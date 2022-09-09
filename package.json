@@ -1,0 +1,22 @@
+{
+  "name": "fiori-stunden",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NilsPvR/fiori-stunden.git"
+  },
+  "author": "NilsPvR",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NilsPvR/fiori-stunden/issues"
+  },
+  "homepage": "https://github.com/NilsPvR/fiori-stunden#readme",
+  "dependencies": {
+    "axios": "^0.27.2"
+  }
+}
