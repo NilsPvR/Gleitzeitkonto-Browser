@@ -2,28 +2,15 @@
 // @name         Fiori-Stunden
 // @namespace    http://tampermonkey.net/
 // @version      0.1
-// @description  Überstunden einfügen in Fiori
 // @author       NilsPvR
-// @match        *://*.ondemand.com/*
+// @description  Überstunden einfügen in Fiori
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
+// @match        *://*.ondemand.com/*
 
 // ==/UserScript==
 
 (function() {
     'use strict';
-    // function importJS(src) {
-    //     const s = document.createElement('script');
-    //     s.setAttribute('type', 'text/javascript');
-    //     s.setAttribute('src', src);
-        
-    //     if (document.head) {
-    //       document.head.appendChild(s);
-    //     } else {
-    //         document.body.appendChild(s);
-    //     }
-    // }
-
-
 
     const addFloatingDisplay = () => {
         const canvas = document.getElementById('canvas'); // main page element is the (almost) only one loaded when DOM is loaded
@@ -39,7 +26,6 @@
     };
 
     if (document.readyState === 'interactive') {
-        console.log('already ready');
         addFloatingDisplay();
     }
     else {
