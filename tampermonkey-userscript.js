@@ -14,7 +14,7 @@
 
     const addFloatingDisplay = () => {
         const canvas = document.getElementById('canvas'); // main page element is the (almost) only one loaded when DOM is loaded
-        canvas.insertAdjacentHTML('beforebegin', 
+        canvas.insertAdjacentHTML('beforebegin',
             '<h3 id="gleitzeitkonto-canvas-headline"style="float: right; margin-top: 11px; margin-right: 9rem; color: rgb(1, 56, 105);">Gleitzeitkonto: 31min</h3>');
     };
 
@@ -26,6 +26,7 @@
     };
 
     if (document.readyState === 'interactive') {
+        console.log('already ready');
         addFloatingDisplay();
     }
     else {
