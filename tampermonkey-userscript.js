@@ -11,19 +11,25 @@
 
 (function() {
     'use strict';
+    let fetchedData;
+    fetch('http://127.0.0.1:3000')
+        .then((response) => response.json())
+        .then((data) => fetchedData = data)
+        .catch((error) => console.error(error));
 
     const addFloatingDisplay = () => {
         const canvas = document.getElementById('canvas'); // main page element is the (almost) only one loaded when DOM is loaded
         canvas.insertAdjacentHTML('beforebegin',
-            '<h3 id="gleitzeitkonto-canvas-headline"style="float: right; margin-top: 11px; margin-right: 9rem; color: rgb(1, 56, 105);">Gleitzeitkonto: 31min</h3>');
+            `<h3 id="gleitzeitkonto-canvas-headline"style="float: right; margin-top: 11px; margin-right: 9rem; color: rgb(1, 56, 105);">Gleitzeitkonto: ${fetchedData?.gleitzeitkonto ? fetchedData.gleitzeitkonto : 'error'}</h3>`);
     };
 
     const addInsertedDisplay = (pHeaderBar) => {
         const oldDisplay = document.getElementById('gleitzeitkonto-canvas-headline');
         if (oldDisplay) oldDisplay.remove(); // delete the old display
 
-        pHeaderBar.innerHTML += '<h3 style="display:flex; align-self: center; color: rgb(1, 56, 105);">Gleitzeitkonto: 31min</h3>'; // add new display
+        pHeaderBar.innerHTML += `<h3 style="display:flex; align-self: center; color: rgb(1, 56, 105);">Gleitzeitkonto: ${fetchedData?.gleitzeitkonto ? fetchedData.gleitzeitkonto : 'error'}</h3>`; // add new display
     };
+
 
     if (document.readyState === 'interactive') {
         console.log('already ready');
