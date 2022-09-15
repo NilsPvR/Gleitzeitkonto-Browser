@@ -18,10 +18,12 @@
 
     // Check if extern or intern Fiori website, since these have different amounts of icons    
     if (window.location.origin == 'https://bgp.btcsap.btc-ag.com:44300') { // Intern Fiori
+        config.siteVersion = 'internal';
         config.amountIcons = 4; // amount of icons to wait for to load
         config.sideDistance = '11rem'; // css margin from the right for floating display
     }    
     else { // extern
+        config.siteVersion = 'external';
         config.amountIcons = 3;
         config.sideDistance = '9rem';
     }
@@ -55,7 +57,8 @@
         else return `Gleitzeitkonto: ${res.konto}`;
     };
     
-
+    // CSS doens't work on intern site
+        // would have to be after canvas but this get's changed dynamically and therefore the h3 would be removed
     const addFloatingDisplay = (pDisplayText) => {
         const canvas = document.getElementById('canvas'); // main page element is the (almost) only one loaded when DOM is loaded
         canvas.insertAdjacentHTML('beforebegin',
@@ -73,13 +76,13 @@
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Main Events <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
     const promiseDisplayText = getDisplayText(); // preload display to save time
 
-    if (document.readyState === 'interactive' || document.readyState === 'complete') {
-        addFloatingDisplay('probably loading');
+    if (config.siteVersion == 'external' && (document.readyState === 'interactive' || document.readyState === 'complete')) {
+        addFloatingDisplay('Gleitzeitkonto: Loading...');
     }
-    else {
+    else if (config.siteVersion == 'external') {
         // Load event fires too early so no point using that
         window.addEventListener('DOMContentLoaded', (event) => {
-            addFloatingDisplay('probably loading');
+            addFloatingDisplay('Gleitzeitkonto: Loading...');
         })
     }
 
@@ -99,6 +102,6 @@
             addInsertedDisplay(headerBar, await promiseDisplayText); // make sure DisplayText loaded
         }
         else if (loops > 10) clearInterval(findHeaderBar); // page loaded too long or html got changed
-    }, 2000); // will be limited to min. 1000 when tab not focused
+    }, 1000); // will be limited to min. 1000 when tab not focused
 
 })();
