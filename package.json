@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "test": "node main.js",
-    "publish": "terser tampermonkey-userscript.js -c -m --comments -o compressed/t-u_comp.js"
+    "publish": "terser tampermonkey-userscript.js -c -m --comments -o compressed/t-u_comp.js && node publish_FirefoxExt.js"
   },
   "repository": {
     "type": "git",
