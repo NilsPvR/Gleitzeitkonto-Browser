@@ -39,12 +39,8 @@
             return data
         }
         catch (e) {
-            console.log(e.message);
-            console.log(e.message == 'NetworkError when attempting to fetch resource.')
             if (e.message == 'NetworkError when attempting to fetch resource.') {
-                console.log('whoops\n' + e);
                 return {errorMessage: 'Der Lokale-Server wurde nicht gestartet!'}
-                
             }
             console.error(e);
         }
