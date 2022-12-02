@@ -4,7 +4,8 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "node main.js"
+    "test": "node main.js",
+    "publish": "terser tampermonkey-userscript.js -c -m --comments -o compressed/t-u_comp.js"
   },
   "repository": {
     "type": "git",
@@ -16,7 +17,8 @@
     "url": "https://github.com/NilsPvR/fiori-stunden/issues"
   },
   "homepage": "https://github.com/NilsPvR/fiori-stunden#readme",
-  "dependencies": {
-    "axios": "^0.27.2"
+  "devDependencies": {
+    "line-reader": "^0.4.0",
+    "terser": "^5.15.0"
   }
 }
