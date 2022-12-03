@@ -18,7 +18,11 @@
   },
   "homepage": "https://github.com/NilsPvR/fiori-stunden#readme",
   "devDependencies": {
+    "express": "^4.18.2",
     "line-reader": "^0.4.0",
+    "puppeteer": "^19.3.0",
+    "puppeteer-extra": "^3.3.4",
+    "puppeteer-extra-plugin-user-preferences": "^2.4.0",
     "terser": "^5.15.0"
   }
 }

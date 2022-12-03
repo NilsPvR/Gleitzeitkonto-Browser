@@ -1,6 +1,6 @@
 const http = require('http');
 
-const hostname = '127.0.0.1';
+const hostname = 'localhost';
 const port = 3000;
 
 const requestListener = (req, res) => {
@@ -12,7 +12,7 @@ const server = http.createServer((request, response) => {
   response.setHeader('Access-Control-Allow-Origin', '*') // since only local allow any client
 
   const responseData = {
-    gleitzeitkonto: '1h 20min',
+    konto: '1h 20min',
   }
 
   const jsonContent = JSON.stringify(responseData);
