@@ -1,0 +1,26 @@
+{
+
+    "manifest_version": 2,
+    "name": "Fiori-Stunden",
+    "version": "1.0",
+  
+    "description": "Browser Erweiterung, welche erlaubt die Überstunden direkt in der Fiori-Zeiterfassung einzusehen ",
+  
+    "icons": {
+      "48": "Assets/border-48.png"
+    },
+  
+    "content_scripts": [
+      {
+        "matches": ["*://*.ondemand.com/*"],
+        "js": ["script.js"]
+
+      }
+    ],
+
+    "permissions": [
+      "*://localhost/*"
+    ]
+  
+  }
+  
