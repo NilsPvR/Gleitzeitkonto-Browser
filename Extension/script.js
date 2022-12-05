@@ -22,12 +22,8 @@
 
     const fetchServer = async () => {
         try {
-            console.log('debugging');
             const url = 'http://localhost:3000';
             const data = await (await fetch(url)).json();
-            console.log(data);
-            // const data = rawdata.json()
-            console.log('no e caught');
             return data
         }
         catch (e) {
@@ -99,13 +95,10 @@
 
     // disgusting loop to check once the page has actually loaded
     const findHeaderBar = setInterval(async () => {
-        console.log('running' + loops);
         loops++;
         headerBar = document.getElementById('shell-header-hdr-search-container'); // top bar, empty part
         const icons = document.getElementById('sf');
 
-        console.log(headerBar);
-        console.log(icons);
 
         if (headerBar && icons) {
             clearInterval(findHeaderBar);
