@@ -12,7 +12,7 @@
   
     "content_scripts": [
       {
-        "matches": ["*://*.ondemand.com/*"],
+        "matches": ["*://*.ondemand.com/*", "*://bgp.btcsap.btc-ag.com/*"],
         "js": ["script.js"]
 
       }
