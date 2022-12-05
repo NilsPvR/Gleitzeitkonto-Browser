@@ -1,6 +1,11 @@
-const { copyFile } = require('fs');
+const { copy, remove } = require('fs-extra');
 
-copyFile('./Compressed/t-u_comp.js', 'Extension/t-u_comp.js', (err) => {
-    if (err) throw err;
-    console.log('Compressed File has been copied!');
-});
+
+try {
+    await copy('/extension', '/compressed/extension'); // copies directory with subdirectories
+    await remove('/compressed/extension/script.js'); // remove file
+    console.log('Copied folder succesfully!');
+}
+catch (e) {
+    console.error(e);
+}
