@@ -60,6 +60,17 @@
         if (oldDisplay) oldDisplay.remove(); // delete the old display
     }
 
+    // change the contents of the floating display
+    // displayText is a promise
+    const updateFloatingDisplay = async (promiseDisplayText) => {
+        await promiseDisplayText; // wait until the promise is resolved
+
+        const oldDisplay = document.getElementById('gleitzeitkonto-canvas-headline');
+        if (oldDisplay) { // check if the floating display still exists
+            oldDisplay.innerHTML = await promiseDisplayText;
+        }
+    }
+
     const addInsertedDisplay = (pHeaderBar, pDisplayText) => {
         removeFloatingDisplay();
 
@@ -80,6 +91,7 @@
         })
     }
 
+    let updatedFloatingDisplay = false; // boolean value: if the floating Display has been updated
     let headerBar;
     let loops = 0; // track how often findHeaderBar ran
     
@@ -98,6 +110,14 @@
         if (headerBar && icons) {
             clearInterval(findHeaderBar);
             addInsertedDisplay(headerBar, await promiseDisplayText); // make sure DisplayText loaded
+        }
+        else if (!updatedFloatingDisplay) { // only update floating display once
+             // don't await 'promiseDisplayText' even tho we want to change this as soon as the promiseDisplayText is fullfilled,
+             // but if the page has loaded before the promise is resolved then just use addInsertedDisplay()
+                // so therefore we shouldn't wait for the 'promiseDisplayText' but rather let this happen asynchronously
+            updateFloatingDisplay(promiseDisplayText);
+
+            updatedFloatingDisplay = true; // now it got updated
         }
         else if (loops > 10) { // page loaded too long or html got changed
             clearInterval(findHeaderBar); 
