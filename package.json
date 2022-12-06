@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "test": "node main.js",
-    "publish": "node publishExtension.js && terser script.js -c -m --comments -o compressed/Extension/fiori-stunden.js"
+    "publish": "node publishExtension.js && terser Extension/fiori-stunden.js -c -m --comments -o compressed/Extension/fiori-stunden.js"
   },
   "repository": {
     "type": "git",
