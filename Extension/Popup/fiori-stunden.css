@@ -1,0 +1,27 @@
+:root { /* btc colors */
+    --primaer-dunkelblau:   #003869;
+    --primaer-mittelblau:   #5aa6e7;
+    --primaer-gelb:         #fbd200;
+    --primaer-grau:         #f5f5f5;
+
+    --sekundaer-1: #00508c;
+    --sekundaer-2: #0078be;
+    --sekundaer-3: #9ccaf1;
+    --sekundaer-4: #cee4f8;
+}
+
+html, body {
+    width: 100%;
+    background-color: var(--primaer-dunkelblau);
+}
+
+
+
+.container {
+    width: 100%;
+    margin-top: 1% auto;
+    padding: 1rem;
+    text-align: center;
+    font-size: 1.5em;
+    color: white;
+}

@@ -2,12 +2,14 @@
 
     "manifest_version": 2,
     "name": "Fiori-Stunden",
-    "version": "1.0",
+    "version": "0.1",
   
     "description": "Browser Erweiterung, welche erlaubt die Überstunden direkt in der Fiori-Zeiterfassung einzusehen ",
+    "homepage_url": "https://github.com/NilsPvR/fiori-stunden",
   
     "icons": {
-      "48": "Assets/border-48.png"
+      "48": "Assets/Experiments.svg",
+      "96": "Assets/Experiments.svg"
     },
   
     "content_scripts": [
@@ -20,7 +22,15 @@
 
     "permissions": [
       "*://localhost/*"
-    ]
+    ],
+
+    "browser_action": {
+      "default_icon": "Assets/Experiments.svg",
+      "default_title": "Fiori-Stunden",
+      "default_popup": "Popup/fiori-stunden.html",
+      "browser_style": true,
+      "chrome_style": true
+    }
   
   }
   
