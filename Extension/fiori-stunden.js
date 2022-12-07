@@ -17,6 +17,21 @@
     }
 
 
+    config.primaer = {
+        "dunkelblau":   "#003869",
+        "mittelblau":   "#5aa6e7",
+        "gelb":         "#fbd200",
+        "grau":         "#f5f5f5",
+    }
+    config.sekundaer = {
+        "1": "#00508c",
+        "2": "0078be",
+        "3": "9ccaf1",
+        "4": "cee4f8",
+    }
+
+
+
     /* ==========================================================================================
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Functions <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
@@ -52,13 +67,13 @@
 
         if (config.siteVersion == 'external') {
             canvas.insertAdjacentHTML('beforebegin',
-                `<h3 id="gleitzeitkonto-canvas-headline"style="float: right; margin-top: 11px; margin-right: ${config.sideDistance}; color: rgb(1, 56, 105);">${pDisplayText ?? 'unknown error'}</h3>`);
+                `<h3 id="gleitzeitkonto-canvas-headline"style="float: right; margin-top: 11px; margin-right: ${config.sideDistance}; color: ${config.primaer.dunkelblau};">${pDisplayText ?? 'unknown error'}</h3>`);
 
         }
 
         if  (config.siteVersion == 'internal') { // internal site needs different styling, which is less 'nice'
             canvas.insertAdjacentHTML('beforebegin',
-                `<h3 id="gleitzeitkonto-canvas-headline"style="position: absolute;  right: ${config.sideDistance}; margin-top: 11px; z-index: 1; color: rgb(1, 56, 105);">${pDisplayText ?? 'unknown error'}</h3>`);
+                `<h3 id="gleitzeitkonto-canvas-headline"style="position: absolute;  right: ${config.sideDistance}; margin-top: 11px; z-index: 1; color: ${config.primaer.dunkelblau};">${pDisplayText ?? 'unknown error'}</h3>`);
         }
     };
 
@@ -81,8 +96,8 @@
 
     const addInsertedDisplay = (pHeaderBar, pDisplayText) => {
         removeFloatingDisplay();
-
-        pHeaderBar.innerHTML += `<h3 style="display:flex; align-self: center; color: rgb(1, 56, 105);">${pDisplayText ?? 'unknown error'}</h3>`; // add new display
+        
+        pHeaderBar.innerHTML += `<h3 style="display:flex; align-self: center; color: ${config.primaer.dunkelblau};">${pDisplayText ?? 'unknown error'}</h3>`; // add new display
     };
 
     /* ==========================================================================================
