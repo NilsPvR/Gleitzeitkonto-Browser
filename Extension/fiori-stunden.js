@@ -27,14 +27,18 @@
             return data
         }
         catch (e) {
-            if (e.message == 'NetworkError when attempting to fetch resource.') {
+            if (e.message == 'NetworkError when attempting to fetch resource.' || e.message == 'Failed to fetch') {
                 console.log(e);
                 return {errorMessage: 'Der Lokale-Server wurde nicht gestartet!'}
             }
-            console.error(e);
+            else {
+                console.error(e);;
+                return {errorMessage: 'Unbekannter Fehler'}
+            }
         }
         
     };
+
     const getDisplayText = async () => {
         const res = await fetchServer();
         if (res.errorMessage) return `Fehler: ${res.errorMessage}`;
@@ -42,12 +46,20 @@
         else return `Gleitzeitkonto: ${res.konto}`;
     };
     
-    // CSS doens't work on intern site
-        // would have to be after canvas but this get's changed dynamically and therefore the h3 would be removed
+
     const addFloatingDisplay = (pDisplayText) => {
         const canvas = document.getElementById('canvas'); // main page element is the (almost) only one loaded when DOM is loaded
-        canvas.insertAdjacentHTML('beforebegin',
-            `<h3 id="gleitzeitkonto-canvas-headline"style="float: right; margin-top: 11px; margin-right: ${config.sideDistance}; color: rgb(1, 56, 105);">${pDisplayText ?? 'unknown error'}</h3>`);
+
+        if (config.siteVersion == 'external') {
+            canvas.insertAdjacentHTML('beforebegin',
+                `<h3 id="gleitzeitkonto-canvas-headline"style="float: right; margin-top: 11px; margin-right: ${config.sideDistance}; color: rgb(1, 56, 105);">${pDisplayText ?? 'unknown error'}</h3>`);
+
+        }
+
+        if  (config.siteVersion == 'internal') { // internal site needs different styling, which is less 'nice'
+            canvas.insertAdjacentHTML('beforebegin',
+                `<h3 id="gleitzeitkonto-canvas-headline"style="position: absolute;  right: ${config.sideDistance}; margin-top: 11px; z-index: 1; color: rgb(1, 56, 105);">${pDisplayText ?? 'unknown error'}</h3>`);
+        }
     };
 
     // remove the display once it is no longer needed
@@ -77,7 +89,7 @@
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Main Events <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
     const promiseDisplayText = getDisplayText(); // preload display to save time
 
-    if (config.siteVersion == 'external' && (document.readyState === 'interactive' || document.readyState === 'complete')) {
+    if (document.readyState === 'interactive' || document.readyState === 'complete') {
         addFloatingDisplay('Gleitzeitkonto: Loading...');
     }
     else if (config.siteVersion == 'external') {
