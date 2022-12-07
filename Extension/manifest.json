@@ -8,8 +8,9 @@
     "homepage_url": "https://github.com/NilsPvR/fiori-stunden",
   
     "icons": {
-      "48": "Assets/Experiments.svg",
-      "96": "Assets/Experiments.svg"
+      "48": "Assets/Experiments48.png",
+      "96": "Assets/Experiments96.png",
+      "128": "Assets/Experiments128.png"      
     },
   
     "content_scripts": [
@@ -25,7 +26,7 @@
     ],
 
     "browser_action": {
-      "default_icon": "Assets/Experiments.svg",
+      "default_icon": "Assets/Experiments48.png",
       "default_title": "Fiori-Stunden",
       "default_popup": "Popup/fiori-stunden.html",
       "browser_style": true,
