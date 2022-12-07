@@ -5,7 +5,9 @@
   "main": "main.js",
   "scripts": {
     "test": "node main.js",
-    "publish": "node publishExtension.js && terser Extension/fiori-stunden.js -c -m --comments -o compressed/Extension/fiori-stunden.js"
+    "publish": "node publishExtension.js && terser Extension/fiori-stunden.js -c -m --comments -o compressed/Extension/fiori-stunden.js && sass-prod",
+    "sass-dev": "sass --watch --update --no-source-map --style=expanded Extension/Popup/fiori-stunden.scss:Extension/Popup/fiori-stunden.css",
+    "sass-prod": "sass --no-source-map --style=compressed Extension/Popup/fiori-stunden.scss:CompressedExtension/Popup/fiori-stunden.css"
   },
   "repository": {
     "type": "git",
@@ -24,6 +26,7 @@
     "puppeteer": "^19.3.0",
     "puppeteer-extra": "^3.3.4",
     "puppeteer-extra-plugin-user-preferences": "^2.4.0",
+    "sass": "^1.56.1",
     "terser": "^5.15.0"
   }
 }

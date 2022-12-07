@@ -26,7 +26,11 @@
     ],
 
     "browser_action": {
-      "default_icon": "Assets/Experiments48.png",
+      "default_icon": {
+        "48": "Assets/Experiments48.png",
+        "96": "Assets/Experiments96.png",
+        "128": "Assets/Experiments128.png"
+      },
       "default_title": "Fiori-Stunden",
       "default_popup": "Popup/fiori-stunden.html",
       "browser_style": true,
