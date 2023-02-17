@@ -4,7 +4,8 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "node main.js",
+    "startTestserver": "node main.js",
+    "startWebserverGleitzeitkonto:": "node ./Webserver/main.js",
     "publish": "node publishExtension.js && terser Extension/fiori-stunden.js -c -m --comments -o compressed/Extension/fiori-stunden.js && sass-prod",
     "sass-dev": "sass --watch --update --no-source-map --style=expanded Extension/Popup/fiori-stunden.scss:Extension/Popup/fiori-stunden.css",
     "sass-prod": "sass --no-source-map --style=compressed Extension/Popup/fiori-stunden.scss:CompressedExtension/Popup/fiori-stunden.css"
