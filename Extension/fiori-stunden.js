@@ -35,6 +35,34 @@
     /* ==========================================================================================
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Functions <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
+    // Boolean value weather or not the user is on "Meine Zeiterfassung" page
+    const checkCorrectMenuIsOpen = async () => {
+        if (window.location.hash = '#btccatstime-create') {
+            return true;
+        }
+        return false;
+    }
+
+    // Resolves the promise only once the user is on "Meine Zeiterfassung" page
+    // This is done by checking the Hash of the URL (the bit after #)
+    const continuousMenucheck = async () => {
+        if (checkCorrectMenuIsOpen()) {
+            return true;
+        }
+
+        return new Promise((resolve) => {
+            window.addEventListener('hashchange', () => {
+
+                if (checkCorrectMenuIsOpen()) {
+                    window.removeEventListener('hashchange');
+                    resolve(true);
+                }
+                // else nothing happens and we wait for the next change
+            })
+        })
+        
+    }
+
     const fetchServer = async () => {
         try {
             const url = 'http://localhost:3000';
@@ -100,9 +128,14 @@
         pHeaderBar.innerHTML += `<h3 style="display:flex; align-self: center; color: ${config.primaer.dunkelblau};">${pDisplayText ?? 'unknown error'}</h3>`; // add new display
     };
 
+
     /* ==========================================================================================
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Main Events <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+    
     const promiseDisplayText = getDisplayText(); // preload display to save time
+    
+    // Only load the rest of the script once the page for Zeiterfassung ist opened
+    await continuousMenucheck();
 
     if (document.readyState === 'interactive' || document.readyState === 'complete') {
         addFloatingDisplay('Gleitzeitkonto: Loading...');
