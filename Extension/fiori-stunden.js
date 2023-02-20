@@ -148,7 +148,6 @@
         return document.getElementById(config.insertedDisplayID);
     }
 
-
     // Update the display continuously for as long as the script is loaded
     // It is asumed that the page has already loaded completely
     const updateDisplayOnURLChange = (pHeaderBar, pDisplayText) => {
@@ -159,10 +158,26 @@
                 addInsertedDisplay(pHeaderBar, pDisplayText);
             }
             else if (!checkCorrectMenuIsOpen()) {
+                // This will also be removed by Fiori but keep remove just in case this behaviour gets changed
                 removeInsertedDisplay();
             }
-
         });
+
+        // Check if the HeaderBar is being manipulated -> display getting removed by Fiori
+        // Without this additonal check the display will be added and then fiori resets the headerBar
+        const observer = new MutationObserver(() => {
+            // When correct page is open and the display doesn't already exist
+            if (checkCorrectMenuIsOpen() && !getInsertedDisplay()) {
+                addInsertedDisplay(pHeaderBar, pDisplayText);
+            }
+        })
+
+        observer.observe(pHeaderBar, { 
+            // config
+            attrtibutes: false,
+            childList: true,
+            subtree: true,
+        })
     }
 
 
