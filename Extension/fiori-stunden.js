@@ -29,6 +29,16 @@
         "3": "9ccaf1",
         "4": "cee4f8",
     }
+    config.gleitzeitHash = '#btccatstime-create'
+    config.floatingDisplayID = 'gleitzeitkonto-canvas-headline';
+    config.insertedDisplayID = 'gleitzeitkonto-display';
+    config.maxPageloadingLoops = 50;
+    config.errorMsgs = {
+        serverNichtGestartet: 'Der Lokale-Server wurde nicht gestartet!',
+        keineDatenVomServer: 'Fehler: Keine Daten vom Lokalen-Server geladen',
+        pageloadingtimeExceeded: 'Die Seite hat zu lange geladen. Das Gleitzeitkonto kann nicht angezeigt werden.',
+        unknownError: 'unknown error',
+    }
 
 
 
@@ -37,7 +47,7 @@
 
     // Boolean value weather or not the user is on "Meine Zeiterfassung" page
     const checkCorrectMenuIsOpen = async () => {
-        if (window.location.hash = '#btccatstime-create') {
+        if (window.location.hash == config.gleitzeitHash) {
             return true;
         }
         return false;
@@ -60,7 +70,6 @@
                 // else nothing happens and we wait for the next change
             })
         })
-        
     }
 
     const fetchServer = async () => {
@@ -72,7 +81,7 @@
         catch (e) {
             if (e.message == 'NetworkError when attempting to fetch resource.' || e.message == 'Failed to fetch') {
                 console.log(e);
-                return {errorMessage: 'Der Lokale-Server wurde nicht gestartet!'}
+                return {errorMessage: config.serverNichtGestartet}
             }
             else {
                 console.error(e);;
@@ -85,7 +94,7 @@
     const getDisplayText = async () => {
         const res = await fetchServer();
         if (res.errorMessage) return `Fehler: ${res.errorMessage}`;
-        else if (!res || !res.konto) return 'Fehler: Keine Daten vom Lokalen-Server geladen';
+        else if (!res || !res.konto) return config.keineDatenVomServer;
         else return `Gleitzeitkonto: ${res.konto}`;
     };
     
@@ -95,19 +104,19 @@
 
         if (config.siteVersion == 'external') {
             canvas.insertAdjacentHTML('beforebegin',
-                `<h3 id="gleitzeitkonto-canvas-headline"style="float: right; margin-top: 11px; margin-right: ${config.sideDistance}; color: ${config.primaer.dunkelblau};">${pDisplayText ?? 'unknown error'}</h3>`);
+                `<h3 id="${config.floatingDisplayID}"style="float: right; margin-top: 11px; margin-right: ${config.sideDistance}; color: ${config.primaer.dunkelblau};">${pDisplayText ?? config.unknownError}</h3>`);
 
         }
 
         if  (config.siteVersion == 'internal') { // internal site needs different styling, which is less 'nice'
             canvas.insertAdjacentHTML('beforebegin',
-                `<h3 id="gleitzeitkonto-canvas-headline"style="position: absolute;  right: ${config.sideDistance}; margin-top: 11px; z-index: 1; color: ${config.primaer.dunkelblau};">${pDisplayText ?? 'unknown error'}</h3>`);
+                `<h3 id="${config.floatingDisplayID}"style="position: absolute;  right: ${config.sideDistance}; margin-top: 11px; z-index: 1; color: ${config.primaer.dunkelblau};">${pDisplayText ?? config.unknownError}</h3>`);
         }
     };
 
     // remove the display once it is no longer needed
     const removeFloatingDisplay = () => {
-        const oldDisplay = document.getElementById('gleitzeitkonto-canvas-headline');
+        const oldDisplay = document.getElementById(config.floatingDisplayID);
         if (oldDisplay) oldDisplay.remove(); // delete the old display
     }
 
@@ -116,7 +125,7 @@
     const updateFloatingDisplay = async (promiseDisplayText) => {
         await promiseDisplayText; // wait until the promise is resolved
 
-        const oldDisplay = document.getElementById('gleitzeitkonto-canvas-headline');
+        const oldDisplay = document.getElementById(config.floatingDisplayID);
         if (oldDisplay) { // check if the floating display still exists
             oldDisplay.innerHTML = await promiseDisplayText;
         }
@@ -125,7 +134,7 @@
     const addInsertedDisplay = (pHeaderBar, pDisplayText) => {
         removeFloatingDisplay();
         
-        pHeaderBar.innerHTML += `<h3 style="display:flex; align-self: center; color: ${config.primaer.dunkelblau};">${pDisplayText ?? 'unknown error'}</h3>`; // add new display
+        pHeaderBar.innerHTML += `<h3 id=${config.insertedDisplayID} style="display:flex; align-self: center; color: ${config.primaer.dunkelblau};">${pDisplayText ?? 'unknown error'}</h3>`; // add new display
     };
 
 
