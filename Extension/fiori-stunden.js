@@ -16,7 +16,6 @@
         config.sideDistance = '9rem';
     }
 
-
     config.primaer = {
         "dunkelblau":   "#003869",
         "mittelblau":   "#5aa6e7",
@@ -28,8 +27,7 @@
         "2": "0078be",
         "3": "9ccaf1",
         "4": "cee4f8",
-    }
-    config.gleitzeitHash = '#btccatstime-create'
+    }    
     config.floatingDisplayID = 'gleitzeitkonto-canvas-headline';
     config.insertedDisplayID = 'gleitzeitkonto-display';
     config.maxPageloadingLoops = 20;
@@ -40,6 +38,13 @@
         unknownError: 'unknown error',
     }
 
+    // Defined by Fiori
+    const givenStrings = {
+        gleitzeitHash: '#btccatstime-create',
+        headerBarID: 'shell-header-hdr-search-container',
+        iconsID: 'sf',
+    };
+
 
 
     /* ==========================================================================================
@@ -47,7 +52,7 @@
 
     // Boolean value weather or not the user is on "Meine Zeiterfassung" page
     const checkCorrectMenuIsOpen = () => {
-        if (window.location.hash === config.gleitzeitHash) {
+        if (window.location.hash === givenStrings.gleitzeitHash) {
             return true;
         }
         return false;
@@ -214,8 +219,8 @@
     // disgusting loop to check once the page has actually loaded
     const findHeaderBar = setInterval(async () => {
         loops++;
-        headerBar = document.getElementById('shell-header-hdr-search-container'); // top bar, empty part
-        const icons = document.getElementById('sf');
+        headerBar = document.getElementById(givenStrings.headerBarID); // top bar, empty part
+        const icons = document.getElementById(givenStrings.iconsID);
 
 
         if (headerBar && icons) {
