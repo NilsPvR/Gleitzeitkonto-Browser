@@ -81,7 +81,7 @@
         catch (e) {
             if (e.message == 'NetworkError when attempting to fetch resource.' || e.message == 'Failed to fetch') {
                 console.log(e);
-                return {errorMessage: config.serverNichtGestartet}
+                return {errorMessage: config.errorMsgs.serverNichtGestartet}
             }
             else {
                 console.error(e);;
@@ -94,7 +94,7 @@
     const getDisplayText = async () => {
         const res = await fetchServer();
         if (res.errorMessage) return `Fehler: ${res.errorMessage}`;
-        else if (!res || !res.konto) return config.keineDatenVomServer;
+        else if (!res || !res.konto) return config.errorMsgs.keineDatenVomServer;
         else return `Gleitzeitkonto: ${res.konto}`;
     };
     
@@ -104,13 +104,13 @@
 
         if (config.siteVersion == 'external') {
             canvas.insertAdjacentHTML('beforebegin',
-                `<h3 id="${config.floatingDisplayID}"style="float: right; margin-top: 11px; margin-right: ${config.sideDistance}; color: ${config.primaer.dunkelblau};">${pDisplayText ?? config.unknownError}</h3>`);
+                `<h3 id="${config.floatingDisplayID}"style="float: right; margin-top: 11px; margin-right: ${config.sideDistance}; color: ${config.primaer.dunkelblau};">${pDisplayText ?? config.errorMsgs.unknownError}</h3>`);
 
         }
 
         if  (config.siteVersion == 'internal') { // internal site needs different styling, which is less 'nice'
             canvas.insertAdjacentHTML('beforebegin',
-                `<h3 id="${config.floatingDisplayID}"style="position: absolute;  right: ${config.sideDistance}; margin-top: 11px; z-index: 1; color: ${config.primaer.dunkelblau};">${pDisplayText ?? config.unknownError}</h3>`);
+                `<h3 id="${config.floatingDisplayID}"style="position: absolute;  right: ${config.sideDistance}; margin-top: 11px; z-index: 1; color: ${config.primaer.dunkelblau};">${pDisplayText ?? config.errorMsgs.unknownError}</h3>`);
         }
     };
 
