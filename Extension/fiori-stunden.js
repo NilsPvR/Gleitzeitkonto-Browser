@@ -32,7 +32,7 @@
     config.gleitzeitHash = '#btccatstime-create'
     config.floatingDisplayID = 'gleitzeitkonto-canvas-headline';
     config.insertedDisplayID = 'gleitzeitkonto-display';
-    config.maxPageloadingLoops = 50;
+    config.maxPageloadingLoops = 20;
     config.errorMsgs = {
         serverNichtGestartet: 'Der Lokale-Server wurde nicht gestartet!',
         keineDatenVomServer: 'Fehler: Keine Daten vom Lokalen-Server geladen',
@@ -189,6 +189,7 @@
     // Only load the rest of the script once the page for Zeiterfassung ist opened
     await continuousMenucheck();
 
+    // If a different menu is opened no floating display will be added
     if (checkCorrectMenuIsOpen()) {
         if (document.readyState === 'interactive' || document.readyState === 'complete') {
             addFloatingDisplay('Gleitzeitkonto: Loading...');
@@ -199,15 +200,17 @@
                 addFloatingDisplay('Gleitzeitkonto: Loading...');
             })
         }
+
+        // don't await 'promiseDisplayText' even tho we want to change this as soon as the promiseDisplayText is fullfilled,
+        // but if the page has loaded before the promise is resolved then just use addInsertedDisplay()
+        // so therefore we shouldn't wait for the 'promiseDisplayText' but rather let this happen asynchronously
+        updateFloatingDisplay(promiseDisplayText);
     }
     
 
-    let updatedFloatingDisplay = false; // boolean value: if the floating Display has been updated
     let headerBar;
     let loops = 0; // track how often findHeaderBar ran
     
-    
-
     // disgusting loop to check once the page has actually loaded
     const findHeaderBar = setInterval(async () => {
         loops++;
@@ -225,18 +228,10 @@
             
             updateDisplayOnURLChange(headerBar, await promiseDisplayText);
         }
-        else if (!updatedFloatingDisplay) { // only update floating display once
-             // don't await 'promiseDisplayText' even tho we want to change this as soon as the promiseDisplayText is fullfilled,
-             // but if the page has loaded before the promise is resolved then just use addInsertedDisplay()
-                // so therefore we shouldn't wait for the 'promiseDisplayText' but rather let this happen asynchronously
-            updateFloatingDisplay(promiseDisplayText);
-
-            updatedFloatingDisplay = true; // now it got updated
-        }
         else if (loops > config.maxPageloadingLoops) { // page loaded too long or html got changed
-            clearInterval(findHeaderBar); 
-            removeFloatingDisplay(); // remove display, probably better to change text to an error to @TODO
-            console.error(config.errorMsgs.pageloadingtimeExceeded)
+            clearInterval(findHeaderBar);
+            removeFloatingDisplay(); // TODO show error in popup
+            console.error(config.errorMsgs.pageloadingtimeExceeded);
         }
     }, 1000); // will be limited to min. 1000 when tab not focused
 
