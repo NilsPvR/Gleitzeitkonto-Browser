@@ -3,5 +3,8 @@ package-lock.json
 /compressed
 
 #ignore for now until the dev platform for the webbrowser is decided on
-/Webserver 
+/Webserver
+
+config.json
+tabel.csv
 
