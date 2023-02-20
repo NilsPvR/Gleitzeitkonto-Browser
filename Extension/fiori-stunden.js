@@ -46,8 +46,8 @@
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Functions <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
     // Boolean value weather or not the user is on "Meine Zeiterfassung" page
-    const checkCorrectMenuIsOpen = async () => {
-        if (window.location.hash == config.gleitzeitHash) {
+    const checkCorrectMenuIsOpen = () => {
+        if (window.location.hash === config.gleitzeitHash) {
             return true;
         }
         return false;
@@ -61,10 +61,10 @@
         }
 
         return new Promise((resolve) => {
-            window.addEventListener('hashchange', () => {
+            const onHashChange = window.addEventListener('hashchange', () => {
 
                 if (checkCorrectMenuIsOpen()) {
-                    window.removeEventListener('hashchange');
+                    window.removeEventListener('hashchange', onHashChange);
                     resolve(true);
                 }
                 // else nothing happens and we wait for the next change
@@ -133,9 +133,37 @@
 
     const addInsertedDisplay = (pHeaderBar, pDisplayText) => {
         removeFloatingDisplay();
-        
+
         pHeaderBar.innerHTML += `<h3 id=${config.insertedDisplayID} style="display:flex; align-self: center; color: ${config.primaer.dunkelblau};">${pDisplayText ?? 'unknown error'}</h3>`; // add new display
     };
+
+    const removeInsertedDisplay = (pHeaderBar, pDisplayText) => {
+        const previousInsertedDisplay = getInsertedDisplay();
+        if (previousInsertedDisplay) {
+            previousInsertedDisplay.remove();
+        }
+    }
+
+    const getInsertedDisplay = () => {
+        return document.getElementById(config.insertedDisplayID);
+    }
+
+
+    // Update the display continuously for as long as the script is loaded
+    // It is asumed that the page has already loaded completely
+    const updateDisplayOnURLChange = (pHeaderBar, pDisplayText) => {
+        window.addEventListener('hashchange', () => {
+
+            // When correct page is open and the display doesn't already exist
+            if (checkCorrectMenuIsOpen() && !getInsertedDisplay()) {
+                addInsertedDisplay(pHeaderBar, pDisplayText);
+            }
+            else if (!checkCorrectMenuIsOpen()) {
+                removeInsertedDisplay();
+            }
+
+        });
+    }
 
 
     /* ==========================================================================================
@@ -146,15 +174,18 @@
     // Only load the rest of the script once the page for Zeiterfassung ist opened
     await continuousMenucheck();
 
-    if (document.readyState === 'interactive' || document.readyState === 'complete') {
-        addFloatingDisplay('Gleitzeitkonto: Loading...');
-    }
-    else if (config.siteVersion == 'external') {
-        // Load event fires too early so no point using that
-        window.addEventListener('DOMContentLoaded', (event) => {
+    if (checkCorrectMenuIsOpen()) {
+        if (document.readyState === 'interactive' || document.readyState === 'complete') {
             addFloatingDisplay('Gleitzeitkonto: Loading...');
-        })
+        }
+        else if (config.siteVersion == 'external') {
+            // Load event fires too early so no point using that
+            window.addEventListener('DOMContentLoaded', (event) => {
+                addFloatingDisplay('Gleitzeitkonto: Loading...');
+            })
+        }
     }
+    
 
     let updatedFloatingDisplay = false; // boolean value: if the floating Display has been updated
     let headerBar;
@@ -171,7 +202,13 @@
 
         if (headerBar && icons) {
             clearInterval(findHeaderBar);
-            addInsertedDisplay(headerBar, await promiseDisplayText); // make sure DisplayText loaded
+
+            // Only add display when user is still on Zeiterfassung page
+            if (checkCorrectMenuIsOpen()) {
+                addInsertedDisplay(headerBar, await promiseDisplayText); // make sure DisplayText loaded
+            }
+            
+            updateDisplayOnURLChange(headerBar, await promiseDisplayText);
         }
         else if (!updatedFloatingDisplay) { // only update floating display once
              // don't await 'promiseDisplayText' even tho we want to change this as soon as the promiseDisplayText is fullfilled,
@@ -181,9 +218,10 @@
 
             updatedFloatingDisplay = true; // now it got updated
         }
-        else if (loops > 10) { // page loaded too long or html got changed
+        else if (loops > config.maxPageloadingLoops) { // page loaded too long or html got changed
             clearInterval(findHeaderBar); 
             removeFloatingDisplay(); // remove display, probably better to change text to an error to @TODO
+            console.error(config.errorMsgs.pageloadingtimeExceeded)
         }
     }, 1000); // will be limited to min. 1000 when tab not focused
 
