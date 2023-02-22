@@ -21,6 +21,10 @@
       }
     ],
 
+    "web_accessible_resources": [
+      "fiori-stunden-func.js"
+   ],
+
     "permissions": [
       "*://localhost/*"
     ],

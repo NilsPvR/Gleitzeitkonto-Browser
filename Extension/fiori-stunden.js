@@ -1,273 +1,63 @@
-(async function() {
+(async () => {
     'use strict';
-    /* ==========================================================================================
-        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Config <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
-    const config = {
-        primaer: {
-            "dunkelblau":   "#003869",
-            "mittelblau":   "#5aa6e7",
-            "gelb":         "#fbd200",
-            "grau":         "#f5f5f5",
-        },
-        sekundaer: {
-            "1": "#00508c",
-            "2": "0078be",
-            "3": "9ccaf1",
-            "4": "cee4f8",
-        },
 
-        loacalServerURL: 'http://localhost:3000',
-        maxPageloadingLoops: 20,
-    };
-
-    // Check if extern or intern Fiori website, since these have different amounts of icons    
-    if (window.location.origin == 'https://bgp.btcsap.btc-ag.com:44300') { // Intern Fiori
-        config.siteVersion = 'internal';
-        config.amountIcons = 4; // amount of icons to wait for to load
-        config.sideDistance = '11rem'; // css margin from the right for floating display
-    }    
-    else { // extern
-        config.siteVersion = 'external';
-        config.amountIcons = 2;
-        config.sideDistance = '9rem';
-    }
-
-    const constStrings = {
-        floatingDisplayID: 'gleitzeitkonto-canvas-headline',
-        insertedDisplayID: 'gleitzeitkonto-display',
-        prefixOvertime: 'Gleitzeitkonto: ',
-        prefixError: 'Fehler: ',
-        overtimeLoading: 'Loading...',
-        errorMsgs: {
-            serverNichtGestartet: 'Der Lokale-Server wurde nicht gestartet!',
-            keineDatenVomServer: 'Fehler: Keine Daten vom Lokalen-Server geladen',
-            pageloadingtimeExceeded: 'Die Seite hat zu lange geladen. Das Gleitzeitkonto kann nicht angezeigt werden.',
-            unknown: 'Unbekannter Fehler',
-            unknownFetching: 'Unbekannter Fehler beim laden der Daten'
-        }
-    }
-
-    // Strings defined by external third parties, e.g. Fiori 
-    const givenStrings = {
-        gleitzeitHash: '#btccatstime-create',
-        headerBarID: 'shell-header-hdr-search-container',
-        iconsID: 'sf',
-        errorMsgs: {
-            networkError: 'NetworkError when attempting to fetch resource.',
-            failedError: 'Failed to fetch',
-        },
-    };
-
-
+    // TODO change browser to chrome for chrome and opera browser, firefox and edge use 'browser'
+    const source = browser.runtime.getURL('./fiori-stunden-func.js'); // use WebExtension API to get the file URL
+    const fioriStundenModule = await import(source); // load script
+    const time = new fioriStundenModule.default();
 
     /* ==========================================================================================
-        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Functions <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Main Events <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
-    // Boolean value weather or not the user is on "Meine Zeiterfassung" page
-    const checkCorrectMenuIsOpen = () => {
-        if (window.location.hash === givenStrings.gleitzeitHash) {
-            return true;
-        }
-        return false;
-    }
+    const promiseDisplayText = time.getDisplayText(); // preload display to save time
 
-    // Resolves the promise only once the user is on "Meine Zeiterfassung" page
-    // This is done by checking the Hash of the URL (the bit after #)
-    const continuousMenucheck = async () => {
-        if (checkCorrectMenuIsOpen()) {
-            return true;
-        }
-
-        return new Promise((resolve) => {
-            const onHashChange = window.addEventListener('hashchange', () => {
-
-                if (checkCorrectMenuIsOpen()) {
-                    window.removeEventListener('hashchange', onHashChange);
-                    resolve(true);
-                }
-                // else nothing happens and we wait for the next change
-            });
-        });
-    };
-
-    const fetchServer = async () => {
-        try {
-            const url = config.loacalServerURL;
-            const data = await (await fetch(url)).json();
-            return data;
-        }
-        catch (e) {
-            if (e.message == givenStrings.errorMsgs.networkError || e.message == givenStrings.errorMsgs.failedError) {
-                console.log(e);
-                return {errorMessage: constStrings.errorMsgs.serverNichtGestartet};
-            }
-            else {
-                console.error(e);
-                return {errorMessage: constStrings.errorMsgs.keineDatenVomServer};
-            }
-        }
-        
-    };
-
-    const getDisplayText = async () => {
-        const res = await fetchServer();
-
-        if (res.errorMessage) return constStrings.prefixError + res.errorMessage; // Error occured
-        else if (!res || !res.konto) return constStrings.errorMsgs.keineDatenVomServer; // No Data
-        else return constStrings.prefixOvertime + res.konto;
-    };
-
-
-    // ---------- Changes on Displays ----------
-    // -----------------------------------------    
-
-    const addFloatingDisplay = (pDisplayText) => {
-        const canvas = document.getElementById('canvas'); // main page element is the (almost) only one loaded when DOM is loaded
-
-        if (config.siteVersion == 'external') {
-            canvas.insertAdjacentHTML('beforebegin',
-                `<h3 id="${constStrings.floatingDisplayID}"style="float: right; margin-top: 11px; margin-right: ${config.sideDistance}; `
-                + `color: ${config.primaer.dunkelblau};">${pDisplayText ?? constStrings.errorMsgs.unknown}</h3>`);
-
-        }
-
-        if  (config.siteVersion == 'internal') { // internal site needs different styling, which is less 'nice'
-            canvas.insertAdjacentHTML('beforebegin',
-                `<h3 id="${constStrings.floatingDisplayID}"style="position: absolute; right: ${config.sideDistance}; margin-top: 11px; z-index: 1; `
-                + `color: ${config.primaer.dunkelblau};">${pDisplayText ?? constStrings.errorMsgs.unknown}</h3>`);
-        }
-    };
-
-    const  getFloatingDisplay = () => {
-        return document.getElementById(constStrings.floatingDisplayID);
-    }
-
-    // remove the display
-    const removeFloatingDisplay = () => {
-        const oldDisplay = getFloatingDisplay();
-        if (oldDisplay) oldDisplay.remove(); // delete the old display
-    };
-
-    // change the contents of the floating display
-    // displayText is a promise
-    const updateFloatingDisplay = async (promiseDisplayText) => {
-        await promiseDisplayText; // wait until the promise is resolved
-
-        const oldDisplay = getFloatingDisplay();
-        if (oldDisplay) { // check if the floating display still exists
-            oldDisplay.innerHTML = await promiseDisplayText;
-        }
-    };
-
-
-
-    const addInsertedDisplay = (pHeaderBar, pDisplayText) => {
-        removeFloatingDisplay();
-
-        pHeaderBar.innerHTML += `<h3 id=${constStrings.insertedDisplayID} style="display:flex; align-self: center; color: ${config.primaer.dunkelblau};">${pDisplayText ?? 'unknown error'}</h3>`; // add new display
-    };
-
-    const getInsertedDisplay = () => {
-        return document.getElementById(constStrings.insertedDisplayID);
-    };
-
-    const removeInsertedDisplay = () => {
-        const previousInsertedDisplay = getInsertedDisplay();
-        if (previousInsertedDisplay) {
-            previousInsertedDisplay.remove();
-        }
-    };
-
-    
-    // ---------- End Changes on Displays ----------
-    // ---------------------------------------------
-
-    // Update the display continuously for as long as the script is loaded
-    // It is asumed that the page has already loaded completely
-    const updateDisplayOnURLChange = (pHeaderBar, pDisplayText) => {
-        window.addEventListener('hashchange', () => {
-
-            // When correct page is open and the display doesn't already exist
-            if (checkCorrectMenuIsOpen() && !getInsertedDisplay()) {
-                addInsertedDisplay(pHeaderBar, pDisplayText);
-            }
-            else if (!checkCorrectMenuIsOpen()) {
-                // This will also be removed by Fiori but keep remove just in case this behaviour gets changed
-                removeInsertedDisplay();
-            }
-        });
-
-        // Check if the HeaderBar is being manipulated -> display getting removed by Fiori
-        // Without this additonal check the display will be added and then fiori resets the headerBar
-        const observer = new MutationObserver(() => {
-            // When correct page is open and the display doesn't already exist
-            if (checkCorrectMenuIsOpen() && !getInsertedDisplay()) {
-                addInsertedDisplay(pHeaderBar, pDisplayText);
-            }
-        });
-
-        observer.observe(pHeaderBar, { 
-            // config
-            attrtibutes: false,
-            childList: true,
-            subtree: true,
-        });
-    };
-
-
-    /* ==========================================================================================
-        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Main Events <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
-    
-    const promiseDisplayText = getDisplayText(); // preload display to save time
-    
     // Only load the rest of the script once the page for 'Zeiterfassung' ist opened
-    await continuousMenucheck();
+    await time.continuousMenucheck();
 
     // Double check, if a different menu is opened no floating display will be added
-    if (checkCorrectMenuIsOpen()) {
+    if (time.checkCorrectMenuIsOpen()) {
         if (document.readyState === 'interactive' || document.readyState === 'complete') {
-            addFloatingDisplay(constStrings.prefixOvertime + constStrings.overtimeLoading);
+            time.addFloatingDisplay(time.constStrings.prefixOvertime + time.constStrings.overtimeLoading);
         }
         else if (config.siteVersion == 'external') {
             // Load event fires too early so no point using that
             window.addEventListener('DOMContentLoaded', (event) => {
-                addFloatingDisplay(constStrings.prefixOvertime + constStrings.overtimeLoading);
+                time.addFloatingDisplay(time.constStrings.prefixOvertime + time.constStrings.overtimeLoading);
             })
         }
 
         // don't await 'promiseDisplayText' even tho we want to change this as soon as the promiseDisplayText is fullfilled,
         // but if the page has loaded before the promise is resolved then just use addInsertedDisplay()
         // so therefore we shouldn't wait for the 'promiseDisplayText' but rather let this happen asynchronously
-        updateFloatingDisplay(promiseDisplayText);
+        time.updateFloatingDisplay(promiseDisplayText);
     };
-    
+
 
     let headerBar;
     let loops = 0; // track how often findHeaderBar ran
-    
+
     // loop to check once the page has actually loaded
     // -> this is determined by checking if the headerbar of the page and the icons in the headerbar are available
     const waitForPageLoad = setInterval(async () => {
         loops++;
-        headerBar = document.getElementById(givenStrings.headerBarID); // top bar, empty part
-        const icons = document.getElementById(givenStrings.iconsID);
+        headerBar = document.getElementById(time.givenStrings.headerBarID); // top bar, empty part
+        const icons = document.getElementById(time.givenStrings.iconsID);
 
 
         if (headerBar && icons) {
             clearInterval(waitForPageLoad);
 
             // Only add display when user is still on Zeiterfassung page
-            if (checkCorrectMenuIsOpen()) {
-                addInsertedDisplay(headerBar, await promiseDisplayText); // make sure DisplayText loaded
+            if (time.checkCorrectMenuIsOpen()) {
+                time.addInsertedDisplay(headerBar, await promiseDisplayText); // make sure DisplayText loaded
             }
             
-            updateDisplayOnURLChange(headerBar, await promiseDisplayText);
+            time.updateDisplayOnURLChange(headerBar, await promiseDisplayText);
         }
-        else if (loops > config.maxPageloadingLoops) { // page loaded too long or html got changed
+        else if (loops > time.config.maxPageloadingLoops) { // page loaded too long or html got changed
             clearInterval(waitForPageLoad);
-            removeFloatingDisplay(); // TODO show error in popup
-            console.error(constStrings.errorMsgs.pageloadingtimeExceeded);
+            time.removeFloatingDisplay(); // TODO show error in popup
+            console.error(time.constStrings.errorMsgs.pageloadingtimeExceeded);
         }
     }, 1000); // will be limited to min. 1000 when tab not focused
-
 })();
