@@ -2,7 +2,23 @@
     'use strict';
     /* ==========================================================================================
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Config <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
-    const config = {};
+    const config = {
+        primaer: {
+            "dunkelblau":   "#003869",
+            "mittelblau":   "#5aa6e7",
+            "gelb":         "#fbd200",
+            "grau":         "#f5f5f5",
+        },
+        sekundaer: {
+            "1": "#00508c",
+            "2": "0078be",
+            "3": "9ccaf1",
+            "4": "cee4f8",
+        },
+
+        loacalServerURL: 'http://localhost:3000',
+        maxPageloadingLoops: 20,
+    };
 
     // Check if extern or intern Fiori website, since these have different amounts of icons    
     if (window.location.origin == 'https://bgp.btcsap.btc-ag.com:44300') { // Intern Fiori
@@ -16,33 +32,30 @@
         config.sideDistance = '9rem';
     }
 
-    config.primaer = {
-        "dunkelblau":   "#003869",
-        "mittelblau":   "#5aa6e7",
-        "gelb":         "#fbd200",
-        "grau":         "#f5f5f5",
-    }
-    config.sekundaer = {
-        "1": "#00508c",
-        "2": "0078be",
-        "3": "9ccaf1",
-        "4": "cee4f8",
-    }    
-    config.floatingDisplayID = 'gleitzeitkonto-canvas-headline';
-    config.insertedDisplayID = 'gleitzeitkonto-display';
-    config.maxPageloadingLoops = 20;
-    config.errorMsgs = {
-        serverNichtGestartet: 'Der Lokale-Server wurde nicht gestartet!',
-        keineDatenVomServer: 'Fehler: Keine Daten vom Lokalen-Server geladen',
-        pageloadingtimeExceeded: 'Die Seite hat zu lange geladen. Das Gleitzeitkonto kann nicht angezeigt werden.',
-        unknownError: 'unknown error',
+    const constStrings = {
+        floatingDisplayID: 'gleitzeitkonto-canvas-headline',
+        insertedDisplayID: 'gleitzeitkonto-display',
+        prefixOvertime: 'Gleitzeitkonto: ',
+        prefixError: 'Fehler: ',
+        overtimeLoading: 'Loading...',
+        errorMsgs: {
+            serverNichtGestartet: 'Der Lokale-Server wurde nicht gestartet!',
+            keineDatenVomServer: 'Fehler: Keine Daten vom Lokalen-Server geladen',
+            pageloadingtimeExceeded: 'Die Seite hat zu lange geladen. Das Gleitzeitkonto kann nicht angezeigt werden.',
+            unknown: 'Unbekannter Fehler',
+            unknownFetching: 'Unbekannter Fehler beim laden der Daten'
+        }
     }
 
-    // Defined by Fiori
+    // Strings defined by external third parties, e.g. Fiori 
     const givenStrings = {
         gleitzeitHash: '#btccatstime-create',
         headerBarID: 'shell-header-hdr-search-container',
         iconsID: 'sf',
+        errorMsgs: {
+            networkError: 'NetworkError when attempting to fetch resource.',
+            failedError: 'Failed to fetch',
+        },
     };
 
 
@@ -73,24 +86,24 @@
                     resolve(true);
                 }
                 // else nothing happens and we wait for the next change
-            })
-        })
-    }
+            });
+        });
+    };
 
     const fetchServer = async () => {
         try {
-            const url = 'http://localhost:3000';
+            const url = config.loacalServerURL;
             const data = await (await fetch(url)).json();
-            return data
+            return data;
         }
         catch (e) {
-            if (e.message == 'NetworkError when attempting to fetch resource.' || e.message == 'Failed to fetch') {
+            if (e.message == givenStrings.errorMsgs.networkError || e.message == givenStrings.errorMsgs.failedError) {
                 console.log(e);
-                return {errorMessage: config.errorMsgs.serverNichtGestartet}
+                return {errorMessage: constStrings.errorMsgs.serverNichtGestartet};
             }
             else {
-                console.error(e);;
-                return {errorMessage: 'Unbekannter Fehler'}
+                console.error(e);
+                return {errorMessage: constStrings.errorMsgs.keineDatenVomServer};
             }
         }
         
@@ -98,60 +111,76 @@
 
     const getDisplayText = async () => {
         const res = await fetchServer();
-        if (res.errorMessage) return `Fehler: ${res.errorMessage}`;
-        else if (!res || !res.konto) return config.errorMsgs.keineDatenVomServer;
-        else return `Gleitzeitkonto: ${res.konto}`;
+
+        if (res.errorMessage) return constStrings.prefixError + res.errorMessage; // Error occured
+        else if (!res || !res.konto) return constStrings.errorMsgs.keineDatenVomServer; // No Data
+        else return constStrings.prefixOvertime + res.konto;
     };
-    
+
+
+    // ---------- Changes on Displays ----------
+    // -----------------------------------------    
 
     const addFloatingDisplay = (pDisplayText) => {
         const canvas = document.getElementById('canvas'); // main page element is the (almost) only one loaded when DOM is loaded
 
         if (config.siteVersion == 'external') {
             canvas.insertAdjacentHTML('beforebegin',
-                `<h3 id="${config.floatingDisplayID}"style="float: right; margin-top: 11px; margin-right: ${config.sideDistance}; color: ${config.primaer.dunkelblau};">${pDisplayText ?? config.errorMsgs.unknownError}</h3>`);
+                `<h3 id="${constStrings.floatingDisplayID}"style="float: right; margin-top: 11px; margin-right: ${config.sideDistance}; `
+                + `color: ${config.primaer.dunkelblau};">${pDisplayText ?? constStrings.errorMsgs.unknown}</h3>`);
 
         }
 
         if  (config.siteVersion == 'internal') { // internal site needs different styling, which is less 'nice'
             canvas.insertAdjacentHTML('beforebegin',
-                `<h3 id="${config.floatingDisplayID}"style="position: absolute;  right: ${config.sideDistance}; margin-top: 11px; z-index: 1; color: ${config.primaer.dunkelblau};">${pDisplayText ?? config.errorMsgs.unknownError}</h3>`);
+                `<h3 id="${constStrings.floatingDisplayID}"style="position: absolute; right: ${config.sideDistance}; margin-top: 11px; z-index: 1; `
+                + `color: ${config.primaer.dunkelblau};">${pDisplayText ?? constStrings.errorMsgs.unknown}</h3>`);
         }
     };
 
-    // remove the display once it is no longer needed
-    const removeFloatingDisplay = () => {
-        const oldDisplay = document.getElementById(config.floatingDisplayID);
-        if (oldDisplay) oldDisplay.remove(); // delete the old display
+    const  getFloatingDisplay = () => {
+        return document.getElementById(constStrings.floatingDisplayID);
     }
+
+    // remove the display
+    const removeFloatingDisplay = () => {
+        const oldDisplay = getFloatingDisplay();
+        if (oldDisplay) oldDisplay.remove(); // delete the old display
+    };
 
     // change the contents of the floating display
     // displayText is a promise
     const updateFloatingDisplay = async (promiseDisplayText) => {
         await promiseDisplayText; // wait until the promise is resolved
 
-        const oldDisplay = document.getElementById(config.floatingDisplayID);
+        const oldDisplay = getFloatingDisplay();
         if (oldDisplay) { // check if the floating display still exists
             oldDisplay.innerHTML = await promiseDisplayText;
         }
-    }
+    };
+
+
 
     const addInsertedDisplay = (pHeaderBar, pDisplayText) => {
         removeFloatingDisplay();
 
-        pHeaderBar.innerHTML += `<h3 id=${config.insertedDisplayID} style="display:flex; align-self: center; color: ${config.primaer.dunkelblau};">${pDisplayText ?? 'unknown error'}</h3>`; // add new display
+        pHeaderBar.innerHTML += `<h3 id=${constStrings.insertedDisplayID} style="display:flex; align-self: center; color: ${config.primaer.dunkelblau};">${pDisplayText ?? 'unknown error'}</h3>`; // add new display
     };
 
-    const removeInsertedDisplay = (pHeaderBar, pDisplayText) => {
+    const getInsertedDisplay = () => {
+        return document.getElementById(constStrings.insertedDisplayID);
+    };
+
+    const removeInsertedDisplay = () => {
         const previousInsertedDisplay = getInsertedDisplay();
         if (previousInsertedDisplay) {
             previousInsertedDisplay.remove();
         }
-    }
+    };
 
-    const getInsertedDisplay = () => {
-        return document.getElementById(config.insertedDisplayID);
-    }
+    
+    // ---------- End Changes on Displays ----------
+    // ---------------------------------------------
 
     // Update the display continuously for as long as the script is loaded
     // It is asumed that the page has already loaded completely
@@ -175,15 +204,15 @@
             if (checkCorrectMenuIsOpen() && !getInsertedDisplay()) {
                 addInsertedDisplay(pHeaderBar, pDisplayText);
             }
-        })
+        });
 
         observer.observe(pHeaderBar, { 
             // config
             attrtibutes: false,
             childList: true,
             subtree: true,
-        })
-    }
+        });
+    };
 
 
     /* ==========================================================================================
@@ -191,18 +220,18 @@
     
     const promiseDisplayText = getDisplayText(); // preload display to save time
     
-    // Only load the rest of the script once the page for Zeiterfassung ist opened
+    // Only load the rest of the script once the page for 'Zeiterfassung' ist opened
     await continuousMenucheck();
 
-    // If a different menu is opened no floating display will be added
+    // Double check, if a different menu is opened no floating display will be added
     if (checkCorrectMenuIsOpen()) {
         if (document.readyState === 'interactive' || document.readyState === 'complete') {
-            addFloatingDisplay('Gleitzeitkonto: Loading...');
+            addFloatingDisplay(constStrings.prefixOvertime + constStrings.overtimeLoading);
         }
         else if (config.siteVersion == 'external') {
             // Load event fires too early so no point using that
             window.addEventListener('DOMContentLoaded', (event) => {
-                addFloatingDisplay('Gleitzeitkonto: Loading...');
+                addFloatingDisplay(constStrings.prefixOvertime + constStrings.overtimeLoading);
             })
         }
 
@@ -210,21 +239,22 @@
         // but if the page has loaded before the promise is resolved then just use addInsertedDisplay()
         // so therefore we shouldn't wait for the 'promiseDisplayText' but rather let this happen asynchronously
         updateFloatingDisplay(promiseDisplayText);
-    }
+    };
     
 
     let headerBar;
     let loops = 0; // track how often findHeaderBar ran
     
-    // disgusting loop to check once the page has actually loaded
-    const findHeaderBar = setInterval(async () => {
+    // loop to check once the page has actually loaded
+    // -> this is determined by checking if the headerbar of the page and the icons in the headerbar are available
+    const waitForPageLoad = setInterval(async () => {
         loops++;
         headerBar = document.getElementById(givenStrings.headerBarID); // top bar, empty part
         const icons = document.getElementById(givenStrings.iconsID);
 
 
         if (headerBar && icons) {
-            clearInterval(findHeaderBar);
+            clearInterval(waitForPageLoad);
 
             // Only add display when user is still on Zeiterfassung page
             if (checkCorrectMenuIsOpen()) {
@@ -234,9 +264,9 @@
             updateDisplayOnURLChange(headerBar, await promiseDisplayText);
         }
         else if (loops > config.maxPageloadingLoops) { // page loaded too long or html got changed
-            clearInterval(findHeaderBar);
+            clearInterval(waitForPageLoad);
             removeFloatingDisplay(); // TODO show error in popup
-            console.error(config.errorMsgs.pageloadingtimeExceeded);
+            console.error(constStrings.errorMsgs.pageloadingtimeExceeded);
         }
     }, 1000); // will be limited to min. 1000 when tab not focused
 
