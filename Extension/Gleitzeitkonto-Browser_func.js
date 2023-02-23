@@ -1,4 +1,4 @@
-export default class fioriStunden {
+export default class GleitzeitkontoBrowser {
     /* ==========================================================================================
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Config <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
     constructor() {

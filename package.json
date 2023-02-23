@@ -6,8 +6,9 @@
   "scripts": {
     "startTestserver": "node main.js",
     "startWebserverGleitzeitkonto:": "node ./Webserver/main.js",
-    "publish": "node publishExtension.js && npm run compressJS && npm run sass-prod",
-    "compressJS": "terser Extension/Gleitzeitkonto-Browser.js -c --comments -o compressed/Extension/Gleitzeitkonto-Browser.js && terser Extension/Gleitzeitkonto-Browser_func.js -c --comments -o compressed/Extension/Gleitzeitkonto-Browser_func.js && terser Extension/Popup/popup-script.js -c -m --comments -o compressed/Extension/Popup/popup-script.js",
+    "publish": "node publishExtension.js && npm run combineJS && npm run compressJS && npm run sass-prod",
+    "combineJS": "browserify Extension/Gleitzeitkonto-Browser.js -p esmify > compressed/Extension/Gleitzeitkonto-Browser.js",
+    "compressJS": "terser compressed/Extension/Gleitzeitkonto-Browser.js -c --comments -o compressed/Extension/Gleitzeitkonto-Browser.js && terser Extension/Popup/popup-script.js -c -m --comments -o compressed/Extension/Popup/popup-script.js",
     "sass-dev": "sass --watch --update --no-source-map --style=expanded Extension/Popup/Gleitzeitkonto-Browser.scss:Extension/Popup/Gleitzeitkonto-Browser.css",
     "sass-prod": "sass --no-source-map --style=compressed Extension/Popup/Gleitzeitkonto-Browser.scss:Compressed/Extension/Popup/Gleitzeitkonto-Browser.css"
   },
@@ -22,6 +23,8 @@
   },
   "homepage": "https://github.com/NilsPvR/Gleitzeitkonto-Browser#readme",
   "devDependencies": {
+    "browserify": "^17.0.0",
+    "esmify": "^2.1.1",
     "express": "^4.18.2",
     "fs-extra": "^11.1.0",
     "line-reader": "^0.4.0",

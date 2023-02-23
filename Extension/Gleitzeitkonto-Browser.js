@@ -1,11 +1,9 @@
+import GleitzeitkontoBrowser from './Gleitzeitkonto-Browser_func'; // load script
+const time = new GleitzeitkontoBrowser();
+
 (async () => {
-    'use strict';
-
-    // TODO change browser to chrome for chrome and opera browser, firefox and edge use 'browser'
-    const source = browser.runtime.getURL('./Gleitzeitkonto-Browser_func.js'); // use WebExtension API to get the file URL
-    const gleitzeitBrowserModule = await import(source); // load script
-    const time = new gleitzeitBrowserModule.default();
-
+    'use strict';   
+    
     /* ==========================================================================================
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Main Events <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 

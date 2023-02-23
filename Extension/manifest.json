@@ -21,10 +21,6 @@
       }
     ],
 
-    "web_accessible_resources": [
-      "Gleitzeitkonto-Browser_func.js"
-   ],
-
     "permissions": [
       "*://localhost/*"
     ],
