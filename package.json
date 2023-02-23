@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "startTestserver": "node main.js",
+    "startTestserver": "node testWebserver.js",
     "startWebserverGleitzeitkonto:": "node ./Webserver/main.js",
     "publish": "node publishExtension.js && npm run combineJS && npm run compressJS && npm run sass-prod",
     "combineJS": "browserify Extension/Gleitzeitkonto-Browser.js -p esmify > compressed/Extension/Gleitzeitkonto-Browser.js",
