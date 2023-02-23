@@ -1,11 +1,11 @@
 {
 
     "manifest_version": 2,
-    "name": "Fiori-Stunden",
+    "name": "Gleitzeitkonto-Browser",
     "version": "0.1",
   
-    "description": "Browser Erweiterung, welche erlaubt die Überstunden direkt in der Fiori-Zeiterfassung einzusehen ",
-    "homepage_url": "https://github.com/NilsPvR/fiori-stunden",
+    "description": "Browser Erweiterung für Chromium und Firefox, welche erlaubt die Überstunden bzw. ein Gleitzeitkonto direkt in der Fiori-Zeiterfassung oder in der Erweiterung einzusehen.",
+    "homepage_url": "https://github.com/NilsPvR/Gleitzeitkonto-Browser",
   
     "icons": {
       "48": "Assets/Experiments48.png",
@@ -16,13 +16,13 @@
     "content_scripts": [
       {
         "matches": ["*://*.ondemand.com/*", "*://bgp.btcsap.btc-ag.com/*"],
-        "js": ["fiori-stunden.js"]
+        "js": ["Gleitzeitkonto-Browser.js"]
 
       }
     ],
 
     "web_accessible_resources": [
-      "fiori-stunden-func.js"
+      "Gleitzeitkonto-Browser_func.js"
    ],
 
     "permissions": [
@@ -35,8 +35,8 @@
         "96": "Assets/Experiments96.png",
         "128": "Assets/Experiments128.png"
       },
-      "default_title": "Fiori-Stunden",
-      "default_popup": "Popup/fiori-stunden.html",
+      "default_title": "Gleitzeitkonto-Browser",
+      "default_popup": "Popup/Gleitzeitkonto-Browser.html",
       "browser_style": true,
       "chrome_style": true
     }

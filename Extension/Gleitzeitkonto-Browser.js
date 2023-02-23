@@ -2,7 +2,7 @@
     'use strict';
 
     // TODO change browser to chrome for chrome and opera browser, firefox and edge use 'browser'
-    const source = browser.runtime.getURL('./fiori-stunden-func.js'); // use WebExtension API to get the file URL
+    const source = browser.runtime.getURL('./Gleitzeitkonto-Browser_func.js'); // use WebExtension API to get the file URL
     const fioriStundenModule = await import(source); // load script
     const time = new fioriStundenModule.default();
 

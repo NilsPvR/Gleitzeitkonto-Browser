@@ -4,7 +4,7 @@ Primitive Anleitung zur Einrichtung
 2. Neues Script erstellen mit folgenden Code
 ```
 // ==UserScript==
-// @name         Fiori-Stunden-Github
+// @name         Gleitzeitkonto-Browser-Github
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @author       NilsPvR
@@ -20,7 +20,7 @@ Primitive Anleitung zur Einrichtung
 
 ```
 // ==UserScript==
-// @name         Fiori-Stunden-Lokal-Github
+// @name         Gleitzeitkonto-Browser-Lokal-Github
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @author       NilsPvR
@@ -36,6 +36,6 @@ Primitive Anleitung zur Einrichtung
         "Nach Updates suchen" Haken setzen
 
 4. Einstellungen von Tampermonkey öffnen und "Userscript Update" -> "Check Interval" einstellen auf bevorzugtes Upate verfahren
-5. "Installierte Userscripte" -> Skript "Fiori-Stunden-Lokal-Github" auswählen, Aktion "Aktualisieren" auswählen -> "Start"<br>
+5. "Installierte Userscripte" -> Skript "Gleitzeitkonto-Browser-Lokal-Github" auswählen, Aktion "Aktualisieren" auswählen -> "Start"<br>
 Sollte so aussehen:<br>
 ![](./Assets/TampermonkeyUpdateConfirmation.png)
