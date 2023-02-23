@@ -6,9 +6,10 @@
   "scripts": {
     "startTestserver": "node main.js",
     "startWebserverGleitzeitkonto:": "node ./Webserver/main.js",
-    "publish": "node publishExtension.js && terser Extension/fiori-stunden.js -c -m --comments -o compressed/Extension/fiori-stunden.js && sass-prod",
+    "publish": "node publishExtension.js && npm run compressJS && npm run sass-prod",
+    "compressJS": "terser Extension/fiori-stunden.js -c --comments -o compressed/Extension/fiori-stunden.js && terser Extension/fiori-stunden-func.js -c --comments -o compressed/Extension/fiori-stunden-func.js && terser Extension/Popup/popup-script.js -c -m --comments -o compressed/Extension/Popup/popup-script.js",
     "sass-dev": "sass --watch --update --no-source-map --style=expanded Extension/Popup/fiori-stunden.scss:Extension/Popup/fiori-stunden.css",
-    "sass-prod": "sass --no-source-map --style=compressed Extension/Popup/fiori-stunden.scss:CompressedExtension/Popup/fiori-stunden.css"
+    "sass-prod": "sass --no-source-map --style=compressed Extension/Popup/fiori-stunden.scss:Compressed/Extension/Popup/fiori-stunden.css"
   },
   "repository": {
     "type": "git",
