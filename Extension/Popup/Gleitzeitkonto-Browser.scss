@@ -1,4 +1,4 @@
-:root { /* btc colors */
+:root { /* company colors */
     --primaer-dunkelblau:   #003869;
     --primaer-mittelblau:   #5aa6e7;
     --primaer-gelb:         #fbd200;
@@ -8,11 +8,15 @@
     --sekundaer-2: #0078be;
     --sekundaer-3: #9ccaf1;
     --sekundaer-4: #cee4f8;
+
+    // gleitzeitkonto colors
+    --gleitzeit-blue:   #13abb6;
+    --gleitzeit-grey:   #212121;
 }
 
 html, body {
     width: 400px;
-    background-color: var(--primaer-dunkelblau);
+    background-color: var(--gleitzeit-grey);
 }
 
 
@@ -23,7 +27,7 @@ html, body {
     text-align: center;
     font-size: 1.5em;
     overflow-wrap: break-word;
-    color: white;
+    color: var(--gleitzeit-blue);
 }
 
 .center {
@@ -39,7 +43,7 @@ html, body {
 
 .switch {
     --line: #505162;
-    --dot: #F7F8FF;
+    --dot: var(--gleitzeit-blue);
     --circle: #9EA0BE;
     --duration: .3s;
     --text: #9EA0BE;

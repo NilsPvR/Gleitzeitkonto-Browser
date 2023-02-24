@@ -8,9 +8,12 @@
     "homepage_url": "https://github.com/NilsPvR/Gleitzeitkonto-Browser",
   
     "icons": {
-      "48": "Assets/Experiments48.png",
-      "96": "Assets/Experiments96.png",
-      "128": "Assets/Experiments128.png"      
+      "48": "Assets/gleitzeitkonto-icon48.png",
+      "64": "Assets/gleitzeitkonto-icon64.png",
+      "96": "Assets/gleitzeitkonto-icon96.png",
+      "128": "Assets/gleitzeitkonto-icon128.png",
+      "256": "Assets/gleitzeitkonto-icon256.png",
+      "512": "Assets/gleitzeitkonto-icon512.png"
     },
   
     "content_scripts": [
@@ -27,9 +30,12 @@
 
     "browser_action": {
       "default_icon": {
-        "48": "Assets/Experiments48.png",
-        "96": "Assets/Experiments96.png",
-        "128": "Assets/Experiments128.png"
+        "48": "Assets/gleitzeitkonto-icon48.png",
+        "64": "Assets/gleitzeitkonto-icon64.png",
+        "96": "Assets/gleitzeitkonto-icon96.png",
+        "128": "Assets/gleitzeitkonto-icon128.png",
+        "256": "Assets/gleitzeitkonto-icon256.png",
+        "512": "Assets/gleitzeitkonto-icon512.png"
       },
       "default_title": "Gleitzeitkonto-Browser",
       "default_popup": "Popup/Gleitzeitkonto-Browser.html",
