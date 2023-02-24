@@ -1,41 +1,20 @@
-Primitive Anleitung zur Einrichtung
+# Gleitzeitkonto-Browser - Anzeigen der Überstunden per Extension
 
-1. Tempermonkey-Erweiterung installieren
-2. Neues Script erstellen mit folgenden Code
-```
-// ==UserScript==
-// @name         Gleitzeitkonto-Browser-Github
-// @namespace    http://tampermonkey.net/
-// @version      0.1
-// @author       NilsPvR
-// @description  Überstunden einfügen in Fiori
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
-// @match        *://*.ondemand.com/*
-// @require      https://gist.githubusercontent.com/NilsPvR/8b67d8f2cda09f394a13bd902f6a4655/raw/tempermonkey-ueberstunden.js
+Die Browser Extension, die das aktuelle Gleitzeitkonto mit Hilfe der [Gleitzeitkonto-API](https://github.com/julius-boettger/gleitzeitkonto-api) anzeigt. Man muss nicht mehr umständlich die Überstunden ausrechnen oder aus PDF-Datein ablesen. Es werden einfach im Fiori-Launchpad auf der Seite der Zeiterfassung die aktuellen Überstunden angezeigt. Ebenfalls ist es möglich die Überstunden im Popup-Menu der Extension selber einzusehen.
+<br><br>
+*Das Gleitzeitkonto im Fiori-Launchpad:*
+<br>
+![Gleitzeitkonto im Fiori-Launchpad](./GleitzeitkontoFioriLaunchpad.png)
 
-// ==/UserScript==
-```
+Das Projekt ist aus dem Problem entsanden, dass es keine einfache Möglichkeit gibt die Überstunden einzusehen.
 
-**das hier ist besser**
 
-```
-// ==UserScript==
-// @name         Gleitzeitkonto-Browser-Lokal-Github
-// @namespace    http://tampermonkey.net/
-// @version      0.1
-// @author       NilsPvR
-// @description  Überstunden einfügen in Fiori
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
-// @updateURL    https://gist.githubusercontent.com/NilsPvR/8b67d8f2cda09f394a13bd902f6a4655/raw/tempermonkey-ueberstunden.js
-// @downloadURL  https://gist.githubusercontent.com/NilsPvR/8b67d8f2cda09f394a13bd902f6a4655/raw/tempermonkey-ueberstunden.js
-// @match        *://*.ondemand.com/*
+## Installation
 
-// ==/UserScript==
-```
-3. Script-Einstellungen: "Starte wenn:" -> "document-start"  
-        "Nach Updates suchen" Haken setzen
 
-4. Einstellungen von Tampermonkey öffnen und "Userscript Update" -> "Check Interval" einstellen auf bevorzugtes Upate verfahren
-5. "Installierte Userscripte" -> Skript "Gleitzeitkonto-Browser-Lokal-Github" auswählen, Aktion "Aktualisieren" auswählen -> "Start"<br>
-Sollte so aussehen:<br>
-![](./Assets/TampermonkeyUpdateConfirmation.png)
+
+## Funktionsweise
+
+Die Gleitzeitkonto-API verwendet [Node.js](https://nodejs.org/). Eine Browser-Extension hat jeodch keinen Zugriff auf lokale Dateien auf dem Computer und kann auch keine Node-Scripts laufen lassen, deshalb ist es nicht möglich direkt auf die API zuzugreifen. Um die Daten zu erhalten muss ein lokaler Webserver eingerichtet werden. Dieser verwendet die API und stellt die Daten dann über Webrequests zur Verfügung.
+
+Die Extension ruft dann die Seite des Webservers auf und zeigt das Gleitzeitkonto im Browser an.
