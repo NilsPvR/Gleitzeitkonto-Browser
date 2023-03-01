@@ -40,7 +40,7 @@ export default class GleitzeitkontoBrowser {
             overtimeLoading: 'Loading...',
             errorMsgs: {
                 serverNichtGestartet: 'Der Lokale-Server wurde nicht gestartet!',
-                keineDatenVomServer: 'Fehler: Keine Daten vom Lokalen-Server geladen',
+                keineDatenVomServer: 'Keine Daten vom Lokalen-Server geladen',
                 pageloadingtimeExceeded: 'Die Seite hat zu lange geladen. Das Gleitzeitkonto kann nicht angezeigt werden.',
                 unknown: 'Unbekannter Fehler',
                 unknownFetching: 'Unbekannter Fehler beim laden der Daten'
