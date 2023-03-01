@@ -18,3 +18,8 @@ Das Projekt ist aus dem Problem entsanden, dass es keine einfache Möglichkeit g
 Die Gleitzeitkonto-API verwendet [Node.js](https://nodejs.org/). Eine Browser-Extension hat jeodch keinen Zugriff auf lokale Dateien auf dem Computer und kann auch keine Node-Scripts laufen lassen, deshalb ist es nicht möglich direkt auf die API zuzugreifen. Um die Daten zu erhalten muss ein lokaler Webserver eingerichtet werden. Dieser verwendet die API und stellt die Daten dann über Webrequests zur Verfügung.
 
 Die Extension ruft dann die Seite des Webservers auf und zeigt das Gleitzeitkonto im Browser an.
+
+RAM Verbrauch: 33,6 / 49,9 MB in Powershell
+    19,2 / 26,6 MB in Node CMD
+    26,3 / 26,3 MB in CMD
+    minimale Version ohne Hostfenster: Node.js Javascript Runtime: 18,8 MB und Konsolenfenster: 0,9 MB

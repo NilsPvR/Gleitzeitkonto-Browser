@@ -2,15 +2,16 @@
   "name": "Gleitzeitkonto-Browser",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "Gleitzeitkonto-Browser.js",
   "scripts": {
     "startTestserver": "node testWebserver.js",
     "startWebserverGleitzeitkonto:": "node ./Webserver/main.js",
-    "publish": "node publishExtension.js && npm run combineJS && npm run compressJS && npm run sass-prod",
+    "publishExtension": "node publishExtension.js && npm run combineJS && npm run compressJS && npm run sass-prod",
     "combineJS": "browserify Extension/Gleitzeitkonto-Browser.js -p esmify > compressed/Extension/Gleitzeitkonto-Browser.js",
     "compressJS": "terser compressed/Extension/Gleitzeitkonto-Browser.js -c --comments -o compressed/Extension/Gleitzeitkonto-Browser.js && terser Extension/Popup/popup-script.js -c -m --comments -o compressed/Extension/Popup/popup-script.js",
     "sass-dev": "sass --watch --update --no-source-map --style=expanded Extension/Popup/Gleitzeitkonto-Browser.scss:Extension/Popup/Gleitzeitkonto-Browser.css",
-    "sass-prod": "sass --no-source-map --style=compressed Extension/Popup/Gleitzeitkonto-Browser.scss:Compressed/Extension/Popup/Gleitzeitkonto-Browser.css"
+    "sass-prod": "sass --no-source-map --style=compressed Extension/Popup/Gleitzeitkonto-Browser.scss:Compressed/Extension/Popup/Gleitzeitkonto-Browser.css",
+    "publishWebserver": ""
   },
   "repository": {
     "type": "git",
