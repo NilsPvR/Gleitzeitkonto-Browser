@@ -11,7 +11,9 @@ const gzk = new GleitzeitkontoAPI(
     // resolve relative path to absolute path
     require("path").resolve("./gleitzeitkonto-api"),
     "working_times.csv",
-    "./gleitzeitkonto-api/gleitzeitconfig.json"
+    "./gleitzeitkonto-api/gleitzeitconfig.json",
+    "https://bgp.btcsap.btc-ag.com:44300/sap/bc/ui5_ui5/ui2/ushell/shells/abap/FioriLaunchpad.html?sap-client=300&sap-language=DE#btccatstime-display",
+    DEBUG
 );
 
 const manageDownloadWorkingTimes = async (DEBUG) => {
