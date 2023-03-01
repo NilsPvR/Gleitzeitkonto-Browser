@@ -9,9 +9,9 @@ let isRunning = false;
 const GleitzeitkontoAPI = require("./gleitzeitkonto-api/gleitzeitkonto-api.js").default;
 const gzk = new GleitzeitkontoAPI(
     // resolve relative path to absolute path
-    require("path").resolve("./webserver/gleitzeitkonto-api"),
+    require("path").resolve("./gleitzeitkonto-api"),
     "working_times.csv",
-    "./webserver/gleitzeitkonto-api/gleitzeitconfig.json"
+    "./gleitzeitkonto-api/gleitzeitconfig.json"
 );
 
 const manageDownloadWorkingTimes = async (DEBUG) => {
@@ -40,7 +40,6 @@ const port = 3000;
 const server = http.createServer(async (request, response) => {
     response.setHeader('Access-Control-Allow-Origin', '*') // since only local allow any client
     response.setHeader('Content-Type', 'application/json');
-    console.log(request.url);
 
     switch (request.url.toLocaleLowerCase()) {
         case '/downloadworkingtimes':
