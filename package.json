@@ -32,5 +32,8 @@
     "terser": "^5.15.0",
     "web-ext": "^7.5.0",
     "zip-build": "^1.8.0"
+  },
+  "dependencies": {
+    "puppeteer": "^19.7.2"
   }
 }

@@ -7,12 +7,13 @@ const time = new GleitzeitkontoBrowser();
     /* ==========================================================================================
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Main Events <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
-    const promiseDisplayText = time.getDisplayText(); // preload display to save time
+    const promiseCalcText = time.fetchServer(time.givenStrings.calcaulteURL);
+    const promiseDownloadText = time.getDownloadDisplayText(); // preload display to save time
 
     // Only load the rest of the script once the page for 'Zeiterfassung' ist opened
     await time.continuousMenucheck();
 
-    // Double check, if a different menu is opened no floating display will be added
+    // Double check; if a different menu is opened no floating display will be added
     if (time.checkCorrectMenuIsOpen()) {
         if (document.readyState === 'interactive' || document.readyState === 'complete') {
             time.addFloatingDisplay(time.constStrings.prefixOvertime + time.constStrings.overtimeLoading);
@@ -27,7 +28,10 @@ const time = new GleitzeitkontoBrowser();
         // don't await 'promiseDisplayText' even tho we want to change this as soon as the promiseDisplayText is fullfilled,
         // but if the page has loaded before the promise is resolved then just use addInsertedDisplay()
         // so therefore we shouldn't wait for the 'promiseDisplayText' but rather let this happen asynchronously
-        time.updateFloatingDisplay(promiseDisplayText);
+        time.updateFloatingDisplayAsync(promiseCalcText);
+        time.updateFloatingDisplayAsync(promiseDownloadText); // TODO currently just hoping that download finishes after calc
+            // if download finished earlier -> calcText (which might be old, even tho unlikly) will overwrite
+            // maybe add some tag or so
     };
 
 
@@ -47,10 +51,10 @@ const time = new GleitzeitkontoBrowser();
 
             // Only add display when user is still on Zeiterfassung page
             if (time.checkCorrectMenuIsOpen()) {
-                time.addInsertedDisplay(headerBar, await promiseDisplayText); // make sure DisplayText loaded
+                time.addInsertedDisplay(headerBar, await promiseDownloadText); // make sure DisplayText loaded
             }
             
-            time.updateDisplayOnURLChange(headerBar, await promiseDisplayText);
+            time.updateDisplayOnURLChange(headerBar, await promiseDownloadText);
         }
         else if (loops > time.config.maxPageloadingLoops) { // page loaded too long or html got changed
             clearInterval(waitForPageLoad);

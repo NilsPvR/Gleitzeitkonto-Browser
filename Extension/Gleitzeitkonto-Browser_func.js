@@ -24,7 +24,7 @@ module.exports = class GleitzeitkontoBrowser {
 
         
         // Check if extern or intern Fiori website, since these have different amounts of icons    
-        if (window.location.origin == url) { // Intern Fiori
+        if (window.location.origin == url) { // Internal Fiori
             this.config.siteVersion = 'internal';
             this.config.amountIcons = 4; // amount of icons to wait for to load
             this.config.sideDistance = '11rem'; // css margin from the right for floating display
@@ -45,6 +45,11 @@ module.exports = class GleitzeitkontoBrowser {
                 serverNichtGestartet: 'Der Lokale-Server wurde nicht gestartet!',
                 keineDatenVomServer: 'Keine Daten vom Lokalen-Server geladen',
                 pageloadingtimeExceeded: 'Die Seite hat zu lange geladen. Das Gleitzeitkonto kann nicht angezeigt werden.',
+                stillRunning: 'Erste Abfrage des Gleitzeitkonto\'s lädt noch', // code -1
+                incorrectPath: 'Falscher Browser-Pfad für die API. Bitte Einstellungen im Popup anpassen.', // code 1
+                notInNetwork: 'Nicht im BTC Netz - Du musst mit LAN oder dem BTC-Office-WLAN verbunden sein', // code 2
+                tooManyCSV: 'Zu viele CSV-Dateien im Ordner der API. Bitte Dateien manuell löschen.', // code 3
+                unknownAPI: 'Unbekannter Fehler der API', // code 4
                 unknown: 'Unbekannter Fehler',
                 unknownFetching: 'Unbekannter Fehler beim laden der Daten'
             }
@@ -59,6 +64,8 @@ module.exports = class GleitzeitkontoBrowser {
                 networkError: 'NetworkError when attempting to fetch resource.',
                 failedError: 'Failed to fetch',
             },
+            downloadURL: '/downloadWorkingTimes',
+            calcaulteURL: '/calculateFromWorkingTimes',
         };
     }
 
@@ -92,31 +99,48 @@ module.exports = class GleitzeitkontoBrowser {
         });
     };
 
-    fetchServer = async () => {
+    fetchServer = async (path) => {
         try {
-            const url = this.config.loacalServerURL;
+            const url = this.config.loacalServerURL + path;
             const data = await (await fetch(url)).json();
             return data;
         }
         catch (e) {
             if (e.message == this.givenStrings.errorMsgs.networkError || e.message == this.givenStrings.errorMsgs.failedError) {
                 console.log(e);
-                return {errorMessage: this.constStrings.errorMsgs.serverNichtGestartet};
+                return {error: this.constStrings.errorMsgs.serverNichtGestartet};
             }
             else {
                 console.error(e);
-                return {errorMessage: this.constStrings.errorMsgs.keineDatenVomServer};
+                return {error: this.constStrings.errorMsgs.keineDatenVomServer};
             }
         }
         
     };
 
-    getDisplayText = async () => {
-        const res = await this.fetchServer();
+    formatDisplayText = (kontoData) => {
+        if (kontoData?.error) return this.constStrings.prefixError + kontoData.error; // Error occured
+        if (!kontoData || !kontoData.kontoString) return this.constStrings.errorMsgs.keineDatenVomServer; // No Data
+        else return this.constStrings.prefixOvertime + kontoData.kontoString;
+    }
 
-        if (res.errorMessage) return this.constStrings.prefixError + res.errorMessage; // Error occured
-        else if (!res || !res.konto) return this.constStrings.errorMsgs.keineDatenVomServer; // No Data
-        else return this.constStrings.prefixOvertime + res.konto;
+    getDownloadDisplayText = async () => {
+        const response = await this.fetchServer(this.givenStrings.downloadURL);
+        let kontoData = {};
+
+        // -- Check StatusCode of Download --
+        if (response == -1) kontoData.error = this.constStrings.errorMsgs.stillRunning;
+        else if (response == 1) kontoData.error = this.constStrings.errorMsgs.incorrectPath;
+        else if (response == 2) kontoData.error = this.constStrings.errorMsgs.notInNetwork;
+        else if (response == 3) kontoData.error = this.constStrings.errorMsgs.tooManyCSV;
+        else if (response == 4) kontoData.error = this.constStrings.errorMsgs.unknownAPI;
+        else if (response == 0) { // success
+            // since download only returns statusCode calculate afterwards
+            kontoData = await this.fetchServer(this.givenStrings.calcaulteURL);
+        }
+
+        
+        return this.formatDisplayText(kontoData);
     };
 
 
@@ -151,13 +175,12 @@ module.exports = class GleitzeitkontoBrowser {
     };
 
     // change the contents of the floating display
-    // displayText is a promise
-    updateFloatingDisplay = async (promiseDisplayText) => {
-        await promiseDisplayText; // wait until the promise is resolved
+    updateFloatingDisplayAsync = async (promiseKontoData) => {
+        const displayText = await promiseKontoData; // wait until the promise is resolved
 
         const oldDisplay = this.getFloatingDisplay();
-        if (oldDisplay) { // check if the floating display still exists
-            oldDisplay.innerHTML = await promiseDisplayText;
+        if (oldDisplay && displayText?.kontoString) { // check if the floating display still exists
+            oldDisplay.innerHTML = this.formatDisplayText(displayText);
         }
     };
 
@@ -167,6 +190,11 @@ module.exports = class GleitzeitkontoBrowser {
         this.removeFloatingDisplay();
 
         pHeaderBar.innerHTML += `<h3 id=${this.constStrings.insertedDisplayID} style="display:flex; align-self: center; color: ${this.config.primaer.dunkelblau};">${pDisplayText ?? 'unknown error'}</h3>`; // add new display
+    };
+
+    addInsertedDisplayAsync = async (pHeaderBar, pPromiseDisplayText) => {
+        const displayText = await pPromiseDisplayText;
+        this.addInsertedDisplay(pHeaderBar, displayText);
     };
 
     getInsertedDisplay = () => {
