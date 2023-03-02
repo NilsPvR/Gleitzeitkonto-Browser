@@ -1,4 +1,4 @@
-import GleitzeitkontoBrowser from './Gleitzeitkonto-Browser_func'; // load script
+const GleitzeitkontoBrowser = require('./Gleitzeitkonto-Browser_func'); // load script
 const time = new GleitzeitkontoBrowser();
 
 (async () => {

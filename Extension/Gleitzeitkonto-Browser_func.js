@@ -1,4 +1,6 @@
-export default class GleitzeitkontoBrowser {
+const url = require('./url.json');
+
+module.exports = class GleitzeitkontoBrowser {
     /* ==========================================================================================
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Config <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
     constructor() {
@@ -20,12 +22,13 @@ export default class GleitzeitkontoBrowser {
             maxPageloadingLoops: 20,
         };
 
+        
         // Check if extern or intern Fiori website, since these have different amounts of icons    
-        if (window.location.origin == 'https://bgp.btcsap.btc-ag.com:44300') { // Intern Fiori
+        if (window.location.origin == url) { // Intern Fiori
             this.config.siteVersion = 'internal';
             this.config.amountIcons = 4; // amount of icons to wait for to load
             this.config.sideDistance = '11rem'; // css margin from the right for floating display
-        }    
+        }
         else { // extern
             this.config.siteVersion = 'external';
             this.config.amountIcons = 2;
