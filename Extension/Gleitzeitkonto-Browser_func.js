@@ -66,6 +66,7 @@ module.exports = class GleitzeitkontoBrowser {
             },
             downloadURL: '/downloadWorkingTimes',
             calcaulteURL: '/calculateFromWorkingTimes',
+            waitForDownlodURL: '/waitfordownload',
         };
     }
 
@@ -108,36 +109,38 @@ module.exports = class GleitzeitkontoBrowser {
         catch (e) {
             if (e.message == this.givenStrings.errorMsgs.networkError || e.message == this.givenStrings.errorMsgs.failedError) {
                 console.log(e);
-                return {error: this.constStrings.errorMsgs.serverNichtGestartet};
+                return {error: { message: this.constStrings.errorMsgs.serverNichtGestartet}};
             }
             else {
                 console.error(e);
-                return {error: this.constStrings.errorMsgs.keineDatenVomServer};
+                return {error: { message: this.constStrings.errorMsgs.keineDatenVomServer}};
             }
         }
         
     };
 
     formatDisplayText = (kontoData) => {
-        if (kontoData?.error) return this.constStrings.prefixError + kontoData.error; // Error occured
-        if (!kontoData || !kontoData.kontoString) return this.constStrings.errorMsgs.keineDatenVomServer; // No Data
+        if (kontoData?.error?.message) return this.constStrings.prefixError + kontoData.error.message; // Error occured
+        if (!kontoData || !kontoData.kontoString) return this.constStrings.prefixError + this.constStrings.errorMsgs.keineDatenVomServer; // No Data
         else return this.constStrings.prefixOvertime + kontoData.kontoString;
     }
 
     getDownloadDisplayText = async () => {
-        const response = await this.fetchServer(this.givenStrings.downloadURL);
+        let response = await this.fetchServer(this.givenStrings.downloadURL);
         let kontoData = {};
 
         // -- Check StatusCode of Download --
-        if (response == -1) kontoData.error = this.constStrings.errorMsgs.stillRunning;
-        else if (response == 1) kontoData.error = this.constStrings.errorMsgs.incorrectPath;
-        else if (response == 2) kontoData.error = this.constStrings.errorMsgs.notInNetwork;
-        else if (response == 3) kontoData.error = this.constStrings.errorMsgs.tooManyCSV;
-        else if (response == 4) kontoData.error = this.constStrings.errorMsgs.unknownAPI;
+        if (response == -1) { // other request still downloading
+            response = await this.fetchServer(this.givenStrings.waitForDownlodURL);
+        }
+        else if (response == 1) kontoData.error = { message: this.constStrings.errorMsgs.incorrectPath, statusCode: 1 }
+        else if (response == 2) kontoData.error = { message: this.constStrings.errorMsgs.notInNetwork, statusCode: 2 }
+        else if (response == 3) kontoData.error = { message: this.constStrings.errorMsgs.tooManyCSV, statusCode: 3 }
+        else if (response == 4) kontoData.error = { message: this.constStrings.errorMsgs.unknownAPI, statusCode: 4 }
         else if (response == 0) { // success
             // since download only returns statusCode calculate afterwards
             kontoData = await this.fetchServer(this.givenStrings.calcaulteURL);
-        }
+        } else if (response?.error) kontoData = response // fetchServer gave an error
 
         
         return this.formatDisplayText(kontoData);

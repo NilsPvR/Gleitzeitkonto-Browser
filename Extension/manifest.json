@@ -2,7 +2,7 @@
 
     "manifest_version": 2,
     "name": "Gleitzeitkonto-Browser",
-    "version": "0.1",
+    "version": "0.2",
   
     "description": "Browser Erweiterung für Chromium und Firefox, welche erlaubt die Überstunden bzw. ein Gleitzeitkonto direkt in der Fiori-Zeiterfassung oder in der Erweiterung einzusehen.",
     "homepage_url": "https://github.com/NilsPvR/Gleitzeitkonto-Browser",
