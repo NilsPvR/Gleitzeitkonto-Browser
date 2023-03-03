@@ -130,17 +130,17 @@ module.exports = class GleitzeitkontoBrowser {
         let kontoData = {};
 
         // -- Check StatusCode of Download --
-        if (response == -1) { // other request still downloading
-            response = await this.fetchServer(this.givenStrings.waitForDownlodURL);
-        }
-        else if (response == 1) kontoData.error = { message: this.constStrings.errorMsgs.incorrectPath, statusCode: 1 }
+        if (response == -1) response = await this.fetchServer(this.givenStrings.waitForDownlodURL); // other request still downloading
+
+        if (response == 1) kontoData.error = { message: this.constStrings.errorMsgs.incorrectPath, statusCode: 1 }
         else if (response == 2) kontoData.error = { message: this.constStrings.errorMsgs.notInNetwork, statusCode: 2 }
         else if (response == 3) kontoData.error = { message: this.constStrings.errorMsgs.tooManyCSV, statusCode: 3 }
         else if (response == 4) kontoData.error = { message: this.constStrings.errorMsgs.unknownAPI, statusCode: 4 }
         else if (response == 0) { // success
             // since download only returns statusCode calculate afterwards
             kontoData = await this.fetchServer(this.givenStrings.calcaulteURL);
-        } else if (response?.error) kontoData = response // fetchServer gave an error
+        }
+        else if (response?.error?.message) kontoData = response // fetchServer gave an error
 
         
         return this.formatDisplayText(kontoData);
