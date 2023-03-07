@@ -204,7 +204,7 @@ module.exports = class GleitzeitkontoBrowser {
         this.removeFloatingDisplay();
 
         const wrapperStyle = `display:flex; color: ${this.config.primaryColors.dunkelblau}; ${loading ? ' opacity: 0.5;' : ''}`
-        pHeaderBar.innerHTML += `<div id="${this.constStrings.floatingDisplayID}" style="${wrapperStyle}">` +
+        pHeaderBar.innerHTML += `<div id="${this.constStrings.insertedDisplayID}" style="${wrapperStyle}">` +
                                     this.getInnerHTMLText(pDisplayText, loading, true) +
                                 '</div>'; // add new display
     };
@@ -236,7 +236,7 @@ module.exports = class GleitzeitkontoBrowser {
 
             // When correct page is open and the display doesn't already exist
             if (this.checkCorrectMenuIsOpen() && !this.getInsertedDisplay()) {
-                this.addInsertedDisplay(pHeaderBar, pDisplayText);
+                this.addInsertedDisplay(pHeaderBar, pDisplayText, false);
             }
             else if (!this.checkCorrectMenuIsOpen()) {
                 // This will also be removed by Fiori but keep remove just in case this behaviour gets changed
