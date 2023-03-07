@@ -24,6 +24,10 @@
       }
     ],
 
+    "web_accessible_resources": [
+      "Assets/refresh.svg"
+    ],
+
     "permissions": [
       "*://localhost/*"
     ],

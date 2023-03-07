@@ -1,11 +1,16 @@
+const cssText = require('./css.js');
 const GleitzeitkontoBrowser = require('./Gleitzeitkonto-Browser_func'); // load script
 const time = new GleitzeitkontoBrowser();
 
 (async () => {
     'use strict';   
-    
+
     /* ==========================================================================================
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Main Events <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+    const styleSheet = document.createElement('style');
+    styleSheet.innerText = cssText;
+    document.head.appendChild(styleSheet);
+
 
     const promiseCalcText = time.fetchServer(time.givenStrings.calcaulteURL);
     const promiseDownloadText = time.getDownloadDisplayText(); // preload display to save time
@@ -16,20 +21,20 @@ const time = new GleitzeitkontoBrowser();
     // Double check; if a different menu is opened no floating display will be added
     if (time.checkCorrectMenuIsOpen()) {
         if (document.readyState === 'interactive' || document.readyState === 'complete') {
-            time.addFloatingDisplay(time.constStrings.prefixOvertime + time.constStrings.overtimeLoading);
+            time.addFloatingDisplay(time.constStrings.prefixOvertime + time.constStrings.overtimeLoading, true);
         }
         else if (config.siteVersion == 'external') {
             // Load event fires too early so no point using that
             window.addEventListener('DOMContentLoaded', (event) => {
-                time.addFloatingDisplay(time.constStrings.prefixOvertime + time.constStrings.overtimeLoading);
+                time.addFloatingDisplay(time.constStrings.prefixOvertime + time.constStrings.overtimeLoading, true);
             })
         }
 
         // don't await 'promiseDisplayText' even tho we want to change this as soon as the promiseDisplayText is fullfilled,
         // but if the page has loaded before the promise is resolved then just use addInsertedDisplay()
         // so therefore we shouldn't wait for the 'promiseDisplayText' but rather let this happen asynchronously
-        time.updateFloatingDisplayAsync(promiseCalcText);
-        time.updateFloatingDisplayAsync(promiseDownloadText); // TODO currently just hoping that download finishes after calc
+        time.updateFloatingDisplayAsync(promiseCalcText, true);
+        time.updateFloatingDisplayAsync(promiseDownloadText, false); // TODO currently just hoping that download finishes after calc
             // if download finished earlier -> calcText (which might be old, even tho unlikly) will overwrite
             // maybe add some tag or so
     };
@@ -51,10 +56,10 @@ const time = new GleitzeitkontoBrowser();
 
             // Only add display when user is still on Zeiterfassung page
             if (time.checkCorrectMenuIsOpen()) {
-                time.addInsertedDisplay(headerBar, await promiseDownloadText); // make sure DisplayText loaded
+                time.addInsertedDisplay(headerBar, await promiseDownloadText, false); // make sure DisplayText loaded
             }
             
-            time.updateDisplayOnURLChange(headerBar, await promiseDownloadText);
+            time.updateDisplayOnURLChange(headerBar, await promiseDownloadText, false);
         }
         else if (loops > time.config.maxPageloadingLoops) { // page loaded too long or html got changed
             clearInterval(waitForPageLoad);

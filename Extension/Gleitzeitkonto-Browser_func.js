@@ -5,17 +5,15 @@ module.exports = class GleitzeitkontoBrowser {
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Config <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
     constructor() {
         this.config = {
-            primaer: {
+            primaryColors: {
                 "dunkelblau":   "#003869",
                 "mittelblau":   "#5aa6e7",
                 "gelb":         "#fbd200",
                 "grau":         "#f5f5f5",
             },
-            sekundaer: {
-                "1": "#00508c",
-                "2": "0078be",
-                "3": "9ccaf1",
-                "4": "cee4f8",
+            gleitzeitKontoColors: {
+                blue: "#00aab4",
+                grey: "#222222",
             },
 
             loacalServerURL: 'http://localhost:3000',
@@ -150,20 +148,33 @@ module.exports = class GleitzeitkontoBrowser {
     // ---------- Changes on Displays ----------
     // -----------------------------------------    
 
-    addFloatingDisplay = (pDisplayText) => {
+    // different styling for loading and inserted bools
+    getInnerHTMLText = (pDisplayText, loading, inserted) => {
+        return  `<img id="refresh-icon" draggable="false" src="${browser.runtime.getURL('./Assets/refresh.svg')}"` + 
+        `style="margin-right: 10px; ${inserted ? "align-self: center;" : "" } animation-play-state: ${loading ? "running;" : "paused;" }">` +
+                `<h3 style="margin-top: 0px">${pDisplayText ?? this.constStrings.errorMsgs.unknown}</h3>`;
+    }
+
+    addFloatingDisplay = (pDisplayText, loading) => {
         const canvas = document.getElementById('canvas'); // main page element is the (almost) only one loaded when DOM is loaded
 
         if (this.config.siteVersion == 'external') {
+            const wrapperStyle = `display: flex; justify-content: end; margin-top: 11px; margin-right: ${this.config.sideDistance}; color: ${this.config.primaryColors.dunkelblau};${loading ? ' opacity: 0.5;' : ''}`
+
             canvas.insertAdjacentHTML('beforebegin',
-                `<h3 id="${this.constStrings.floatingDisplayID}"style="float: right; margin-top: 11px; margin-right: ${this.config.sideDistance}; `
-                + `color: ${this.config.primaer.dunkelblau};">${pDisplayText ?? this.constStrings.errorMsgs.unknown}</h3>`);
+                `<div id="${this.constStrings.floatingDisplayID}" style="${wrapperStyle}">` +
+                    this.getInnerHTMLText(pDisplayText, loading, false) + 
+                '</div>');
 
         }
 
         if  (this.config.siteVersion == 'internal') { // internal site needs different styling, which is less 'nice'
+            const wrapperStyle = `position: absolute; right: ${this.config.sideDistance}; margin-top: 11px; z-index: 1; color: ${this.config.primaryColors.dunkelblau};${loading ? ' opacity: 0.5;' : ''}`
+
             canvas.insertAdjacentHTML('beforebegin',
-                `<h3 id="${this.constStrings.floatingDisplayID}"style="position: absolute; right: ${this.config.sideDistance}; margin-top: 11px; z-index: 1; `
-                + `color: ${this.config.primaer.dunkelblau};">${pDisplayText ?? this.constStrings.errorMsgs.unknown}</h3>`);
+                `<div id="${this.constStrings.floatingDisplayID}" style="${wrapperStyle}">` +
+                    this.getInnerHTMLText(pDisplayText, loading, false) +
+                '</div>');
         }
     };
 
@@ -177,8 +188,9 @@ module.exports = class GleitzeitkontoBrowser {
         if (oldDisplay) oldDisplay.remove(); // delete the old display
     };
 
+    // TODO update to new format
     // change the contents of the floating display
-    updateFloatingDisplayAsync = async (promiseKontoData) => {
+    updateFloatingDisplayAsync = async (promiseKontoData, loading) => {
         const displayText = await promiseKontoData; // wait until the promise is resolved
 
         const oldDisplay = this.getFloatingDisplay();
@@ -189,15 +201,18 @@ module.exports = class GleitzeitkontoBrowser {
 
 
 
-    addInsertedDisplay = (pHeaderBar, pDisplayText) => {
+    addInsertedDisplay = (pHeaderBar, pDisplayText, loading) => {
         this.removeFloatingDisplay();
 
-        pHeaderBar.innerHTML += `<h3 id=${this.constStrings.insertedDisplayID} style="display:flex; align-self: center; color: ${this.config.primaer.dunkelblau};">${pDisplayText ?? 'unknown error'}</h3>`; // add new display
+        const wrapperStyle = `display:flex; color: ${this.config.primaryColors.dunkelblau}; ${loading ? ' opacity: 0.5;' : ''}`
+        pHeaderBar.innerHTML += `<div id="${this.constStrings.floatingDisplayID}" style="${wrapperStyle}">` +
+                                    this.getInnerHTMLText(pDisplayText, loading, true) +
+                                '</div>'; // add new display
     };
 
-    addInsertedDisplayAsync = async (pHeaderBar, pPromiseDisplayText) => {
+    addInsertedDisplayAsync = async (pHeaderBar, pPromiseDisplayText, loading) => {
         const displayText = await pPromiseDisplayText;
-        this.addInsertedDisplay(pHeaderBar, displayText);
+        this.addInsertedDisplay(pHeaderBar, displayText, loading);
     };
 
     getInsertedDisplay = () => {
