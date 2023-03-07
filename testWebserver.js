@@ -10,9 +10,17 @@ const requestListener = (req, res) => {
 const server = http.createServer((request, response) => {
   response.statusCode = 200;
   response.setHeader('Access-Control-Allow-Origin', '*') // since only local allow any client
+  response.setHeader('Content-Type', 'application/json');
+
+  if (request.url.toLocaleLowerCase() == '/downloadworkingtimes') {
+    response.end(JSON.stringify('0'));
+    return;
+  }
 
   const responseData = {
-    konto: '1h 20min',
+    kontoString: '+1h 20min',
+    kontoInMin: 80,
+    lasteDate: '07.03.2023'
   }
 
   const jsonContent = JSON.stringify(responseData);
