@@ -188,14 +188,13 @@ module.exports = class GleitzeitkontoBrowser {
         if (oldDisplay) oldDisplay.remove(); // delete the old display
     };
 
-    // TODO update to new format
     // change the contents of the floating display
     updateFloatingDisplayAsync = async (promiseKontoData, loading) => {
         const displayText = await promiseKontoData; // wait until the promise is resolved
 
         const oldDisplay = this.getFloatingDisplay();
         if (oldDisplay && displayText?.kontoString) { // check if the floating display still exists
-            oldDisplay.innerHTML = this.formatDisplayText(displayText);
+            oldDisplay.innerHTML = this.getInnerHTMLText(this.formatDisplayText(displayText), loading, false);
         }
     };
 
