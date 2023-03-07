@@ -169,7 +169,7 @@ module.exports = class GleitzeitkontoBrowser {
         }
 
         if  (this.config.siteVersion == 'internal') { // internal site needs different styling, which is less 'nice'
-            const wrapperStyle = `position: absolute; right: ${this.config.sideDistance}; margin-top: 11px; z-index: 1; color: ${this.config.primaryColors.dunkelblau};${loading ? ' opacity: 0.5;' : ''}`
+            const wrapperStyle = `display: flex; position: absolute; right: ${this.config.sideDistance}; margin-top: 11px; z-index: 1; color: ${this.config.primaryColors.dunkelblau};${loading ? ' opacity: 0.5;' : ''}`
 
             canvas.insertAdjacentHTML('beforebegin',
                 `<div id="${this.constStrings.floatingDisplayID}" style="${wrapperStyle}">` +
@@ -203,7 +203,7 @@ module.exports = class GleitzeitkontoBrowser {
     addInsertedDisplay = (pHeaderBar, pDisplayText, loading) => {
         this.removeFloatingDisplay();
 
-        const wrapperStyle = `display:flex; color: ${this.config.primaryColors.dunkelblau}; ${loading ? ' opacity: 0.5;' : ''}`
+        const wrapperStyle = `display:flex; line-height: 2.25rem; color: ${this.config.primaryColors.dunkelblau}; ${loading ? ' opacity: 0.5;' : ''}`
         pHeaderBar.innerHTML += `<div id="${this.constStrings.insertedDisplayID}" style="${wrapperStyle}">` +
                                     this.getInnerHTMLText(pDisplayText, loading, true) +
                                 '</div>'; // add new display
