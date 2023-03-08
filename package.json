@@ -1,6 +1,6 @@
 {
   "name": "Gleitzeitkonto-Browser",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Browser Erweiterung für Chromium und Firefox, welche erlaubt die Überstunden bzw. ein Gleitzeitkonto direkt in der Fiori-Zeiterfassung oder in der Erweiterung einzusehen.",
   "main": "Gleitzeitkonto-Browser.js",
   "scripts": {
@@ -12,6 +12,7 @@
     "publishWebserver": "node publishWebserver.js && terser Webserver/main.js --comments -o compressed/Webserver/main.js && terser Webserver/gleitzeitkonto-api/gleitzeitkonto-api.js --comments -o compressed/Webserver/gleitzeitkonto-api/gleitzeitkonto-api.js",
     "combineJS": "browserify Extension/Gleitzeitkonto-Browser.js > compressed/Extension/Gleitzeitkonto-Browser.js",
     "compressJS": "terser compressed/Extension/Gleitzeitkonto-Browser.js -c --comments -o compressed/Extension/Gleitzeitkonto-Browser.js && terser Extension/Popup/popup-script.js -c -m --comments -o compressed/Extension/Popup/popup-script.js",
+    "packageWebserver": "nexe",
     "sass-dev": "sass --watch --update --no-source-map --style=expanded Extension/Popup/Gleitzeitkonto-Browser.scss:Extension/Popup/Gleitzeitkonto-Browser.css",
     "sass-prod": "sass --no-source-map --style=compressed Extension/Popup/Gleitzeitkonto-Browser.scss:Compressed/Extension/Popup/Gleitzeitkonto-Browser.css"
   },

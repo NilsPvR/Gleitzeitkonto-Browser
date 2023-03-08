@@ -13,6 +13,13 @@ Das Gleitzeitkonto-Projekt ist enstanden, da es keine einfache Möglichkeit gab 
 
 ## Installation
 
+### Automatisch
+
+Lade dir den aktuellsten [Release](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases) runter.  
+
+
+### Manuell
+
 
 
 ## Funktionsweise
