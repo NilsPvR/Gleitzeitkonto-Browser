@@ -31,6 +31,7 @@
     "sass": "^1.56.1",
     "terser": "^5.15.0",
     "web-ext": "^7.5.0",
+    "webextension-polyfill": "^0.10.0",
     "zip-build": "^1.8.0"
   },
   "dependencies": {

@@ -1,4 +1,5 @@
 const url = require('./url.json');
+const browser = require('webextension-polyfill');
 
 module.exports = class GleitzeitkontoBrowser {
     /* ==========================================================================================
