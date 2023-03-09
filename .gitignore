@@ -2,8 +2,8 @@
 package-lock.json
 /compressed
 
-/webserver/url.json
-/extension/url.json
+/Webserver/url.json
+/Extension/url.json
 
 # environment variables
 .env
