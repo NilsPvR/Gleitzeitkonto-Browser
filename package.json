@@ -8,13 +8,13 @@
     "startDevWebserverGleitzeitkonto:": "cd webserver && node main.js",
     "startProdWebserverGleitzeitkonto": "cd compressed/webserver && node main.js",
     "publishProject": "npm run publishExtension && npm run publishWebserver",
-    "publishExtension": "node publishExtension.js && npm run combineJS && npm run compressJS && npm run sass-prod && zip-build ./compressed/Extension ./compressed/Gleitzeitkonto-Browser --interactive --template unsigned_%NAME%_%VERSION%.%EXT% --override true",
-    "publishWebserver": "node publishWebserver.js && terser Webserver/main.js --comments -o compressed/Webserver/main.js && terser Webserver/gleitzeitkonto-api/gleitzeitkonto-api.js --comments -o compressed/Webserver/gleitzeitkonto-api/gleitzeitkonto-api.js",
+    "publishExtension": "node publishExtension.js && npm run combineJS && npm run compressJS && npm run sass-prod && zip-build ./compressed/extension ./compressed/Gleitzeitkonto-Browser --interactive --template unsigned_%NAME%_%VERSION%.%EXT% --override true",
+    "publishWebserver": "node publishWebserver.js && terser Webserver/main.js --comments -o compressed/webserver/main.js && terser Webserver/gleitzeitkonto-api/gleitzeitkonto-api.js --comments -o compressed/webserver/gleitzeitkonto-api/gleitzeitkonto-api.js",
     "combineJS": "browserify Extension/Gleitzeitkonto-Browser.js > compressed/Extension/Gleitzeitkonto-Browser.js",
-    "compressJS": "terser compressed/Extension/Gleitzeitkonto-Browser.js -c --comments -o compressed/Extension/Gleitzeitkonto-Browser.js && terser Extension/Popup/popup-script.js -c -m --comments -o compressed/Extension/Popup/popup-script.js",
+    "compressJS": "terser compressed/extension/Gleitzeitkonto-Browser.js -c --comments -o compressed/extension/Gleitzeitkonto-Browser.js && terser Extension/Popup/popup-script.js -c -m --comments -o compressed/extension/Popup/popup-script.js",
     "packageWebserver": "nexe",
     "sass-dev": "sass --watch --update --no-source-map --style=expanded Extension/Popup/Gleitzeitkonto-Browser.scss:Extension/Popup/Gleitzeitkonto-Browser.css",
-    "sass-prod": "sass --no-source-map --style=compressed Extension/Popup/Gleitzeitkonto-Browser.scss:Compressed/Extension/Popup/Gleitzeitkonto-Browser.css"
+    "sass-prod": "sass --no-source-map --style=compressed Extension/Popup/Gleitzeitkonto-Browser.scss:compressed/extension/Popup/Gleitzeitkonto-Browser.css"
   },
   "repository": {
     "type": "git",
