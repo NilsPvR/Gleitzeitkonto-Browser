@@ -151,29 +151,29 @@ module.exports = class GleitzeitkontoBrowser {
 
     // different styling for loading and inserted bools
     getInnerHTMLText = (pDisplayText, loading, inserted) => {
-        return  `<img id="refresh-icon" draggable="false" src="${browser.runtime.getURL('./Assets/refresh.svg')}"` + 
-        `style="margin-right: 10px; ${inserted ? "align-self: center;" : "" } animation-play-state: ${loading ? "running;" : "paused;" }">` +
-                `<h3 style="margin-top: 0px">${pDisplayText ?? this.constStrings.errorMsgs.unknown}</h3>`;
+        return  `<button class="reset-button reload-button" style="${inserted ? "align-self: center;" : "" }" onclick="window.location.href = '#'">` +
+                    `<img id="refresh-icon" src="${browser.runtime.getURL('./Assets/refresh.svg')}"` + 
+                    `style="animation-play-state: ${loading ? "running;" : "paused;" }">` +
+                `</button>` +
+                `<h3 class="gleitzeit-display-line">${pDisplayText ?? this.constStrings.errorMsgs.unknown}</h3>`;
     }
 
     addFloatingDisplay = (pDisplayText, loading) => {
         const canvas = document.getElementById('canvas'); // main page element is the (almost) only one loaded when DOM is loaded
 
         if (this.config.siteVersion == 'external') {
-            const wrapperStyle = `display: flex; justify-content: end; margin-top: 11px; margin-right: ${this.config.sideDistance}; color: ${this.config.primaryColors.dunkelblau};${loading ? ' opacity: 0.5;' : ''}`
 
             canvas.insertAdjacentHTML('beforebegin',
-                `<div id="${this.constStrings.floatingDisplayID}" style="${wrapperStyle}">` +
+                `<div class="floating-display external" id="${this.constStrings.floatingDisplayID}" style="${loading ? ' opacity: 0.5;' : ''}">` +
                     this.getInnerHTMLText(pDisplayText, loading, false) + 
                 '</div>');
 
         }
 
         if  (this.config.siteVersion == 'internal') { // internal site needs different styling, which is less 'nice'
-            const wrapperStyle = `display: flex; position: absolute; right: ${this.config.sideDistance}; margin-top: 11px; z-index: 1; color: ${this.config.primaryColors.dunkelblau};${loading ? ' opacity: 0.5;' : ''}`
 
             canvas.insertAdjacentHTML('beforebegin',
-                `<div id="${this.constStrings.floatingDisplayID}" style="${wrapperStyle}">` +
+                `<div class="floating-display internal" id="${this.constStrings.floatingDisplayID}" style="${loading ? ' opacity: 0.5;' : ''}">` +
                     this.getInnerHTMLText(pDisplayText, loading, false) +
                 '</div>');
         }
@@ -204,8 +204,7 @@ module.exports = class GleitzeitkontoBrowser {
     addInsertedDisplay = (pHeaderBar, pDisplayText, loading) => {
         this.removeFloatingDisplay();
 
-        const wrapperStyle = `display:flex; line-height: 2.25rem; color: ${this.config.primaryColors.dunkelblau}; ${loading ? ' opacity: 0.5;' : ''}`
-        pHeaderBar.innerHTML += `<div id="${this.constStrings.insertedDisplayID}" style="${wrapperStyle}">` +
+        pHeaderBar.innerHTML += `<div class="inserted-display" id="${this.constStrings.insertedDisplayID}" style="${loading ? ' opacity: 0.5;' : ''}">` +
                                     this.getInnerHTMLText(pDisplayText, loading, true) +
                                 '</div>'; // add new display
     };
