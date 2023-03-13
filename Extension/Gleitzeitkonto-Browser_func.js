@@ -161,22 +161,10 @@ module.exports = class GleitzeitkontoBrowser {
     addFloatingDisplay = (pDisplayText, loading) => {
         const canvas = document.getElementById('canvas'); // main page element is the (almost) only one loaded when DOM is loaded
 
-        if (this.config.siteVersion == 'external') {
-
-            canvas.insertAdjacentHTML('beforebegin',
-                `<div class="floating-display external" id="${this.constStrings.floatingDisplayID}" style="${loading ? ' opacity: 0.5;' : ''}">` +
+        canvas.insertAdjacentHTML('beforebegin',
+                `<div class="floating-display ${this.config.siteVersion}" id="${this.constStrings.floatingDisplayID}" style="${loading ? ' opacity: 0.5;' : ''}">` +
                     this.getInnerHTMLText(pDisplayText, loading, false) + 
                 '</div>');
-
-        }
-
-        if  (this.config.siteVersion == 'internal') { // internal site needs different styling, which is less 'nice'
-
-            canvas.insertAdjacentHTML('beforebegin',
-                `<div class="floating-display internal" id="${this.constStrings.floatingDisplayID}" style="${loading ? ' opacity: 0.5;' : ''}">` +
-                    this.getInnerHTMLText(pDisplayText, loading, false) +
-                '</div>');
-        }
     };
 
     getFloatingDisplay = () => {
