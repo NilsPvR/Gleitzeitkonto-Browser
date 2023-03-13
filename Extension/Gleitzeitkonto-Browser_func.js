@@ -124,7 +124,7 @@ module.exports = class GleitzeitkontoBrowser {
         else return this.constStrings.prefixOvertime + kontoData.kontoString;
     }
 
-    getDownloadDisplayText = async () => {
+    getDownloadKontoData = async () => {
         let response = await this.fetchServer(this.givenStrings.downloadURL);
         let kontoData = {};
 
@@ -142,7 +142,7 @@ module.exports = class GleitzeitkontoBrowser {
         else if (response?.error?.message) kontoData = response // fetchServer gave an error
 
         
-        return this.formatDisplayText(kontoData);
+        return kontoData;
     };
 
 
@@ -179,11 +179,11 @@ module.exports = class GleitzeitkontoBrowser {
 
     // change the contents of the floating display
     updateFloatingDisplayAsync = async (promiseKontoData, loading) => {
-        const displayText = await promiseKontoData; // wait until the promise is resolved
+        const kontoData = await promiseKontoData; // wait until the promise is resolved
 
         const oldDisplay = this.getFloatingDisplay();
-        if (oldDisplay && displayText?.kontoString) { // check if the floating display still exists
-            oldDisplay.innerHTML = this.getInnerHTMLText(this.formatDisplayText(displayText), loading, false);
+        if (oldDisplay && kontoData?.kontoString) { // check if the floating display still exists
+            oldDisplay.innerHTML = this.getInnerHTMLText(this.formatDisplayText(kontoData), loading, false);
         }
     };
 
@@ -197,10 +197,25 @@ module.exports = class GleitzeitkontoBrowser {
                                 '</div>'; // add new display
     };
 
-    addInsertedDisplayAsync = async (pHeaderBar, pPromiseDisplayText, loading) => {
-        const displayText = await pPromiseDisplayText;
-        this.addInsertedDisplay(pHeaderBar, displayText, loading);
-    };
+    // addInsertedDisplayAsync = async (pHeaderBar, pPromiseDisplayText, loading) => {
+    //     const displayText = await pPromiseDisplayText;
+    //     this.addInsertedDisplay(pHeaderBar, displayText, loading);
+    // };
+
+    // moves the old floating display to an inserted display, the styling will also be adjusted accordingly 
+    // pDisplayText is optional
+    moveFloatingToInsertedDisplay = (pHeaderBar, pOldNode, pDisplayText) => {
+        pOldNode.id = this.constStrings.insertedDisplayID;
+        pHeaderBar.append(pOldNode); // moves the Node
+
+        const newDisplay = document.getElementById(this.constStrings.insertedDisplayID); // get the newly added display
+
+        document.getElementsByClassName('reset-button').item(0).style.alignSelf = 'center';
+        newDisplay.className = 'inserted-display';
+        newDisplay.style.opacity = "";
+        if (pDisplayText) this.updateDisplayText(pDisplayText);
+       
+    }
 
     getInsertedDisplay = () => {
         return document.getElementById(this.constStrings.insertedDisplayID);
@@ -213,18 +228,44 @@ module.exports = class GleitzeitkontoBrowser {
         }
     };
 
+
+    // updates the loading state once the KontoData has loaded and updates display with kontoData
+    updateDisplay = async (possiblePromiseKontoData, loading) => {
+        const kontoData = await possiblePromiseKontoData; // wait until the promise is resolved
+
+        const refreshIcon = document.getElementById('refresh-icon');
+
+        if (refreshIcon && kontoData?.kontoString) {
+            refreshIcon.style.animationPlayState = loading ? 'running' : 'paused';
+            this.updateDisplayText(this.formatDisplayText(kontoData));
+        }
+    }
+
+
+    // works for both display
+    updateDisplayText = async (possiblePromiseDisplayText) => {
+        const displayText = await possiblePromiseDisplayText;
+        const display = document.getElementsByClassName('gleitzeit-display-line');
+
+        if (display?.item(0) && displayText) {
+            display.item(0).innerHTML = displayText;
+        }
+    }
+
     
     // ---------- End Changes on Displays ----------
     // ---------------------------------------------
 
     // Update the display continuously for as long as the script is loaded
     // It is asumed that the page has already loaded completely
-    updateDisplayOnURLChange = (pHeaderBar, pDisplayText) => {
+    updateDisplayOnURLChange = (pHeaderBar, pKontoData) => {
+        const displayText = this.formatDisplayText(pKontoData);
+
         window.addEventListener('hashchange', () => {
 
             // When correct page is open and the display doesn't already exist
             if (this.checkCorrectMenuIsOpen() && !this.getInsertedDisplay()) {
-                this.addInsertedDisplay(pHeaderBar, pDisplayText, false);
+                this.addInsertedDisplay(pHeaderBar, displayText, false);
             }
             else if (!this.checkCorrectMenuIsOpen()) {
                 // This will also be removed by Fiori but keep remove just in case this behaviour gets changed
@@ -237,7 +278,7 @@ module.exports = class GleitzeitkontoBrowser {
         const observer = new MutationObserver(() => {
             // When correct page is open and the display doesn't already exist
             if (this.checkCorrectMenuIsOpen() && !this.getInsertedDisplay()) {
-                this.addInsertedDisplay(pHeaderBar, pDisplayText);
+                this.addInsertedDisplay(pHeaderBar, displayText);
             }
         });
 
