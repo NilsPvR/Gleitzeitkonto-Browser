@@ -151,7 +151,7 @@ module.exports = class GleitzeitkontoBrowser {
 
     // different styling for loading and inserted bools
     getInnerHTMLText = (pDisplayText, loading, inserted) => {
-        return  `<button class="reset-button reload-button" style="${inserted ? "align-self: center;" : "" }" onclick="window.location.href = '#'">` +
+        return  `<button class="reset-button reload-button" style="${inserted ? "align-self: center;" : "" }" onclick="window.location.href = '#'" ${loading ? 'disabled="true"' : ''}>` +
                     `<img id="refresh-icon" src="${browser.runtime.getURL('./Assets/refresh.svg')}"` + 
                     `style="animation-play-state: ${loading ? "running;" : "paused;" }">` +
                 `</button>` +
@@ -178,14 +178,14 @@ module.exports = class GleitzeitkontoBrowser {
     };
 
     // change the contents of the floating display
-    updateFloatingDisplayAsync = async (promiseKontoData, loading) => {
-        const kontoData = await promiseKontoData; // wait until the promise is resolved
+    // updateFloatingDisplayAsync = async (promiseKontoData, loading) => {
+    //     const kontoData = await promiseKontoData; // wait until the promise is resolved
 
-        const oldDisplay = this.getFloatingDisplay();
-        if (oldDisplay && kontoData?.kontoString) { // check if the floating display still exists
-            oldDisplay.innerHTML = this.getInnerHTMLText(this.formatDisplayText(kontoData), loading, false);
-        }
-    };
+    //     const oldDisplay = this.getFloatingDisplay();
+    //     if (oldDisplay && kontoData?.kontoString) { // check if the floating display still exists
+    //         oldDisplay.innerHTML = this.getInnerHTMLText(this.formatDisplayText(kontoData), loading, false);
+    //     }
+    // };
 
 
 
@@ -211,8 +211,7 @@ module.exports = class GleitzeitkontoBrowser {
         const newDisplay = document.getElementById(this.constStrings.insertedDisplayID); // get the newly added display
 
         document.getElementsByClassName('reset-button').item(0).style.alignSelf = 'center';
-        newDisplay.className = 'inserted-display';
-        newDisplay.style.opacity = "";
+        newDisplay.className = 'inserted-display';        
         if (pDisplayText) this.updateDisplayText(pDisplayText);
        
     }
@@ -228,16 +227,40 @@ module.exports = class GleitzeitkontoBrowser {
         }
     };
 
+    startLoading = () => {
+        const currentDisplay = document.getElementById(this.constStrings.insertedDisplayID) 
+                            ?? document.getElementById(this.constStrings.floatingDisplayID); // get the display;
+        if (currentDisplay) currentDisplay.style.opacity = '0.5';
+
+        const refreshIcon = document.getElementById('refresh-icon');
+        if (refreshIcon) refreshIcon.style.animationPlayState = 'running';
+
+        const refreshButton = document.getElementsByClassName('reload-button').item(0);
+        if (refreshButton) refreshButton.disabled = true;
+    }
+
+
+    stopLoading = () => {
+        const currentDisplay = document.getElementById(this.constStrings.insertedDisplayID) 
+                            ?? document.getElementById(this.constStrings.floatingDisplayID); // get the display
+        if (currentDisplay) currentDisplay.style.opacity = '';
+
+        const refreshIcon = document.getElementById('refresh-icon');
+        if (refreshIcon) refreshIcon.style.animationPlayState = 'paused';
+
+        const refreshButton = document.getElementsByClassName('reload-button').item(0);
+        if (refreshButton) refreshButton.disabled = false;
+    }
+
 
     // updates the loading state once the KontoData has loaded and updates display with kontoData
     updateDisplay = async (possiblePromiseKontoData, loading) => {
         const kontoData = await possiblePromiseKontoData; // wait until the promise is resolved
 
-        const refreshIcon = document.getElementById('refresh-icon');
-
-        if (refreshIcon && kontoData?.kontoString) {
-            refreshIcon.style.animationPlayState = loading ? 'running' : 'paused';
+        if (kontoData?.kontoString) {
             this.updateDisplayText(this.formatDisplayText(kontoData));
+            if (loading) this.startLoading();
+            else this.stopLoading();
         }
     }
 
@@ -278,7 +301,7 @@ module.exports = class GleitzeitkontoBrowser {
         const observer = new MutationObserver(() => {
             // When correct page is open and the display doesn't already exist
             if (this.checkCorrectMenuIsOpen() && !this.getInsertedDisplay()) {
-                this.addInsertedDisplay(pHeaderBar, displayText);
+                this.addInsertedDisplay(pHeaderBar, displayText, false);
             }
         });
 
