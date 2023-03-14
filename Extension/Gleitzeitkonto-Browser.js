@@ -36,6 +36,7 @@ const time = new GleitzeitkontoBrowser();
         time.updateDisplay(promiseCalcKontoData, true);
         time.updateDisplay(promiseDownloadKontoData, false); // TODO currently just hoping that download finishes after calc
             // if download finished earlier -> calcText (which might be old, even tho unlikly) will overwrite
+            // problematic when server not started since both requests take almost the same amount of time
             // maybe add some tag or so
     };
 

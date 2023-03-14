@@ -182,7 +182,7 @@ module.exports = class GleitzeitkontoBrowser {
     //     const kontoData = await promiseKontoData; // wait until the promise is resolved
 
     //     const oldDisplay = this.getFloatingDisplay();
-    //     if (oldDisplay && kontoData?.kontoString) { // check if the floating display still exists
+    //     if (oldDisplay && kontoData) { // check if the floating display still exists
     //         oldDisplay.innerHTML = this.getInnerHTMLText(this.formatDisplayText(kontoData), loading, false);
     //     }
     // };
@@ -257,7 +257,7 @@ module.exports = class GleitzeitkontoBrowser {
     updateDisplay = async (possiblePromiseKontoData, loading) => {
         const kontoData = await possiblePromiseKontoData; // wait until the promise is resolved
 
-        if (kontoData?.kontoString) {
+        if (kontoData) {
             this.updateDisplayText(this.formatDisplayText(kontoData));
             if (loading) this.startLoading();
             else this.stopLoading();
