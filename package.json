@@ -14,7 +14,8 @@
     "compressJS": "terser compressed/extension/Gleitzeitkonto-Browser.js -c --comments -o compressed/extension/Gleitzeitkonto-Browser.js && terser Extension/Popup/popup-script.js -c -m --comments -o compressed/extension/Popup/popup-script.js",
     "packageWebserver": "nexe",
     "sass-dev": "sass --watch --update --no-source-map --style=expanded Extension/Popup/Gleitzeitkonto-Browser.scss:Extension/Popup/Gleitzeitkonto-Browser.css",
-    "sass-prod": "sass --no-source-map --style=compressed Extension/Popup/Gleitzeitkonto-Browser.scss:compressed/extension/Popup/Gleitzeitkonto-Browser.css"
+    "sass-prod": "sass --no-source-map --style=compressed Extension/Popup/Gleitzeitkonto-Browser.scss:compressed/extension/Popup/Gleitzeitkonto-Browser.css",
+    "buildPKG": "pkg ."
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
   "devDependencies": {
     "browserify": "^17.0.0",
     "fs-extra": "^11.1.0",
+    "pkg": "^5.8.1",
     "sass": "^1.56.1",
     "terser": "^5.15.0",
     "web-ext": "^7.5.0",
@@ -37,5 +39,11 @@
   },
   "dependencies": {
     "puppeteer": "^19.7.2"
+  },
+  "bin": "./Webserver/main.js",
+  "pkg": {
+    "scripts": "./Webserver/main.js",
+    "targets": [ "latest-win" ],
+    "outputPath": "./compressed/webserver"
   }
 }
