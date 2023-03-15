@@ -1,4 +1,3 @@
-const cssText = require('./css.js');
 const GleitzeitkontoBrowser = require('./Gleitzeitkonto-Browser_func'); // load script
 const time = new GleitzeitkontoBrowser();
 
@@ -7,9 +6,16 @@ const time = new GleitzeitkontoBrowser();
 
     /* ==========================================================================================
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Main Events <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
-    const styleSheet = document.createElement('style');
-    styleSheet.innerText = cssText;
-    document.head.appendChild(styleSheet);
+
+    if (!document.getElementById(time.constStrings.cssID)) { // if not already added
+        const link = document.createElement('link');
+        link.id = time.constStrings.cssID;
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.media = 'all';
+        link.href = browser.runtime.getURL('./Gleitzeitkonto-Browser.css');
+        document.head.appendChild(link);
+    }
 
 
     const promiseCalcKontoData = time.fetchServer(time.givenStrings.calcaulteURL);

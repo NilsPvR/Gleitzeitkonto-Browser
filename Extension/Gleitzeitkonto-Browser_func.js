@@ -37,6 +37,7 @@ module.exports = class GleitzeitkontoBrowser {
         this.constStrings = {
             floatingDisplayID: 'gleitzeitkonto-canvas-headline',
             insertedDisplayID: 'gleitzeitkonto-display',
+            cssID: 'gleitzeitkonto-css',
             prefixOvertime: 'Gleitzeitkonto: ',
             prefixError: 'Fehler: ',
             overtimeLoading: 'Loading...',
