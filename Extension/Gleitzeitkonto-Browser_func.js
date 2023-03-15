@@ -18,7 +18,7 @@ module.exports = class GleitzeitkontoBrowser {
             },
 
             loacalServerURL: 'http://localhost:3000',
-            maxPageloadingLoops: 20,
+            maxPageloadingLoops: 120, // 2 minutes
         };
 
         
@@ -177,18 +177,7 @@ module.exports = class GleitzeitkontoBrowser {
         if (oldDisplay) oldDisplay.remove(); // delete the old display
     };
 
-    // change the contents of the floating display
-    // updateFloatingDisplayAsync = async (promiseKontoData, loading) => {
-    //     const kontoData = await promiseKontoData; // wait until the promise is resolved
-
-    //     const oldDisplay = this.getFloatingDisplay();
-    //     if (oldDisplay && kontoData) { // check if the floating display still exists
-    //         oldDisplay.innerHTML = this.getInnerHTMLText(this.formatDisplayText(kontoData), loading, false);
-    //     }
-    // };
-
-
-
+    
     addInsertedDisplay = (pHeaderBar, pDisplayText, loading) => {
         this.removeFloatingDisplay();
 
@@ -196,11 +185,6 @@ module.exports = class GleitzeitkontoBrowser {
                                     this.getInnerHTMLText(pDisplayText, loading, true) +
                                 '</div>'; // add new display
     };
-
-    // addInsertedDisplayAsync = async (pHeaderBar, pPromiseDisplayText, loading) => {
-    //     const displayText = await pPromiseDisplayText;
-    //     this.addInsertedDisplay(pHeaderBar, displayText, loading);
-    // };
 
     // moves the old floating display to an inserted display, the styling will also be adjusted accordingly 
     // pDisplayText is optional
@@ -226,6 +210,8 @@ module.exports = class GleitzeitkontoBrowser {
             previousInsertedDisplay.remove();
         }
     };
+
+    // ---------- For both displays ----------
 
     startLoading = () => {
         const currentDisplay = document.getElementById(this.constStrings.insertedDisplayID) 

@@ -25,30 +25,26 @@ const time = new GleitzeitkontoBrowser();
         }
         else if (config.siteVersion == 'external') {
             // Load event fires too early so no point using that
-            window.addEventListener('DOMContentLoaded', (event) => {
+            window.addEventListener('DOMContentLoaded', () => {
                 time.addFloatingDisplay(time.constStrings.prefixOvertime + time.constStrings.overtimeLoading, true);
             })
         }
 
         // don't await 'promiseDisplayText' even tho we want to change this as soon as the promiseDisplayText is fullfilled,
-        // but if the page has loaded before the promise is resolved then just use addInsertedDisplay()
-        // so therefore we shouldn't wait for the 'promiseDisplayText' but rather let this happen asynchronously
+        // but if the page loads before the promise resolves then the display should be movedToInserted asap
+        // -> let this happen asynchronously
         time.updateDisplay(promiseCalcKontoData, true);
-        time.updateDisplay(promiseDownloadKontoData, false); // TODO currently just hoping that download finishes after calc
-            // if download finished earlier -> calcText (which might be old, even tho unlikly) will overwrite
-            // problematic when server not started since both requests take almost the same amount of time
-            // maybe add some tag or so
+        time.updateDisplay(promiseDownloadKontoData, false);
     };
 
 
-    let headerBar;
     let loops = 0; // track how often findHeaderBar ran
 
     // loop to check once the page has actually loaded
     // -> this is determined by checking if the headerbar of the page and the icons in the headerbar are available
     const waitForPageLoad = setInterval(async () => {
         loops++;
-        headerBar = document.getElementById(time.givenStrings.headerBarID); // top bar, empty part
+        const headerBar = document.getElementById(time.givenStrings.headerBarID); // top bar, empty part
         const icons = document.getElementById(time.givenStrings.iconsID);
 
 
