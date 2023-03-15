@@ -3,9 +3,6 @@ const http = require('http');
 const hostname = 'localhost';
 const port = 3000;
 
-const requestListener = (req, res) => {
-  
-}
 
 const server = http.createServer((request, response) => {
   response.statusCode = 200;
@@ -13,7 +10,10 @@ const server = http.createServer((request, response) => {
   response.setHeader('Content-Type', 'application/json');
 
   if (request.url.toLocaleLowerCase() == '/downloadworkingtimes') {
-    response.end(JSON.stringify('0'));
+    setTimeout(() => {
+      response.end(JSON.stringify('0'));
+    }, 3000);
+
     return;
   }
 
