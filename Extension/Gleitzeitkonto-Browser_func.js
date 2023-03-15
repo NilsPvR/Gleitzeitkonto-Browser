@@ -38,6 +38,7 @@ module.exports = class GleitzeitkontoBrowser {
             floatingDisplayID: 'gleitzeitkonto-canvas-headline',
             insertedDisplayID: 'gleitzeitkonto-display',
             cssID: 'gleitzeitkonto-css',
+            buttonID: 'gleitzeitkonto-reload-button',
             prefixOvertime: 'Gleitzeitkonto: ',
             prefixError: 'Fehler: ',
             overtimeLoading: 'Loading...',
@@ -178,9 +179,9 @@ module.exports = class GleitzeitkontoBrowser {
         });
 
         const button = this.createRichElement('button', {
+            id: this.constStrings.buttonID,
             class: 'reset-button reload-button',
             style: inserted ? "align-self: center;" : "",
-            onclick: 'window.location.href = "#"',
             disabled: loading ? 'true' : 'false' 
             },
             refreshImage);
@@ -238,7 +239,7 @@ module.exports = class GleitzeitkontoBrowser {
 
         const newDisplay = document.getElementById(this.constStrings.insertedDisplayID); // get the newly added display
 
-        document.getElementsByClassName('reset-button').item(0).style.alignSelf = 'center';
+        document.getElementById(this.constStrings.buttonID).style.alignSelf = 'center';
         newDisplay.className = 'inserted-display';        
         if (pDisplayText) this.updateDisplayText(pDisplayText);
        
@@ -265,7 +266,7 @@ module.exports = class GleitzeitkontoBrowser {
         const refreshIcon = document.getElementById('refresh-icon');
         if (refreshIcon) refreshIcon.style.animationPlayState = 'running';
 
-        const refreshButton = document.getElementsByClassName('reload-button').item(0);
+        const refreshButton = document.getElementById(this.constStrings.buttonID);
         if (refreshButton) refreshButton.disabled = true;
     }
 
@@ -278,7 +279,7 @@ module.exports = class GleitzeitkontoBrowser {
         const refreshIcon = document.getElementById('refresh-icon');
         if (refreshIcon) refreshIcon.style.animationPlayState = 'paused';
 
-        const refreshButton = document.getElementsByClassName('reload-button').item(0);
+        const refreshButton = document.getElementById(this.constStrings.buttonID);
         if (refreshButton) refreshButton.disabled = false;
     }
 
@@ -342,4 +343,14 @@ module.exports = class GleitzeitkontoBrowser {
             subtree: true,
         });
     };
+
+    // called from the reload btn, recalculates the Gleitzeitkontos
+    reloadGleitzeitKonto () {
+        this.startLoading(); // start loading immediately
+        const promiseCalcKontoData = this.fetchServer(this.givenStrings.calcaulteURL);
+        const promiseDownloadKontoData = this.getDownloadKontoData();
+
+        this.updateDisplay(promiseCalcKontoData, true);
+        this.updateDisplay(promiseDownloadKontoData, false);
+    }
 };

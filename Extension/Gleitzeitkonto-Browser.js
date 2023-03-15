@@ -37,6 +37,9 @@ const time = new GleitzeitkontoBrowser();
             })
         }
 
+        // register button click for reload
+        document.getElementById(time.constStrings.buttonID).addEventListener('click', () => { time.reloadGleitzeitKonto() });
+
         // don't await 'promiseDisplayText' even tho we want to change this as soon as the promiseDisplayText is fullfilled,
         // but if the page loads before the promise resolves then the display should be movedToInserted asap
         // -> let this happen asynchronously
