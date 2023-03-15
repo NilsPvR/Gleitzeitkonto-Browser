@@ -150,22 +150,59 @@ module.exports = class GleitzeitkontoBrowser {
     // ---------- Changes on Displays ----------
     // -----------------------------------------    
 
+    /**
+     * Creates a new HTML Element with the specified attributes and the content placed inside
+     * @param tagName       String - The name of the HTML-Tag, e.g: <div> -> 'div'
+     * @param attributes    Object - key: attribute name, value: value of the attribute
+     * @param content       HTMLElement | String - The nodes or strings to be placed inside of the element
+     */
+    createRichElement = (tagName, attributes, ...content) => {
+        let element = document.createElement(tagName);
+        if (attributes) {
+            for (const [attr, value] of Object.entries(attributes)) {
+                element.setAttribute(attr, value);
+            }
+        }
+        if (content && content.length) {
+            element.append(...content);
+        }
+        return element;
+    }
+
     // different styling for loading and inserted bools
-    getInnerHTMLText = (pDisplayText, loading, inserted) => {
-        return  `<button class="reset-button reload-button" style="${inserted ? "align-self: center;" : "" }" onclick="window.location.href = '#'" ${loading ? 'disabled="true"' : ''}>` +
-                    `<img id="refresh-icon" src="${browser.runtime.getURL('./Assets/refresh.svg')}"` + 
-                    `style="animation-play-state: ${loading ? "running;" : "paused;" }">` +
-                `</button>` +
-                `<h3 class="gleitzeit-display-line">${pDisplayText ?? this.constStrings.errorMsgs.unknown}</h3>`;
+    getInnerHTMLElements = (pDisplayText, loading, inserted) => {
+        const refreshImage = this.createRichElement('img', {
+            id: 'refresh-icon',
+            src: browser.runtime.getURL('./Assets/refresh.svg'),
+            style: `animation-play-state: ${loading ? "running;" : "paused;" }` 
+        });
+
+        const button = this.createRichElement('button', {
+            class: 'reset-button reload-button',
+            style: inserted ? "align-self: center;" : "",
+            onclick: 'window.location.href = "#"',
+            disabled: loading ? 'true' : 'false' 
+            },
+            refreshImage);
+
+        const headline = this.createRichElement('h3',{ class: 'gleitzeit-display-line' }, pDisplayText ?? this.constStrings.errorMsgs.unknown);
+
+        return [ button, headline ];
     }
 
     addFloatingDisplay = (pDisplayText, loading) => {
+        const HTMLElements = this.getInnerHTMLElements(pDisplayText, loading, false);
         const canvas = document.getElementById('canvas'); // main page element is the (almost) only one loaded when DOM is loaded
 
-        canvas.insertAdjacentHTML('beforebegin',
-                `<div class="floating-display ${this.config.siteVersion}" id="${this.constStrings.floatingDisplayID}" style="${loading ? ' opacity: 0.5;' : ''}">` +
-                    this.getInnerHTMLText(pDisplayText, loading, false) + 
-                '</div>');
+        canvas.insertAdjacentElement('beforebegin',
+            this.createRichElement('div', {
+                class: `floating-display ${this.config.siteVersion}`,
+                id: this.constStrings.floatingDisplayID,
+                style: loading ? ' opacity: 0.5;' : ''
+                },
+                ...HTMLElements, // spread syntax to expand array
+            )
+        );
     };
 
     getFloatingDisplay = () => {
@@ -182,9 +219,15 @@ module.exports = class GleitzeitkontoBrowser {
     addInsertedDisplay = (pHeaderBar, pDisplayText, loading) => {
         this.removeFloatingDisplay();
 
-        pHeaderBar.innerHTML += `<div class="inserted-display" id="${this.constStrings.insertedDisplayID}" style="${loading ? ' opacity: 0.5;' : ''}">` +
-                                    this.getInnerHTMLText(pDisplayText, loading, true) +
-                                '</div>'; // add new display
+        const HTMLElements = this.getInnerHTMLElements(pDisplayText, loading, true);
+
+        pHeaderBar.append(this.createRichElement('div', {
+            class: 'inserted-display',
+            id: this.constStrings.insertedDisplayID,
+            style: loading ? ' opacity: 0.5;' : ''
+            },
+            ...HTMLElements, // spread syntax to expand array
+        ));
     };
 
     // moves the old floating display to an inserted display, the styling will also be adjusted accordingly 
