@@ -1,3 +1,4 @@
+const browser = require('webextension-polyfill');
 const GleitzeitkontoBrowser = require('./Gleitzeitkonto-Browser_func'); // load script
 const time = new GleitzeitkontoBrowser();
 
