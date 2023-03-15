@@ -4,7 +4,7 @@ const browser = require('webextension-polyfill');
 module.exports = class GleitzeitkontoBrowser {
     /* ==========================================================================================
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Config <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
-    constructor() {
+    constructor () {
         this.config = {
             primaryColors: {
                 "dunkelblau":   "#003869",
@@ -74,7 +74,7 @@ module.exports = class GleitzeitkontoBrowser {
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Functions <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
     // Boolean value weather or not the user is on "Meine Zeiterfassung" page
-    checkCorrectMenuIsOpen = () => {
+    checkCorrectMenuIsOpen () {
         if (window.location.hash === this.givenStrings.gleitzeitHash) {
             return true;
         }
@@ -83,7 +83,7 @@ module.exports = class GleitzeitkontoBrowser {
 
     // Resolves the promise only once the user is on "Meine Zeiterfassung" page
     // This is done by checking the Hash of the URL (the bit after #)
-    continuousMenucheck = async () => {
+    async continuousMenucheck () {
         if (this.checkCorrectMenuIsOpen()) {
             return true;
         }
@@ -100,7 +100,7 @@ module.exports = class GleitzeitkontoBrowser {
         });
     };
 
-    fetchServer = async (path) => {
+    async fetchServer (path) {
         try {
             const url = this.config.loacalServerURL + path;
             const data = await (await fetch(url)).json();
@@ -119,13 +119,13 @@ module.exports = class GleitzeitkontoBrowser {
         
     };
 
-    formatDisplayText = (kontoData) => {
+    formatDisplayText (kontoData) {
         if (kontoData?.error?.message) return this.constStrings.prefixError + kontoData.error.message; // Error occured
         if (!kontoData || !kontoData.kontoString) return this.constStrings.prefixError + this.constStrings.errorMsgs.keineDatenVomServer; // No Data
         else return this.constStrings.prefixOvertime + kontoData.kontoString;
     }
 
-    getDownloadKontoData = async () => {
+    async getDownloadKontoData () {
         let response = await this.fetchServer(this.givenStrings.downloadURL);
         let kontoData = {};
 
@@ -156,7 +156,7 @@ module.exports = class GleitzeitkontoBrowser {
      * @param attributes    Object - key: attribute name, value: value of the attribute
      * @param content       HTMLElement | String - The nodes or strings to be placed inside of the element
      */
-    createRichElement = (tagName, attributes, ...content) => {
+    createRichElement (tagName, attributes, ...content) {
         let element = document.createElement(tagName);
         if (attributes) {
             for (const [attr, value] of Object.entries(attributes)) {
@@ -170,7 +170,7 @@ module.exports = class GleitzeitkontoBrowser {
     }
 
     // different styling for loading and inserted bools
-    getInnerHTMLElements = (pDisplayText, loading, inserted) => {
+    getInnerHTMLElements (pDisplayText, loading, inserted) {
         const refreshImage = this.createRichElement('img', {
             id: 'refresh-icon',
             src: browser.runtime.getURL('./Assets/refresh.svg'),
@@ -190,7 +190,7 @@ module.exports = class GleitzeitkontoBrowser {
         return [ button, headline ];
     }
 
-    addFloatingDisplay = (pDisplayText, loading) => {
+    addFloatingDisplay (pDisplayText, loading) {
         const HTMLElements = this.getInnerHTMLElements(pDisplayText, loading, false);
         const canvas = document.getElementById('canvas'); // main page element is the (almost) only one loaded when DOM is loaded
 
@@ -205,18 +205,18 @@ module.exports = class GleitzeitkontoBrowser {
         );
     };
 
-    getFloatingDisplay = () => {
+    getFloatingDisplay () {
         return document.getElementById(this.constStrings.floatingDisplayID);
     }
 
     // remove the display
-    removeFloatingDisplay = () => {
+    removeFloatingDisplay () {
         const oldDisplay = this.getFloatingDisplay();
         if (oldDisplay) oldDisplay.remove(); // delete the old display
     };
 
     
-    addInsertedDisplay = (pHeaderBar, pDisplayText, loading) => {
+    addInsertedDisplay (pHeaderBar, pDisplayText, loading) {
         this.removeFloatingDisplay();
 
         const HTMLElements = this.getInnerHTMLElements(pDisplayText, loading, true);
@@ -232,7 +232,7 @@ module.exports = class GleitzeitkontoBrowser {
 
     // moves the old floating display to an inserted display, the styling will also be adjusted accordingly 
     // pDisplayText is optional
-    moveFloatingToInsertedDisplay = (pHeaderBar, pOldNode, pDisplayText) => {
+    moveFloatingToInsertedDisplay (pHeaderBar, pOldNode, pDisplayText) {
         pOldNode.id = this.constStrings.insertedDisplayID;
         pHeaderBar.append(pOldNode); // moves the Node
 
@@ -244,11 +244,11 @@ module.exports = class GleitzeitkontoBrowser {
        
     }
 
-    getInsertedDisplay = () => {
+    getInsertedDisplay () {
         return document.getElementById(this.constStrings.insertedDisplayID);
     };
 
-    removeInsertedDisplay = () => {
+    removeInsertedDisplay () {
         const previousInsertedDisplay = this.getInsertedDisplay();
         if (previousInsertedDisplay) {
             previousInsertedDisplay.remove();
@@ -257,7 +257,7 @@ module.exports = class GleitzeitkontoBrowser {
 
     // ---------- For both displays ----------
 
-    startLoading = () => {
+    startLoading () {
         const currentDisplay = document.getElementById(this.constStrings.insertedDisplayID) 
                             ?? document.getElementById(this.constStrings.floatingDisplayID); // get the display;
         if (currentDisplay) currentDisplay.style.opacity = '0.5';
@@ -270,7 +270,7 @@ module.exports = class GleitzeitkontoBrowser {
     }
 
 
-    stopLoading = () => {
+    stopLoading () {
         const currentDisplay = document.getElementById(this.constStrings.insertedDisplayID) 
                             ?? document.getElementById(this.constStrings.floatingDisplayID); // get the display
         if (currentDisplay) currentDisplay.style.opacity = '';
@@ -284,7 +284,7 @@ module.exports = class GleitzeitkontoBrowser {
 
 
     // updates the loading state once the KontoData has loaded and updates display with kontoData
-    updateDisplay = async (possiblePromiseKontoData, loading) => {
+    async updateDisplay (possiblePromiseKontoData, loading) {
         const kontoData = await possiblePromiseKontoData; // wait until the promise is resolved
 
         if (kontoData) {
@@ -296,7 +296,7 @@ module.exports = class GleitzeitkontoBrowser {
 
 
     // works for both display
-    updateDisplayText = async (possiblePromiseDisplayText) => {
+    async updateDisplayText (possiblePromiseDisplayText) {
         const displayText = await possiblePromiseDisplayText;
         const display = document.getElementsByClassName('gleitzeit-display-line');
 
@@ -311,7 +311,7 @@ module.exports = class GleitzeitkontoBrowser {
 
     // Update the display continuously for as long as the script is loaded
     // It is asumed that the page has already loaded completely
-    updateDisplayOnURLChange = (pHeaderBar, pKontoData) => {
+    updateDisplayOnURLChange (pHeaderBar, pKontoData) {
         const displayText = this.formatDisplayText(pKontoData);
 
         window.addEventListener('hashchange', () => {
