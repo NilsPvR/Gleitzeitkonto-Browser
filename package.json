@@ -9,7 +9,7 @@
     "startProdWebserverGleitzeitkonto": "cd compressed/webserver && node main.js",
     "publishProject": "npm run publishExtension && npm run publishWebserver",
     "publishExtension": "node publishExtension.js && npm run combineJS && npm run compressJS && npm run sass-prod && zip-build ./compressed/extension ./compressed/Gleitzeitkonto-Browser --interactive --template unsigned_%NAME%_%VERSION%.%EXT% --override true",
-    "publishWebserver": "node publishWebserver.js && terser Webserver/main.js --comments -o compressed/webserver/main.js && terser Webserver/gleitzeitkonto-api/gleitzeitkonto-api.js --comments -o compressed/webserver/gleitzeitkonto-api/gleitzeitkonto-api.js",
+    "publishWebserver": "node publishWebserver.js && terser Webserver/main.js --comments -o compressed/webserver/main.js && terser Webserver/gleitzeitkonto-api/gleitzeitkonto-api.js --comments -o compressed/webserver/gleitzeitkonto-api/gleitzeitkonto-api.js && npm run buildPKG",
     "combineJS": "browserify Extension/Gleitzeitkonto-Browser.js > compressed/extension/Gleitzeitkonto-Browser.js",
     "compressJS": "terser compressed/extension/Gleitzeitkonto-Browser.js -c --comments -o compressed/extension/Gleitzeitkonto-Browser.js && terser Extension/Popup/popup-script.js -c -m --comments -o compressed/extension/Popup/popup-script.js",
     "packageWebserver": "nexe",

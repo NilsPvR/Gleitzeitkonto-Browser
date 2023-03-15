@@ -1,8 +1,13 @@
 const http = require('http');
 const { EventEmitter } = require('events');
+const path = require('path');
 
 // DEBUG=true starts webscraper in foreground and do logging, DEBUG=false in background
 const DEBUG = false;
+
+// "%AppData%/Gleitzeitkonto-Browser" Path or similar for other plattforms
+const downloadPath = path.join(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + '/.local/share'),
+                    'Gleitzeitkonto-Browser', 'gleitzeitkonto-api');
 
 // prevent running multiple downloadCommands of API at the same time
 let isRunning = false;
@@ -10,12 +15,11 @@ const isRunningEmitter = new EventEmitter(); // allows async/await for isRunning
 let lastDownloadStatusCode;
 
 // import and setup gleitzeit-api
-const GleitzeitkontoAPI = require("./gleitzeitkonto-api/gleitzeitkonto-api.js").default;
+const GleitzeitkontoAPI = require('./gleitzeitkonto-api/gleitzeitkonto-api.js').default;
 const gzk = new GleitzeitkontoAPI(
-    // resolve relative path to absolute path
-    require("path").resolve("./gleitzeitkonto-api"),
-    "working_times.csv",
-    "./gleitzeitkonto-api/gleitzeitconfig.json",
+    downloadPath,
+    'working_times.csv',
+    path.join(downloadPath, 'gleitzeitconfig.json'),
     require('./url.json'),
     DEBUG
 );
@@ -92,7 +96,7 @@ const server = http.createServer(async (request, response) => {
 server.listen(port, hostname, (error) => {
     if(!error) console.log(`Gleitzeitkonto-Webserver läuft auf http://${hostname}:${port}`);
     else { 
-        console.error("Fehler beim starten des Gleitzeitkonto-Webservers:");
+        console.error('Fehler beim starten des Gleitzeitkonto-Webservers:');
         console.error(error);
     }
 });
