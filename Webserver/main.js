@@ -1,6 +1,7 @@
 const http = require('http');
 const { EventEmitter } = require('events');
 const path = require('path');
+const fs = require('fs');
 
 // DEBUG=true starts webscraper in foreground and do logging, DEBUG=false in background
 const DEBUG = false;
@@ -8,6 +9,8 @@ const DEBUG = false;
 // "%AppData%/Gleitzeitkonto-Browser" Path or similar for other plattforms
 const downloadPath = path.join(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + '/.local/share'),
                     'Gleitzeitkonto-Browser', 'gleitzeitkonto-api');
+
+if (!fs.existsSync(downloadPath)) fs.mkdirSync(downloadPath, { recursive: true }); // creates folder if not existant, including parent folders
 
 // prevent running multiple downloadCommands of API at the same time
 let isRunning = false;
