@@ -16,6 +16,7 @@ const fs = require('fs');
         fs.copyFileSync('./Webserver/icon.ico', './compressed/packedWebserver/icon.ico');
         fs.copyFileSync('./Webserver/main.js', './compressed/unpackedWebserver/main.js');
         fs.copyFileSync('./Webserver/gleitzeitkonto-api/gleitzeitkonto-api.js', './compressed/unpackedWebserver/gleitzeitkonto-api/gleitzeitkonto-api.js');
+        fs.copyFileSync('package.json', './compressed/unpackedWebserver/package.json');
 
         console.log('Created folder succesfully!');
     }
