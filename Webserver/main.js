@@ -60,7 +60,7 @@ const waitForDownload = async () => {
 // ===== Webserver =====
 const hostname = 'localhost';
 const port = 35221;
-const version = '0.3.0';
+const version = '1.0.0';
 
 // webserver stuff
 const server = http.createServer(async (request, response) => {

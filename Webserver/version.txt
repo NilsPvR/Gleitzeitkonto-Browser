@@ -1,2 +1,2 @@
-Gleitzeitkonto-Webserver v0.3.0
+Gleitzeitkonto-Webserver v1.0.0
 https://github.com/NilsPvR/Gleitzeitkonto-Browser
