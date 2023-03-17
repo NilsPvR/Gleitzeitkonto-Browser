@@ -17,7 +17,7 @@ module.exports = class GleitzeitkontoBrowser {
                 grey: "#222222",
             },
 
-            loacalServerURL: 'http://localhost:3000',
+            loacalServerURL: 'http://localhost:35221',
             maxPageloadingLoops: 120, // 2 minutes
         };
 
