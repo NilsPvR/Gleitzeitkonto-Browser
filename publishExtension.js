@@ -9,7 +9,7 @@ const { extname } = require('path');
         };
         await copy('./Extension', './compressed/extension', { filter: filterFunc }); // copies directory with subdirectories
         fs.rmSync('./compressed/extension/url.json', { force: true }); // remove url file
-        if (!fs.existsSync('./compressed/Gleitzeitkonto-Browser')) fs.mkdirSync('./compressed/Gleitzeitkonto-Browser'); // create folder
+        if (!fs.existsSync('./compressed/Gleitzeitkonto-Browser-ZIP')) fs.mkdirSync('./compressed/Gleitzeitkonto-Browser-ZIP'); // create folder
         
 
         console.log('Copied folder succesfully!');

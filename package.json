@@ -8,14 +8,16 @@
     "startDevWebserverGleitzeitkonto:": "cd webserver && node main.js",
     "startProdWebserverGleitzeitkonto": "cd compressed/webserver && node main.js",
     "publishProject": "npm run publishExtension && npm run publishWebserver",
-    "publishExtension": "node publishExtension.js && npm run combineJS && npm run compressJS && npm run sass-prod && zip-build ./compressed/extension ./compressed/Gleitzeitkonto-Browser --interactive --template unsigned_%NAME%_%VERSION%.%EXT% --override true",
-    "publishWebserver": "node publishWebserver.js && terser Webserver/main.js --comments -o compressed/webserver/main.js && terser Webserver/gleitzeitkonto-api/gleitzeitkonto-api.js --comments -o compressed/webserver/gleitzeitkonto-api/gleitzeitkonto-api.js && npm run buildPKG",
+    "publishExtension": "node publishExtension.js && npm run combineJS && npm run compressJS && npm run sass-prod && npm run zipChromium && npm run zipFirefox",
+    "publishWebserver": "node publishWebserver.js && npm run buildPKG && node publishRenameWebserver.js && npm run zipWebserver",
     "combineJS": "browserify Extension/Gleitzeitkonto-Browser.js > compressed/extension/Gleitzeitkonto-Browser.js",
     "compressJS": "terser compressed/extension/Gleitzeitkonto-Browser.js -c --comments -o compressed/extension/Gleitzeitkonto-Browser.js && terser Extension/Popup/popup-script.js -c -m --comments -o compressed/extension/Popup/popup-script.js",
-    "packageWebserver": "nexe",
+    "zipChromium": "zip-build ./compressed/extension ./compressed/Gleitzeitkonto-Browser-ZIP --interactive --template NICHT-Herunterlden-win-x64-chromium.zip --subDir Chromium Extension --override true",
+    "zipFirefox": "zip-build ./compressed/extension ./compressed/Gleitzeitkonto-Browser-ZIP --interactive --template NICHT-Herunterlden-win-x64-firefox.zip --override true",
     "sass-dev": "sass --watch --update --no-source-map --style=expanded Extension/Popup/Gleitzeitkonto-Browser.scss:Extension/Popup/Gleitzeitkonto-Browser.css",
     "sass-prod": "sass --no-source-map --style=compressed Extension/Popup/Gleitzeitkonto-Browser.scss:compressed/extension/Popup/Gleitzeitkonto-Browser.css",
-    "buildPKG": "pkg ."
+    "buildPKG": "pkg --targets latest-win --out-path ./compressed/packedWebserver ./Webserver/main.js --compress Brotli",
+    "zipWebserver": "zip-build ./compressed/unpackedWebserver ./compressed/Gleitzeitkonto-Browser-ZIP --interactive --template NICHT-Herunterladen-win-x64-webserver-script.zip --override true && zip-build ./compressed/packedWebserver ./compressed/Gleitzeitkonto-Browser-ZIP --interactive --template NICHT-Herunterladen-win-x64-webserver.zip --override true"
   },
   "repository": {
     "type": "git",
@@ -39,11 +41,5 @@
   },
   "dependencies": {
     "puppeteer": "^19.7.2"
-  },
-  "bin": "./Webserver/main.js",
-  "pkg": {
-    "scripts": "./Webserver/main.js",
-    "targets": [ "latest-win" ],
-    "outputPath": "./compressed/webserver"
   }
 }
