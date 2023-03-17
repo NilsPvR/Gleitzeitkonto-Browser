@@ -20,10 +20,11 @@
 
 ' Create Shortcut for startWebserver.vbs in %AppData%\Microsoft\Windows\Start Menu\Programs\Startup\
 ' Inform user about successful installation
+' Start Webserver
 
 ' ----- initialize path and url variables -----
 chromiumURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/Download/NICHT-Herunterlden-win-x64-chromium.zip"
-firefoxURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/Download/NICHT-Herunterlden-win-x64-firefox.zip"
+firefoxURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/Download/NICHT-Herunterlden-win-x64-firefox.xpi"
 packedWebserverURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/Download/NICHT-Herunterlden-win-x64-webserver.zip"
 unpackedWebserverURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/Download/NICHT-Herunterlden-win-x64-webserver-script.zip"
 
@@ -172,8 +173,9 @@ if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then
     objShortcut.WorkingDirectory = installationFolder
     objShortcut.IconLocation = strIcon
     objShortcut.Save
-end if
 
+    CreateObject("Wscript.Shell").Run installationFolder + "\Gleitzeitkonto-Webserver.exe", 0
+end if
 
 
 MsgBox "Installation erfolgreich abgeschlossen", 0, boxTitle
