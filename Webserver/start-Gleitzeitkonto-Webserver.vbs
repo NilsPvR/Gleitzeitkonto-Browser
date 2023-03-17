@@ -1,1 +1,0 @@
-CreateObject("Wscript.Shell").Run "Gleitzeitkonto-Webserver.exe", 0
