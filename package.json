@@ -23,7 +23,7 @@
     "url": "git+https://github.com/NilsPvR/Gleitzeitkonto-Browser.git"
   },
   "author": "NilsPvR",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/NilsPvR/Gleitzeitkonto-Browser/issues"
   },
