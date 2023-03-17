@@ -60,6 +60,7 @@ const waitForDownload = async () => {
 // ===== Webserver =====
 const hostname = 'localhost';
 const port = 35221;
+const version = '0.3.0';
 
 // webserver stuff
 const server = http.createServer(async (request, response) => {
@@ -87,6 +88,10 @@ const server = http.createServer(async (request, response) => {
         case '/waitfordownload':
             response.writeHead(200);
             response.end(await waitForDownload());
+            break;
+        case '/version':
+            response.writeHead(200);
+            response.end(JSON.stringify({ version: version }));
             break;
         default:
             response.writeHead(404);

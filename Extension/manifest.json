@@ -29,7 +29,7 @@
     ],
 
     "permissions": [
-      "*://localhost/*"
+      "*://localhost/*", "https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest"
     ],
 
     "browser_action": {

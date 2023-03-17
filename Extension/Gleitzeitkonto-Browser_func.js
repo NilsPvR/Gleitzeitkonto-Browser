@@ -52,9 +52,10 @@ module.exports = class GleitzeitkontoBrowser {
                 tooManyCSV: 'Zu viele CSV-Dateien im Ordner der API. Bitte Dateien manuell löschen.', // code 3
                 unknownAPI: 'Unbekannter Fehler der API', // code 4
                 unknown: 'Unbekannter Fehler',
-                unknownFetching: 'Unbekannter Fehler beim laden der Daten'
+                unknownFetching: 'Unbekannter Fehler beim laden der Daten',
+                versionOutdated: 'Bitte die Erweiterung aktualisieren!'
             }
-        }
+        };
 
         // Strings defined by external third parties, e.g. Fiori 
         this.givenStrings = {
@@ -68,6 +69,8 @@ module.exports = class GleitzeitkontoBrowser {
             downloadURL: '/downloadWorkingTimes',
             calcaulteURL: '/calculateFromWorkingTimes',
             waitForDownlodURL: '/waitfordownload',
+            versionURL: '/version',
+            githubAPIURL: 'https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest',
         };
     }
 
@@ -80,7 +83,7 @@ module.exports = class GleitzeitkontoBrowser {
             return true;
         }
         return false;
-    }
+    };
 
     // Resolves the promise only once the user is on "Meine Zeiterfassung" page
     // This is done by checking the Hash of the URL (the bit after #)
@@ -124,7 +127,7 @@ module.exports = class GleitzeitkontoBrowser {
         if (kontoData?.error?.message) return this.constStrings.prefixError + kontoData.error.message; // Error occured
         if (!kontoData || !kontoData.kontoString) return this.constStrings.prefixError + this.constStrings.errorMsgs.keineDatenVomServer; // No Data
         else return this.constStrings.prefixOvertime + kontoData.kontoString;
-    }
+    };
 
     async getDownloadKontoData () {
         let response = await this.fetchServer(this.givenStrings.downloadURL);
@@ -168,7 +171,7 @@ module.exports = class GleitzeitkontoBrowser {
             element.append(...content);
         }
         return element;
-    }
+    };
 
     // different styling for loading and inserted bools
     getInnerHTMLElements (pDisplayText, loading, inserted) {
@@ -189,7 +192,7 @@ module.exports = class GleitzeitkontoBrowser {
         const headline = this.createRichElement('h3',{ class: 'gleitzeit-display-line' }, pDisplayText ?? this.constStrings.errorMsgs.unknown);
 
         return [ button, headline ];
-    }
+    };
 
     addFloatingDisplay (pDisplayText, loading) {
         const HTMLElements = this.getInnerHTMLElements(pDisplayText, loading, false);
@@ -208,7 +211,7 @@ module.exports = class GleitzeitkontoBrowser {
 
     getFloatingDisplay () {
         return document.getElementById(this.constStrings.floatingDisplayID);
-    }
+    };
 
     // remove the display
     removeFloatingDisplay () {
@@ -243,7 +246,7 @@ module.exports = class GleitzeitkontoBrowser {
         newDisplay.className = 'inserted-display';        
         if (pDisplayText) this.updateDisplayText(pDisplayText);
        
-    }
+    };
 
     getInsertedDisplay () {
         return document.getElementById(this.constStrings.insertedDisplayID);
@@ -268,7 +271,7 @@ module.exports = class GleitzeitkontoBrowser {
 
         const refreshButton = document.getElementById(this.constStrings.buttonID);
         if (refreshButton) refreshButton.disabled = true;
-    }
+    };
 
 
     stopLoading () {
@@ -281,7 +284,7 @@ module.exports = class GleitzeitkontoBrowser {
 
         const refreshButton = document.getElementById(this.constStrings.buttonID);
         if (refreshButton) refreshButton.disabled = false;
-    }
+    };
 
 
     // updates the loading state once the KontoData has loaded and updates display with kontoData
@@ -293,7 +296,7 @@ module.exports = class GleitzeitkontoBrowser {
             if (loading) this.startLoading();
             else this.stopLoading();
         }
-    }
+    };
 
 
     // works for both display
@@ -304,7 +307,7 @@ module.exports = class GleitzeitkontoBrowser {
         if (display?.item(0) && displayText) {
             display.item(0).innerHTML = displayText;
         }
-    }
+    };
 
     
     // ---------- End Changes on Displays ----------
@@ -312,14 +315,15 @@ module.exports = class GleitzeitkontoBrowser {
 
     // Update the display continuously for as long as the script is loaded
     // It is asumed that the page has already loaded completely
-    updateDisplayOnURLChange (pHeaderBar, pKontoData) {
-        const displayText = this.formatDisplayText(pKontoData);
+    updateDisplayOnURLChange (pHeaderBar, pKontoData, loading, versionOutdated) {
+        let displayText = this.formatDisplayText(pKontoData);
+        if (versionOutdated) displayText = this.constStrings.prefixError + this.constStrings.errorMsgs.versionOutdated;
 
         window.addEventListener('hashchange', () => {
 
             // When correct page is open and the display doesn't already exist
             if (this.checkCorrectMenuIsOpen() && !this.getInsertedDisplay()) {
-                this.addInsertedDisplay(pHeaderBar, displayText, false);
+                this.addInsertedDisplay(pHeaderBar, displayText, loading);
             }
             else if (!this.checkCorrectMenuIsOpen()) {
                 // This will also be removed by Fiori but keep remove just in case this behaviour gets changed
@@ -332,7 +336,7 @@ module.exports = class GleitzeitkontoBrowser {
         const observer = new MutationObserver(() => {
             // When correct page is open and the display doesn't already exist
             if (this.checkCorrectMenuIsOpen() && !this.getInsertedDisplay()) {
-                this.addInsertedDisplay(pHeaderBar, displayText, false);
+                this.addInsertedDisplay(pHeaderBar, displayText, loading);
             }
         });
 
@@ -352,5 +356,36 @@ module.exports = class GleitzeitkontoBrowser {
 
         this.updateDisplay(promiseCalcKontoData, true);
         this.updateDisplay(promiseDownloadKontoData, false);
-    }
+    };
+
+
+    async checkVersionOutdated () {
+        const localBrowserVersion = browser.runtime.getManifest().version;
+
+        let localWebserverVersion = await this.fetchServer(this.givenStrings.versionURL); // get version obj
+        if (localBrowserVersion?.version) localWebserverVersion = localWebserverVersion.version; // get version string out of object
+
+        let onlineVersion;
+        try {
+            onlineVersion = await fetch(this.givenStrings.githubAPIURL); // get latest release data from github
+            onlineVersion = await onlineVersion.json();
+        } catch (e) {
+            console.log(e);
+            return false; // don't compare versions since online version not available
+        }
+        if (onlineVersion?.tag_name) onlineVersion = onlineVersion.tag_name.toLowerCase().replace('v', ''); // get only the number string
+
+        // one of the versions is not available
+        if (typeof onlineVersion != 'string' || !localBrowserVersion  || typeof localWebserverVersion != 'string') return false;
+
+        // compare strings to compare version numbers
+        const resultBrowser = localBrowserVersion.localeCompare(onlineVersion, undefined, { numeric: true, sensitivity: 'base' });
+        const resultWebserver = localWebserverVersion.localeCompare(onlineVersion, undefined, { numeric: true, sensitivity: 'base' });
+
+        if (resultBrowser == -1 || resultWebserver == -1) { // version is outdated
+            return true;
+        }
+        
+        return false;
+    };
 };

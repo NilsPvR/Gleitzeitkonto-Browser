@@ -21,6 +21,7 @@ const time = new GleitzeitkontoBrowser();
 
     const promiseCalcKontoData = time.fetchServer(time.givenStrings.calcaulteURL);
     const promiseDownloadKontoData = time.getDownloadKontoData(); // preload display to save time
+    const versionOutdated = time.checkVersionOutdated(); // preload version
 
     // Only load the rest of the script once the page for 'Zeiterfassung' ist opened
     await time.continuousMenucheck();
@@ -66,7 +67,16 @@ const time = new GleitzeitkontoBrowser();
                 time.moveFloatingToInsertedDisplay(headerBar, document.getElementById(time.constStrings.floatingDisplayID)); // make sure DisplayText loaded
             }
             
-            time.updateDisplayOnURLChange(headerBar, await promiseDownloadKontoData, false);
+            time.updateDisplayOnURLChange(headerBar, await promiseDownloadKontoData, false, await versionOutdated);
+
+            await promiseCalcKontoData; // wait until the display has been added
+            if (await versionOutdated) { // version is outdated
+                time.updateDisplayText(time.constStrings.prefixError + time.constStrings.errorMsgs.versionOutdated);
+
+                const refreshButton = document.getElementById(time.constStrings.buttonID);
+                if (refreshButton) refreshButton.disabled = true; // disable button
+            }
+
         }
         else if (loops > time.config.maxPageloadingLoops) { // page loaded too long or html got changed
             clearInterval(waitForPageLoad);
