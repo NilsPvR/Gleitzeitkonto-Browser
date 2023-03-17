@@ -5,8 +5,7 @@
   "main": "Gleitzeitkonto-Browser.js",
   "scripts": {
     "startTestserver": "node testWebserver.js",
-    "startDevWebserverGleitzeitkonto:": "cd webserver && node main.js",
-    "startProdWebserverGleitzeitkonto": "cd compressed/webserver && node main.js",
+    "startDevWebserverGleitzeitkonto:": "cd Webserver && node main.js",
     "publishProject": "npm run publishExtension && npm run publishWebserver",
     "publishExtension": "node publishExtension.js && npm run combineJS && npm run compressJS && npm run sass-prod && npm run zipChromium && npm run zipFirefox",
     "publishWebserver": "node publishWebserver.js && npm run buildPKG && node publishRenameWebserver.js && npm run zipWebserver",
