@@ -305,7 +305,7 @@ module.exports = class GleitzeitkontoBrowser {
         const display = document.getElementsByClassName('gleitzeit-display-line');
 
         if (display?.item(0) && displayText) {
-            display.item(0).innerHTML = displayText;
+            display.item(0).replaceChildren(displayText);
         }
     };
 
