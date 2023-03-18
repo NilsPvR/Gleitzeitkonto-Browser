@@ -91,7 +91,7 @@ end if
 strWebserverAnswer = InputBox("Bitte w" + ChrW(&H00E4) + "hle, welcher Gleitzeitkonto-Webserver installiert werden soll. (Dieser wird ben" + ChrW(&H00F6) + "tigt." + _
         "Bitte nur abw" + ChrW(&H00E4) + "hlen, wenn bereits installiert.)" + Chr(13) + _
         Chr(13) + _
-        "1: Webserver-Package (Node.js ist nicht installiert)" + Chr(13) + _ 
+        "1: Webserver-Package (Empfohlen)" + Chr(13) + _ 
         "2: Webserver-Node.js-Skript (Node.js ist bereits installiert)" + Chr(13) + _        
         "3: Webserver NICHT installieren", _
     boxTitle, _
@@ -177,5 +177,9 @@ if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then
     CreateObject("Wscript.Shell").Run installationFolder + "\Gleitzeitkonto-Webserver.exe", 0
 end if
 
+if (strWebserverAnswer = "2") then
+    MsgBox "!!!!" + Chr(13) + "Beachte die Installations Hinweise unter 'Nodes.js Webserver':  https://github.com/NilsPvR/Gleitzeitkonto-Browser#nodejs-webserver" + _
+        " um Gleitzeitkonto-Browser final einzurichten." + Chr(13) + "!!!!", 0, boxTitle
+end if
 
 MsgBox "Installation erfolgreich abgeschlossen", 0, boxTitle

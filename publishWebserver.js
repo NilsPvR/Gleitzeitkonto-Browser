@@ -18,6 +18,8 @@ const fs = require('fs');
         fs.copyFileSync('./Webserver/gleitzeitkonto-api/gleitzeitkonto-api.js', './compressed/unpackedWebserver/gleitzeitkonto-api/gleitzeitkonto-api.js');
         fs.copyFileSync('package.json', './compressed/unpackedWebserver/package.json');
 
+        fs.writeFileSync('./compressed/unpackedWebserver/url.json', '""');
+
         console.log('Created folder succesfully!');
     }
     catch (e) {
