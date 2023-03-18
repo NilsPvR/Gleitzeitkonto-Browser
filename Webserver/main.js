@@ -93,6 +93,11 @@ const server = http.createServer(async (request, response) => {
             response.writeHead(200);
             response.end(JSON.stringify({ version: version }));
             break;
+        case '/kill':
+            response.writeHead(200);
+            response.end();
+            if (DEBUG) console.debug('Server über /kill aufruf gestoppt.');
+            process.exit();
         default:
             response.writeHead(404);
             response.end();

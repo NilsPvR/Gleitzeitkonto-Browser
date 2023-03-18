@@ -66,6 +66,15 @@ function unzip(source, target)
     objShell.NameSpace(target).CopyHere(filesInZip) ' extract the items
 end function
 
+sub killWebserver (pstrWebserverAnswer)
+    ' ----- Kill old Webserver if existant -----
+    On Error Resume Next ' define only in sub to ignore error when Webserver not running
+    if (pstrWebserverAnswer = 1 OR pstrWebserverAnswer = 2) then
+        set objHTTP = CreateObject( "WinHttp.WinHttpRequest.5.1" )
+        call objHTTP.open("GET", "http://localhost:35221/kill", False)
+        objHTTP.send
+    end if
+end sub
 
 ' ----- Ask for input -----
 strBrowserAnswer = InputBox("Installation f" + ChrW(&H00FC) + "r Gleitzeitkonto-Browser gestartet!" + ChrW(13) + _
@@ -140,6 +149,8 @@ elseif (strBrowserAnswer = "3") then
     call unzip(fileDir, installationFolder)
     call FSO.DeleteFile(fileDir)
 end if
+
+call killWebserver(strWebserverAnswer)
 
 ' ----- Download Webserver -----
 if (strWebserverAnswer = "1") then
