@@ -129,20 +129,22 @@ if (continueRespone = "2") then
 end if
 
 ' ----- Download Browser Extension -----
-if (strBrowserAnswer = "1") then
+if (strBrowserAnswer = "1") then ' Firefox
     fileDir =  installationFolder + "\" + Split(firefoxURL, "/")(8)
     call download(firefoxURL, fileDir) ' do not unzip for firefox
+    call FSO.MoveFile(fileDir, installationFolder + "\Gleitzeitkonto-Browser-Firefox.xpi") ' rename file
 
-elseif (strBrowserAnswer = "2") then
+elseif (strBrowserAnswer = "2") then ' Chromium
     fileDir = installationFolder + "\" + Split(chromiumURL, "/")(8)
     call download(chromiumURL, fileDir)
     call unzip(fileDir, installationFolder)
     call FSO.DeleteFile(fileDir)
 
     
-elseif (strBrowserAnswer = "3") then
+elseif (strBrowserAnswer = "3") then ' Firefox + Chromium
     fileDir = installationFolder + "\" + Split(firefoxURL, "/")(8)
     call download(firefoxURL, fileDir) ' do not unzip for firefox
+    call FSO.MoveFile(fileDir, installationFolder + "\Gleitzeitkonto-Browser-Firefox.xpi") ' rename file
 
     fileDir = installationFolder + "\" + Split(chromiumURL, "/")(8)
     call download(chromiumURL, fileDir)

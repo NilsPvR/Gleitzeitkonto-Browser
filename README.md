@@ -53,7 +53,17 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 <br>
 
 ### Firefox
-1. Neuen Tab mit `about:addons` öffnen
+1. "Windows-Taste" + "R" (gleichzeitig) drücken
+2. `%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser` eingeben + "OK" klicken
+3. Datei mit dem Namen: "Gleitzeitkonto-Browser-Firefox.xpi" öffnen
+4. Firefox zum Öffnen wählen + "OK" klicken
+5. "Hinzufügen" klicken in Firefox
+6. Fertig! 🥳
+
+<img alt="Erweiterungsdatei mit Firefox öffnen" src="Assets/Firefox-easy-installation.png" style="height: 300px; margin-left: 1.7rem">
+
+<details><summary><b>❓ Die Datei lässt sich nicht mit Firefox öffnen</b></summary>
+1. In Firefox neuen Tab mit `about:addons` öffnen
 2. Links "Erweiterungen" auswählen
 3. "Erweiterungen verwalten" Einstellungsrad klicken
 4. "Add-on aus Datei installieren..." klicken
@@ -61,12 +71,13 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 <img src="./Assets/firefox-installation.png" style="margin-left: 1.7rem" alt="Installation in Firefox">
 
 
-5. In die Adressleiste `%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser` eingeben und "NICHT-Herunterlden-win-x64-firefox.xpi" auswählen
+5. In die Adressleiste `%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser` eingeben und "Gleitzeitkonto-Browser-Firefox.xpi" auswählen
 6. "Öffnen" klicken
 7. Fertig! 🥳
+</details>
 
 ### Chrome
-1. Neuen Tab mit `about:extensions` öffnen
+1. In Chrome neuen Tab mit `about:extensions` öffnen
 2. Rechts "Entwicklermodus" aktivieren
 3. "Entpackte Erweiterung laden" klicken
 
@@ -77,7 +88,7 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 3. Fertig! 🥳
 
 ### Edge
-1. Neuen Tab mit `about:extensions` öffnen
+1. In Edge neuen Tab mit `about:extensions` öffnen
 2. Links "Entwicklermodus" aktivieren
 3. "Entpackte Dateien laden" klicken
 
