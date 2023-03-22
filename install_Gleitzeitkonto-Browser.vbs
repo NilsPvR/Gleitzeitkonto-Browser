@@ -23,10 +23,10 @@
 ' Start Webserver
 
 ' ----- initialize path and url variables -----
-chromiumURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/Download/NICHT-Herunterlden-win-x64-chromium.zip"
-firefoxURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/Download/NICHT-Herunterlden-win-x64-firefox.xpi"
-packedWebserverURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/Download/NICHT-Herunterlden-win-x64-webserver.zip"
-unpackedWebserverURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/Download/NICHT-Herunterlden-win-x64-webserver-script.zip"
+chromiumURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/NICHT-Herunterladen-win-x64-chromium.zip"
+firefoxURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/NICHT-Herunterladen-win-x64-firefox.xpi"
+packedWebserverURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/NICHT-Herunterladen-win-x64-webserver.zip"
+unpackedWebserverURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/NICHT-Herunterladen-win-x64-webserver-script.zip"
 
 set objWShell = CreateObject("WScript.Shell")
 userprofile = objWShell.ExpandEnvironmentStrings("%userprofile%")
@@ -63,7 +63,7 @@ function unzip(source, target)
     set objShell = CreateObject("Shell.Application")
 
     set filesInZip = objShell.NameSpace(source).Items ' get all items in zip
-    objShell.NameSpace(target).CopyHere(filesInZip) ' extract the items
+    call objShell.NameSpace(target).CopyHere(filesInZip, &H14&) ' extract the items
 end function
 
 sub killWebserver (pstrWebserverAnswer)
@@ -132,7 +132,12 @@ end if
 if (strBrowserAnswer = "1") then ' Firefox
     fileDir =  installationFolder + "\" + Split(firefoxURL, "/")(8)
     call download(firefoxURL, fileDir) ' do not unzip for firefox
-    call FSO.MoveFile(fileDir, installationFolder + "\Gleitzeitkonto-Browser-Firefox.xpi") ' rename file
+
+    oldFirefoxXPI = installationFolder + "\Gleitzeitkonto-Browser-Firefox.xpi"
+    if (FSO.FileExists(oldFirefoxXPI)) then ' if old file available delete it
+        call FSO.DeleteFile(oldFirefoxXPI)
+    end if
+    call FSO.MoveFile(fileDir, oldFirefoxXPI) ' rename download file
 
 elseif (strBrowserAnswer = "2") then ' Chromium
     fileDir = installationFolder + "\" + Split(chromiumURL, "/")(8)
@@ -144,7 +149,12 @@ elseif (strBrowserAnswer = "2") then ' Chromium
 elseif (strBrowserAnswer = "3") then ' Firefox + Chromium
     fileDir = installationFolder + "\" + Split(firefoxURL, "/")(8)
     call download(firefoxURL, fileDir) ' do not unzip for firefox
-    call FSO.MoveFile(fileDir, installationFolder + "\Gleitzeitkonto-Browser-Firefox.xpi") ' rename file
+
+    oldFirefoxXPI = installationFolder + "\Gleitzeitkonto-Browser-Firefox.xpi"
+    if (FSO.FileExists(oldFirefoxXPI)) then ' if old file available delete it
+        call FSO.DeleteFile(oldFirefoxXPI)
+    end if
+    call FSO.MoveFile(fileDir, oldFirefoxXPI) ' rename download file
 
     fileDir = installationFolder + "\" + Split(chromiumURL, "/")(8)
     call download(chromiumURL, fileDir)
@@ -187,6 +197,9 @@ if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then
     objShortcut.IconLocation = strIcon
     objShortcut.Save
 
+end if
+
+if (strWebserverAnswer = "1") then
     CreateObject("Wscript.Shell").Run installationFolder + "\Gleitzeitkonto-Webserver.exe", 0
 end if
 
