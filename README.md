@@ -63,17 +63,16 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 <img alt="Erweiterungsdatei mit Firefox öffnen" src="Assets/Firefox-easy-installation.png" style="height: 300px; margin-left: 1.7rem">
 
 <details><summary><b>❓ Die Datei lässt sich nicht mit Firefox öffnen</b></summary>
-1. In Firefox neuen Tab mit `about:addons` öffnen
-2. Links "Erweiterungen" auswählen
-3. "Erweiterungen verwalten" Einstellungsrad klicken
-4. "Add-on aus Datei installieren..." klicken
-   
-<img src="./Assets/firefox-installation.png" style="margin-left: 1.7rem" alt="Installation in Firefox">
-
-
-5. In die Adressleiste `%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser` eingeben und "Gleitzeitkonto-Browser-Firefox.xpi" auswählen
-6. "Öffnen" klicken
-7. Fertig! 🥳
+<ol>
+    <li>In Firefox neuen Tab mit `about:addons` öffnen</li>
+    <li>Links "Erweiterungen" auswählen</li>
+    <li>"Erweiterungen verwalten" Einstellungsrad klicken</li>
+    <li>"Add-on aus Datei installieren..." klicken</li>
+    <img src="./Assets/firefox-installation.png" alt="Installation in Firefox">
+    <li>In die Adressleiste `%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser` eingeben und "Gleitzeitkonto-Browser-Firefox.xpi" auswählen</li>
+    <li>"Öffnen" klicken</li>
+    <li>Fertig! 🥳</li>
+</ul>
 </details>
 
 ### Chrome
@@ -102,14 +101,14 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 <hr>
 
 ## 1. Manuell (alternativ)
-Gleitzeitkonto-Browser kann auch manuell installiert werden. Die Dateien, die unter [releases](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases) nicht heruntergeladen werden sollen müssen hierfür heruntergeladen werden. Bei vorhandener Node.js Installation kann die webserver-script.zip, ansonsten die webserver.zip Datei, heruntergeladen werden. Die Dateien nun in ein gewünschtes Verzeichnis extrahieren.<br>
+Gleitzeitkonto-Browser kann auch manuell installiert werden. Die Dateien, die unter [releases](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases) nicht heruntergeladen werden sollen müssen hierfür heruntergeladen werden. Bei vorhandener Node.js Installation kann die webserver-script.zip, ansonsten die webserver.zip Datei, heruntergeladen werden. Die Dateien nun in ein gewünschtes Verzeichnis extrahieren. Bei der Skript-Version [erweiterte Schritte](#experten---nodejs-webserver) beachten.<br>
 Das vbscript "start-Gleitzeitkonto-Webserver" kann dazu verwendet werden um den Webserver zu starten. Es kann hierfür eine Verknüpfung erstellt werden, um diese in den Autostart zu legen.
 
 Für die Erweiterung muss die entsprechende .zip oder .xpi Datei heruntergeladen werden. Für Chromium-Browser muss die zip Datei entpackt werden. Für Firefox die .xpi Datei unverändert lassen. Die Dateien können in ein beliebiges Verzeichnis gelegt werden. Anschließend [Hinzufügen der Erweiterung](#2-hinzufügen-der-erweiterung) folgen, mit angepasstem Pfad.
 <br><br>
 
-## Node.js Webserver
-Wenn der Webserver mit vorhandener Node.js Installation verwendet werden soll muss eine URL hinzugefügt werden. Hierzu folgende Schritte befolgen:
+## Experten - Node.js Webserver
+Diese Schritte nur folgen, wenn bei der Installation "Hintergrund-Node.js-Skript" ausgewählt wurde. Zunächst muss [Node.js](https://nodejs.org/) auf dem PC installiert sein. Damit der Hintergrund-Prozess (Webserver) funktionieren kann, muss eine URL hinzugefügt werden:
 1. "Windows-Taste" + "R" (gleichzeitig) drücken
 2. `%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser` eingeben
 3. Die Datei "url.json" öffnen
@@ -117,11 +116,13 @@ Wenn der Webserver mit vorhandener Node.js Installation verwendet werden soll mu
    ```"https://abc.cdef.domain.com:1234/bla/bla/bla#btccatstime-display"```
 5. Speichern + Schließen
 6. Im selben Ordner "start-Gleitzeitkonto-Webserver.vbs" ausführen, um den Webserver zu starten
+7. Der Webserver sollte nun unter [http://localhost:35221](http://localhost:35221) erreichbar sein
 
 # Funktionsweise
 
-Die Gleitzeitkonto-API verwendet [Node.js](https://nodejs.org/). Eine Browser-Erweiterung, bzw. einfach ein Javascript Skript im Browser, hat jeodch keinen Zugriff auf lokale Dateien auf dem Computer und kann auch keine Node-Scripts laufen lassen. Aus diesem Grund ist es nicht möglich direkt auf die API zuzugreifen. Um die Daten von der API zu erhalten muss ein lokaler Webserver eingerichtet werden (eine Webseite wie "wikipedia.org" nur lokal). Der Webserver verwendet die API und stellt die Daten dann über Webrequests (Aufrufe der Seite) zur Verfügung. Dies kann auch nachvollzogen werden indem die [lokale Seite](http://localhost:35221) aufgerufen wird. Zur Funktionsweise der API kann die [README](https://github.com/julius-boettger/gleitzeitkonto-api#readme) des repos gelesen werden.<br>
-Die Browser-Erweiterung ruft den lokalen Webserver auf und erhält hierüber die Daten zum Gleitzeitkonto. Diese werden dann im Popup und auf der Fiori-Seite angezeigt. Die Browser-Erweiterung kann also nicht ohne den Webserver funktionieren.
+Die Gleitzeitkonto-API (wird zur Berechnung benötigt) verwendet [Node.js](https://nodejs.org/). Eine Browser-Erweiterung, bzw. einfach ein Javascript Skript im Browser, hat jeodch keinen Zugriff auf lokale Dateien auf dem Computer und kann auch keine Node-Scripts laufen lassen. Aus diesem Grund ist es nicht möglich direkt auf die API zuzugreifen. Um die Daten von der API zu erhalten muss ein Hintergrund-Programm (ein lokaler Webserver) eingerichtet werden. Ein Webserver ist eine Webseite wie "wikipedia.org" nur läuft diese lokal, auf dem PC. Der Webserver verwendet die API und stellt die Daten dann über Webrequests (Aufrufe der Seite) zur Verfügung. Dies kann auch nachvollzogen werden indem die [lokale Seite](http://localhost:35221) aufgerufen wird. <br>
+Zur Funktionsweise der API kann die [README](https://github.com/julius-boettger/gleitzeitkonto-api#readme) des repos gelesen werden.<br>
+Die Browser-Erweiterung ruft den lokalen Webserver auf und erhält hierüber die Daten zum Gleitzeitkonto. Diese werden dann im Popup und auf der Fiori-Seite angezeigt. Die Browser-Erweiterung kann also nicht ohne das Hintergrund-Programm / den Webserver funktionieren.
 
 Der Webserver muss kontinuierlich im Hintergrund laufen. Es ist leider nicht möglich, um den Webserver nur bei Bedarf von der Browser-Erweiterung heruas zu starten. Für den Webserver läuft ein Hintergrund Prozess, den man im Task-Manager unter "Details" mit dem Namen "Gleitzeitkonto-Webserver.exe" bzw. "node.exe" finden kann. Hierzu wird normalerweise ca. 20 - 40 MB RAM verbraucht. Solange der Webserver nicht aufgerufen wird, wird jedoch die CPU nicht (nur minimal) verwendet.<br>
 

@@ -13,7 +13,7 @@
     ' Webserver folder
         ' Gleitzeitkonto-Webserver.exe
         ' Startup Script
-    ' Extension folder
+    ' Erweiterung folder
         ' Assets
         ' Popup
         ' ....
@@ -42,7 +42,7 @@ if not (FSO.FolderExists(installationFolder)) then
 end if
 
 ' ----- Subs Download and Unzip -----
-function download (url, fileDir)
+sub download (url, fileDir)
     set objHTTP = CreateObject( "WinHttp.WinHttpRequest.5.1" )
     call objHTTP.open("GET", url, False)
     objHTTP.send
@@ -57,19 +57,19 @@ function download (url, fileDir)
         .write objHTTP.responseBody
         .savetofile fileDir, 2 'overwrite
     end with
-end function
+end sub
 
-function unzip(source, target)
+sub unzip(source, target)
     set objShell = CreateObject("Shell.Application")
 
     set filesInZip = objShell.NameSpace(source).Items ' get all items in zip
     call objShell.NameSpace(target).CopyHere(filesInZip, &H14&) ' extract the items
-end function
+end sub
 
 sub killWebserver (pstrWebserverAnswer)
     ' ----- Kill old Webserver if existant -----
     On Error Resume Next ' define only in sub to ignore error when Webserver not running
-    if (pstrWebserverAnswer = 1 OR pstrWebserverAnswer = 2) then
+    if (pstrWebserverAnswer = "1" OR pstrWebserverAnswer = "2") then
         set objHTTP = CreateObject( "WinHttp.WinHttpRequest.5.1" )
         call objHTTP.open("GET", "http://localhost:35221/kill", False)
         objHTTP.send
@@ -77,49 +77,67 @@ sub killWebserver (pstrWebserverAnswer)
 end sub
 
 ' ----- Ask for input -----
-strBrowserAnswer = InputBox("Installation f" + ChrW(&H00FC) + "r Gleitzeitkonto-Browser gestartet!" + ChrW(13) + _
+function askBrowser ()
+    strBrowserAnswer = InputBox("Installation f" + ChrW(&H00FC) + "r Gleitzeitkonto-Browser gestartet!" + ChrW(13) + _
         Chr(13) + _
-        "Bitte w" + ChrW(&H00E4) + "hle f" + ChrW(&H00FC) + "r welchen Browser du die Extension installieren m" + _
+        "Bitte w" + ChrW(&H00E4) + "hle f" + ChrW(&H00FC) + "r welchen Browser du die Erweiterung installieren m" + _
         ChrW(&H00F6) + "chtest:" + Chr(13) + _
         "1: Firefox" + Chr(13) + _
         "2: Chrome/Edge (Chromium)" + Chr(13) + _ 
         "3: Mehrere Browser" + Chr(13) + _
-        "4: Keine Extension installieren", _
+        "4: Keine Erweiterung installieren", _
     boxTitle, _
     "Zahl eingeben")
 
-if (strBrowserAnswer = "") then
-    MsgBox "Installation abgebrochen.", 0, boxTitle
-    Wscript.Quit
-elseif NOT (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3" OR strBrowserAnswer = "4") then
-    MsgBox "'" + strBrowserAnswer + "' ist eine ung" + ChrW(&H00FC) + "ltige Eingabe. Installation wird abgebrochen", 0, boxTitle
-    Wscript.Quit
-end if
+    if (strBrowserAnswer = "") then
+        MsgBox "Installation abgebrochen.", 0, boxTitle
+        Wscript.Quit
+    elseif NOT (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3" OR strBrowserAnswer = "4") then
+        MsgBox "'" + strBrowserAnswer + "' ist eine ung" + ChrW(&H00FC) + "ltige Eingabe.", 0, boxTitle
+        askBrowser = askBrowser()
+    end if
 
+    askBrowser = strBrowserAnswer
+end function
 
-strWebserverAnswer = InputBox("Bitte w" + ChrW(&H00E4) + "hle, welcher Gleitzeitkonto-Webserver installiert werden soll. (Dieser wird ben" + ChrW(&H00F6) + "tigt." + _
-        "Bitte nur abw" + ChrW(&H00E4) + "hlen, wenn bereits installiert.)" + Chr(13) + _
+function askWebserver ()
+    strWebserverAnswer = InputBox("Gleitzeitkonto-Browser ben" + ChrW(&H00F6) + "tigt einen Hintergrund-Prozess (Webserver) zum Funktionieren." + Chr(13) + _
         Chr(13) + _
-        "1: Webserver-Package (Empfohlen)" + Chr(13) + _ 
-        "2: Webserver-Node.js-Skript (Node.js ist bereits installiert)" + Chr(13) + _        
-        "3: Webserver NICHT installieren", _
+        "Welche Version soll installiert werden?" + _
+        " (Nur abw" + ChrW(&H00E4) + "hlen, wenn bereits installiert)" + Chr(13) + _
+        Chr(13) + _
+        "1: Hintergrund-Package (Empfohlen)" + Chr(13) + _
+        "2: Hintergrund-Node.js-Skript (f" + ChrW(&H00FC) + "r Experten)" + Chr(13) + _
+        "3: Hintergrund-Prozess NICHT installieren", _
     boxTitle, _
     "1")
 
-if (strWebserverAnswer = "") then
-    MsgBox "Installation abgebrochen.", 0, boxTitle
-    Wscript.Quit
-elseif NOT (strWebserverAnswer = "1" OR strWebserverAnswer = "2" OR strWebserverAnswer = "3") then
-    MsgBox "'" + strWebserverAnswer + "' ist eine ung" + ChrW(&H00FC) + "ltige Eingabe. Installation wird abgebrochen", 0, boxTitle
-    Wscript.Quit
-end if
+    if (strWebserverAnswer = "") then
+        MsgBox "Installation abgebrochen.", 0, boxTitle
+        Wscript.Quit
+    elseif NOT (strWebserverAnswer = "1" OR strWebserverAnswer = "2" OR strWebserverAnswer = "3") then
+        MsgBox "'" + strWebserverAnswer + "' ist eine ung" + ChrW(&H00FC) + "ltige Eingabe.", 0, boxTitle
+        askWebserver = askWebserver()
+    end if
+
+    askWebserver = strWebserverAnswer
+end function
+
+strBrowserAnswer = askBrowser()
+strWebserverAnswer = askWebserver()
+
 
 strInstallParts = ""
-if (strBrowserAnswer = "1") then strInstallParts = strInstallParts + Chr(13) + "- Browser-Extension Firefox"
-if (strBrowserAnswer = "2") then strInstallParts = strInstallParts + Chr(13) + "- Browser-Extension Chrome/Edge (Chromium)"
-if (strBrowserAnswer = "3") then strInstallParts = strInstallParts + Chr(13) + "- Browser-Extension Firefox + Chrome/Edge (Chromium)"
-if (strWebserverAnswer = "1") then strInstallParts = strInstallParts + Chr(13) + "- Webserver-Package"
-if (strWebserverAnswer = "2") then strInstallParts = strInstallParts + Chr(13) + "- Webserver-Node.js-Skript"
+if (strBrowserAnswer = "1") then strInstallParts = strInstallParts + Chr(13) + "- Browser-Erweiterung Firefox"
+if (strBrowserAnswer = "2") then strInstallParts = strInstallParts + Chr(13) + "- Browser-Erweiterung Chrome/Edge (Chromium)"
+if (strBrowserAnswer = "3") then strInstallParts = strInstallParts + Chr(13) + "- Browser-Erweiterung Firefox + Chrome/Edge (Chromium)"
+if (strWebserverAnswer = "1") then strInstallParts = strInstallParts + Chr(13) + "- Hintergrund-Package"
+if (strWebserverAnswer = "2") then strInstallParts = strInstallParts + Chr(13) + "- Hintergrund-Node.js-Skript"
+
+if (strBrowserAnswer = "4" and strWebserverAnswer = "3") then' nothing to install
+    MsgBox "Es wurden keine Komponenten zum Installieren ausgew" + ChrW(&H00E4) + "hlt. Installation wird beendet.", 0, boxTitle
+    Wscript.Quit
+end if
 
 continueRespone = MsgBox("Folgende Komponenten werden installiert:" + Chr(13) + strInstallParts + Chr(13) + Chr(13) + "Fortfahren?", "1", boxTitle)
 
@@ -128,7 +146,7 @@ if (continueRespone = "2") then
     Wscript.Quit
 end if
 
-' ----- Download Browser Extension -----
+' ----- Download Browser Erweiterung -----
 if (strBrowserAnswer = "1") then ' Firefox
     fileDir =  installationFolder + "\" + Split(firefoxURL, "/")(8)
     call download(firefoxURL, fileDir) ' do not unzip for firefox
@@ -203,9 +221,16 @@ if (strWebserverAnswer = "1") then
     CreateObject("Wscript.Shell").Run installationFolder + "\Gleitzeitkonto-Webserver.exe", 0
 end if
 
+
+' ===== Installation finished =====
 if (strWebserverAnswer = "2") then
-    MsgBox "!!!!" + Chr(13) + "Beachte die Installations Hinweise unter 'Nodes.js Webserver':  https://github.com/NilsPvR/Gleitzeitkonto-Browser#nodejs-webserver" + _
-        " um Gleitzeitkonto-Browser final einzurichten." + Chr(13) + "!!!!", 0, boxTitle
+        openLinkAnswer = MsgBox("!!!!" + Chr(13) + "Beachte die Installations Hinweise unter 'Experten - Nodes.js Webserver':  https://github.com/NilsPvR/Gleitzeitkonto-Browser#experten---nodejs-webserver" + _
+        " um Gleitzeitkonto-Browser final einzurichten." + Chr(13) + "!!!!" + Chr(13) + _
+        Chr(13) + "Website " + ChrW(&H00F6) + "ffnen?", 4, boxTitle)
+
+    if (openLinkAnswer = "6") then ' yes
+        CreateObject("WScript.Shell").Run("https://github.com/NilsPvR/Gleitzeitkonto-Browser#experten---nodejs-webserver"), 0 ' open website
+    end if
 end if
 
 MsgBox "Installation erfolgreich abgeschlossen", 0, boxTitle
