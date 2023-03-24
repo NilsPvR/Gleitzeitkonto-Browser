@@ -127,29 +127,26 @@
 
 
 <script language="VBScript">
-    ' This script is an installation for the Gleitzeitkonto-Browser and does summed up the following
+    ' This takes care of the installation for Gleitzeitkonto-Browser and does summed up the following
 
-    ' Ask Users for which Browser he is installing: option 1: Firefox, option 2: Chrome, Edge (Chromium), option 3: multiple
-    ' Ask User which Webserver he is installing: option 1: packed, option 2: unpacked, option 3: none
+    ' Await user input for which Browser they are installing:
+        ' option 1: Firefox, option 2: Chrome, Edge (Chromium), option 3: multiple, option 4: none
+    ' Await user input which webserver they are installing:
+        ' option 1: packed, option 2: unpacked, option 3: none
     ' Confirm installation parts
+        ' cancel or continue
 
-    ' Download zip file from Github to %Local AppData%/Programs/Gleitzeitkonto-Browser
-    ' https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/Download/NICHT-Herunterlden-win-x64-chromium.zip
-    ' https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/Download/NICHT-Herunterlden-win-x64-firefox.zip
-    ' https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/Download/NICHT-Herunterlden-win-x64-webserver.zip
+    ' Download zip files from Github to %Local AppData%/Programs/Gleitzeitkonto-Browser
+    '   see chromiumURL, firefoxURL, packedWebserverURL, unpackedWebserverULR
 
-    ' Extract zip contents
-        ' Webserver folder
-            ' Gleitzeitkonto-Webserver.exe
-            ' Startup Script
-        ' Erweiterung folder
-            ' Assets
-            ' Popup
-            ' ....
+    ' Extract zip contents for Webserver (if selected)
+    ' Extract zip contents for Chromium-Extension (if selected)
+    ' When unpacked is selected link to extended instructions
 
     ' Create Shortcut for startWebserver.vbs in %AppData%\Microsoft\Windows\Start Menu\Programs\Startup\
-    ' Inform user about successful installation
     ' Start Webserver
+    ' Inform user about successful installation
+    
 
     ' ----- initialize path and url variables -----
     chromiumURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/NICHT-Herunterladen-win-x64-chromium.zip"
@@ -157,7 +154,9 @@
     packedWebserverURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/NICHT-Herunterladen-win-x64-webserver.zip"
     unpackedWebserverURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/NICHT-Herunterladen-win-x64-webserver-script.zip"
 
+    ' set shell obj
     set objWShell = CreateObject("WScript.Shell")
+
     userprofile = objWShell.ExpandEnvironmentStrings("%userprofile%")
     localPrograms = userprofile + "\AppData\Local\Programs"
     installationFolder = localPrograms + "\Gleitzeitkonto-Browser"
@@ -165,18 +164,24 @@
 
     boxTitle = "Gleitzeitkonto-Browser"
 
+    
+
 
     ' ----- Subs Download, Unzip and Killwebserver -----
+
+    ' Downloads a file from the given URL and writes the content into the given fileDir.
+    ' @param url        string  URL to download from
+    ' @parma fileDir    string  path to a file location to save the downloaded file (with file name and extension)
     sub download (url, fileDir)
         set objHTTP = CreateObject( "WinHttp.WinHttpRequest.5.1" )
         call objHTTP.open("GET", url, False)
-        objHTTP.send
+        objHTTP.send ' send request
 
         set objFSO = CreateObject("Scripting.FileSystemObject")
         dim bStrm: set bStrm = Createobject("Adodb.Stream")
 
 
-        with bStrm
+        with bStrm ' save response of request in file
             .type = 1 ' binary
             .open
             .write objHTTP.responseBody
@@ -184,6 +189,9 @@
         end with
     end sub
 
+    ' Unzips a given zip file. 
+    ' @param source     string  path of the zip file to be unzipped
+    ' @param target     string  path for the contents to be placed
     sub unzip(source, target)
         set objShell = CreateObject("Shell.Application")
 
@@ -191,6 +199,9 @@
         call objShell.NameSpace(target).CopyHere(filesInZip, &H14&) ' extract the items
     end sub
 
+    ' Sends a webrequest to the kill subdomain of the Gleitzeitkont-Webserver. Will only send
+    ' if the given param is 1 or 2
+    ' @param    pstrWebserverAnswer string  will send the request if the string is "1" or "2"
     sub killWebserver (pstrWebserverAnswer)
         ' ----- Kill old Webserver if existant -----
         On Error Resume Next ' define only in sub to ignore error when Webserver not running
@@ -201,15 +212,19 @@
         end if
     end sub
 
-    ' ----->> Events <<-----
+    ' =====>> Events <<=====
 
+    ' ----- Install Button clicked -----
     sub submitBtn_onClick
+        ' get answer for browser
         browserElements = Window.browser.SelectedIndex
         strBrowserAnswer = Window.browser.Options(browserElements).Value
 
+        ' get answer for webserver
         webserverElements = Window.webserver.SelectedIndex
         strWebserverAnswer = Window.webserver.Options(webserverElements).Value
 
+        ' validate Browser answer
         if (strBrowserAnswer = "") then
             errorField.innerHTML = "Bitte eine Option für den Browser auswählen."
             exit sub
@@ -218,6 +233,8 @@
             exit sub
         end if
 
+
+        ' validate webserver answer
         if (strWebserverAnswer = "") then
             errorField.innerHTML = "Bitte eine Option für den Hintergrund-Prozess auswählen"
             exit sub
@@ -225,14 +242,16 @@
             errorField.innerHTML = "'" + strWebserverAnswer + "' ist eine ungültige Eingabe für den Hintergrund-Prozess."
             exit sub
         end if
+
         if (strBrowserAnswer = "4" and strWebserverAnswer = "3") then' nothing to install
             errorField.innerHTML = "Es wurden keine Komponenten zum Installieren ausgewählt."
             exit sub
         end if
 
-        ' everything went fine so remove any error messages
+        ' everything went fine so remove any possible previous error messages
         errorField.innerHTML = ""
 
+        ' ----- Confirm parts to be installed -----
         strInstallParts = ""
         if (strBrowserAnswer = "1") then strInstallParts = strInstallParts + Chr(13) + "- Browser-Erweiterung Firefox"
         if (strBrowserAnswer = "2") then strInstallParts = strInstallParts + Chr(13) + "- Browser-Erweiterung Chrome/Edge (Chromium)"
@@ -243,19 +262,22 @@
 
         continueRespone = MsgBox("Folgende Komponenten werden installiert:" + Chr(13) + strInstallParts + Chr(13) + Chr(13) + "Fortfahren?", "1", boxTitle)
 
-        if (continueRespone = "2") then 
+        if (continueRespone = "2") then ' cancelled
             MsgBox "Installation abgebrochen", 0, boxTitle
             self.close()
             exit sub
         end if
 
+
         ' ----- Start Installation -----
+        ' create installation folder is not already present
         set FSO = CreateObject("Scripting.FileSystemObject")
         if not (FSO.FolderExists(installationFolder)) then
             FSO.CreateFolder(installationFolder)
         end if
 
-        ' ----- Download Browser Erweiterung -----
+
+        ' ----- Download Browser Extension -----
         if (strBrowserAnswer = "1") then ' Firefox
             fileDir =  installationFolder + "\" + Split(firefoxURL, "/")(8)
             call download(firefoxURL, fileDir) ' do not unzip for firefox
@@ -289,7 +311,9 @@
             call FSO.DeleteFile(fileDir)
         end if
 
+        ' end webserver so no issues with overwriting files which are in use
         call killWebserver(strWebserverAnswer)
+
 
         ' ----- Download Webserver -----
         if (strWebserverAnswer = "1") then
@@ -309,8 +333,9 @@
             call FSO.DeleteFile(fileDir, true)
         end if
 
+
         ' ----- Create Shortcut for Webserver Startup -----
-        if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then
+        if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then ' when webserver is getting installed
             
             strProgramTitle = "Start Gleitzeitkonto-Webserver"
             strProgram = installationFolder + "\start-Gleitzeitkonto-Webserver.vbs"
@@ -326,31 +351,35 @@
 
         end if
 
-        if (strWebserverAnswer = "1") then
-            CreateObject("Wscript.Shell").Run installationFolder + "\Gleitzeitkonto-Webserver.exe", 0
+        ' ----- Start webserver -----
+        if (strWebserverAnswer = "1") then ' when packed version is selected
+            objWShell.Run installationFolder + "\Gleitzeitkonto-Webserver.exe", 0
         end if
 
 
         ' ----- Installation finished -----
+        ' show additional instructions for unpacked/script webserver
         if (strWebserverAnswer = "2") then
             openLinkAnswer = MsgBox("!!!!" + Chr(13) + "Beachte die Installations Hinweise unter 'Experten - Nodes.js Webserver':  https://github.com/NilsPvR/Gleitzeitkonto-Browser#experten---nodejs-webserver" + _
             " um Gleitzeitkonto-Browser final einzurichten." + Chr(13) + "!!!!" + Chr(13) + _
             Chr(13) + "Website " + ChrW(&H00F6) + "ffnen?", 4, boxTitle)
 
-            if (openLinkAnswer = "6") then ' yes
-                CreateObject("WScript.Shell").Run("https://github.com/NilsPvR/Gleitzeitkonto-Browser#experten---nodejs-webserver"), 0 ' open website
+            if (openLinkAnswer = "6") then ' yes clicked
+                objWShell.Run("https://github.com/NilsPvR/Gleitzeitkonto-Browser#experten---nodejs-webserver"), 0 ' open website
             end if
         end if
 
         MsgBox "Installation erfolgreich abgeschlossen", 0, boxTitle
-        self.close()
+        self.close() ' close the hta window
     end sub
 
-
+    ' ----- Help Button for Browser clicked -----
     sub browserHelpBtn_onClick
         MsgBox "'Gleitzeitkonto-Browser' ist eine Erweiterung für den Browser. Bitte wähle für welchen Browser die Erweiterung installiert werden soll.", 0, boxTitle
     end sub
 
+
+    ' ----- Help Button for Webserver clicked -----
     sub webserverHelpBtn_onClick
         MsgBox "Gleitzeitkonto-Browser benötigt einen Hintergrund-Prozess zum Funktionieren (Infos auf Github)." + Chr(13) + _
             Chr(13) + _
@@ -358,8 +387,9 @@
             "wenn dieser bereits installiert und nicht geupdated werden soll.", 0, boxTitle
     end sub
 
+    ' ----- Github Link clicked -----
     sub githubBtn_onClick
-        CreateObject("WScript.Shell").Run("https://github.com/NilsPvR/Gleitzeitkonto-Browser"), 0 ' open website
+        objWShell.Run("https://github.com/NilsPvR/Gleitzeitkonto-Browser"), 0 ' open website
     end sub
 
 </script>
