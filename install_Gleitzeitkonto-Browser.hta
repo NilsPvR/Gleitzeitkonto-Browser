@@ -15,57 +15,116 @@
     body {
         background-color: #222222;
         color: #00aab4;
+        font-family: Roobert BTC;
     }
     tr {
         margin-bottom: 7px;
+    }
+    h3 {
+        width: 100%;
+        text-align: center;
+    }
+
+    .btn {
+        background-color: #484e5b;
+        border-radius: 5px;
+        padding-top: 4px !important;
+        color: #00aab4;
+    }
+    .btn:hover {
+        background-color: #6a7285;
+    }
+
+
+    .customSelect {
+        background-color: #484e5b;
+        color: #00aab4;
+        border: none;
+    }
+
+
+    .helpBtn {
+        margin-left: 5px;
+    }
+    .installBtn {
+        width: 100px;
+        margin-top: 10px;
+        position: relative;
+        left: 50%;
+        margin: -50px 0 0 -50px;
+        margin-top: 15px;
+    }
+    .githubLink {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+    }
+    .resetBtn {
+        border-width: 0;
+        font-family: inherit;
+        font-size: inherit;
+        font-style: inherit;
+        font-weight: inherit;
+    }
+    .errorField {
+        margin-left: 10px;
+        font-family: serif;
+        color: red;
     }
 </style>
 
 <body>
 <div id="mainFrame">
-    <h3><strong>Gleitzeitkonto-Browser</strong></h3>
+    <h3><b>Gleitzeitkonto-Browser</b></h3>
     <p>
-        Installation für Gleitzeitkonto Browser gerstartet!<br>
+        <i>Installation für Gleitzeitkonto-Browser gerstartet ...</i><br>
         <br>
         Bitte wähle für welchen Browser die Erweiterung installiert werden soll und welche Version des Hintergrund-Prozesses installiert werden soll:
     </p>
+    <p class="errorField" id="errorField"></p>
 
     <table id="installTable">
         <tr>
-            <td><label>Browser:</label></td>
+            <td><label><b>Browser:</b></label></td>
             <td>
-                <select required name="browser">
+                <select class="customSelect" required="true" name="browser" style="width: 100%;">
                     <option value="" disabled=true selected=true>-- auswählen --</option>
                     <option value="1">Firefox</option>
                     <option value="2">Chrome/Edge (Chromium)</option>
                     <option value="3">Mehrere Browser</option>
-                    <option value="4">Keine Erweiterung installieren</option>
+                    <option value="4">NICHT installieren</option>
                 </select>
             </td>
+            <td><input type="button" class="btn resetBtn helpBtn" name="browserHelpBtn" value="?"></td>
         </tr>
         <tr>
-            <td><label>Hintergrund-Prozess:</label></td>
+            <td><label><b>Hintergrund-Prozess:</b></label></td>
             <td>
-                <select required name="webserver">
+                <select class="customSelect" required="true" name="webserver">
                     <option value="" disabled=true selected=true>-- auswählen --</option>
                     <option value="1">Hintergrund-Package (Empfohlen)</option>
                     <option value="2">Hintergrund-Node.js-Skript (für Experten)</option>
-                    <option value="3">Hintergrund-Prozess NICHT installieren</option>
+                    <option value="3">NICHT installieren</option>
                 </select>
             </td>
-        </tr>
-        <tr>
-            <td><input type="submit" value="Installieren" name="submitButton"></td>
+            <td><input type="button" class="btn resetBtn helpBtn" name="webserverHelpBtn" value="?"></td>
         </tr>
     </table>
+
+    <div style="position: relative;"><input type="submit" class="btn resetBtn installBtn" name="submitBtn" value="Installieren"></div>
+    <input type="button" class="btn resetBtn githubLink" name="githubBtn" value="Github">
 </div>
 
 
 </body>
 
+
+
 <script>
     window.resizeTo(600, 350);
 </script>
+
+
 
 <script language="VBScript">
     ' This script is an installation for the Gleitzeitkonto-Browser and does summed up the following
@@ -107,7 +166,7 @@
     boxTitle = "Gleitzeitkonto-Browser"
 
 
-    ' ----- Subs Download and Unzip -----
+    ' ----- Subs Download, Unzip and Killwebserver -----
     sub download (url, fileDir)
         set objHTTP = CreateObject( "WinHttp.WinHttpRequest.5.1" )
         call objHTTP.open("GET", url, False)
@@ -142,7 +201,9 @@
         end if
     end sub
 
-    sub submitButton_onclick
+    ' ----->> Events <<-----
+
+    sub submitBtn_onClick
         browserElements = Window.browser.SelectedIndex
         strBrowserAnswer = Window.browser.Options(browserElements).Value
 
@@ -150,20 +211,27 @@
         strWebserverAnswer = Window.webserver.Options(webserverElements).Value
 
         if (strBrowserAnswer = "") then
-            MsgBox "Bitte eine Option für den Browser auswählen.", 0, boxTitle
+            errorField.innerHTML = "Bitte eine Option für den Browser auswählen."
             exit sub
         elseif NOT (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3" OR strBrowserAnswer = "4") then
-            MsgBox "'" + strBrowserAnswer + "' ist eine ung" + ChrW(&H00FC) + "ltige Eingabe für den Browser.", 0, boxTitle
+            errorField.innerHTML = "'" + strBrowserAnswer + "' ist eine ungültige Eingabe für den Browser."
             exit sub
         end if
 
         if (strWebserverAnswer = "") then
-            MsgBox "Bitte eine Option für den Hintergrund-Prozess auswählen", 0, boxTitle
+            errorField.innerHTML = "Bitte eine Option für den Hintergrund-Prozess auswählen"
             exit sub
         elseif NOT (strWebserverAnswer = "1" OR strWebserverAnswer = "2" OR strWebserverAnswer = "3") then
-            MsgBox "'" + strWebserverAnswer + "' ist eine ung" + ChrW(&H00FC) + "ltige Eingabe für den Hintergrund-Prozess.", 0, boxTitle
+            errorField.innerHTML = "'" + strWebserverAnswer + "' ist eine ungültige Eingabe für den Hintergrund-Prozess."
             exit sub
         end if
+        if (strBrowserAnswer = "4" and strWebserverAnswer = "3") then' nothing to install
+            errorField.innerHTML = "Es wurden keine Komponenten zum Installieren ausgewählt."
+            exit sub
+        end if
+
+        ' everything went fine so remove any error messages
+        errorField.innerHTML = ""
 
         strInstallParts = ""
         if (strBrowserAnswer = "1") then strInstallParts = strInstallParts + Chr(13) + "- Browser-Erweiterung Firefox"
@@ -172,15 +240,12 @@
         if (strWebserverAnswer = "1") then strInstallParts = strInstallParts + Chr(13) + "- Hintergrund-Package"
         if (strWebserverAnswer = "2") then strInstallParts = strInstallParts + Chr(13) + "- Hintergrund-Node.js-Skript"
 
-        if (strBrowserAnswer = "4" and strWebserverAnswer = "3") then' nothing to install
-            MsgBox "Es wurden keine Komponenten zum Installieren ausgew" + ChrW(&H00E4) + "hlt. Installation wird beendet.", 0, boxTitle
-            exit sub
-        end if
 
         continueRespone = MsgBox("Folgende Komponenten werden installiert:" + Chr(13) + strInstallParts + Chr(13) + Chr(13) + "Fortfahren?", "1", boxTitle)
 
         if (continueRespone = "2") then 
             MsgBox "Installation abgebrochen", 0, boxTitle
+            self.close()
             exit sub
         end if
 
@@ -278,5 +343,23 @@
         end if
 
         MsgBox "Installation erfolgreich abgeschlossen", 0, boxTitle
+        self.close()
     end sub
+
+
+    sub browserHelpBtn_onClick
+        MsgBox "'Gleitzeitkonto-Browser' ist eine Erweiterung für den Browser. Bitte wähle für welchen Browser die Erweiterung installiert werden soll.", 0, boxTitle
+    end sub
+
+    sub webserverHelpBtn_onClick
+        MsgBox "Gleitzeitkonto-Browser benötigt einen Hintergrund-Prozess zum Funktionieren (Infos auf Github)." + Chr(13) + _
+            Chr(13) + _
+            "Es wird 'Hintergrund-Package' empfohlen, da es die einfachste Installation bietet. Bitte den Hintergrund-Prozess nur abwählen, " + _
+            "wenn dieser bereits installiert und nicht geupdated werden soll.", 0, boxTitle
+    end sub
+
+    sub githubBtn_onClick
+        CreateObject("WScript.Shell").Run("https://github.com/NilsPvR/Gleitzeitkonto-Browser"), 0 ' open website
+    end sub
+
 </script>
