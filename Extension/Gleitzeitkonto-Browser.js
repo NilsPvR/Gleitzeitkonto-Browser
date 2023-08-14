@@ -55,11 +55,11 @@ const time = new GleitzeitkontoBrowser();
     // -> this is determined by checking if the headerbar of the page and the icons in the headerbar are available
     const waitForPageLoad = setInterval(async () => {
         loops++;
-        const headerBar = document.getElementById(time.givenStrings.headerBarID); // top bar, empty part
-        const icons = document.getElementById(time.givenStrings.iconsID);
+        const searchBar = document.getElementById(time.givenStrings.searchBarID); // search bar is one of last elements to load
+        const headerBar = document.getElementById(time.givenStrings.headerEndID); // the conatiner in which to place the inserted display
 
 
-        if (headerBar && icons) {
+        if (searchBar && headerBar) {
             clearInterval(waitForPageLoad);
 
             // Only add display when user is still on Zeiterfassung page

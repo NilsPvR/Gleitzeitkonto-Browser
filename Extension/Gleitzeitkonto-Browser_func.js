@@ -60,8 +60,8 @@ module.exports = class GleitzeitkontoBrowser {
         // Strings defined by external third parties, e.g. Fiori 
         this.givenStrings = {
             gleitzeitHash: '#btccatstime-create',
-            headerBarID: 'shell-header-hdr-search-container',
-            iconsID: 'sf',
+            headerEndID: 'shell-header-hdr-end',
+            searchBarID: 'searchFieldInShell-input',
             errorMsgs: {
                 networkError: 'NetworkError when attempting to fetch resource.',
                 failedError: 'Failed to fetch',
@@ -225,7 +225,7 @@ module.exports = class GleitzeitkontoBrowser {
 
         const HTMLElements = this.getInnerHTMLElements(pDisplayText, loading, true);
 
-        pHeaderBar.append(this.createRichElement('div', {
+        pHeaderBar.prepend(this.createRichElement('div', {
             class: 'inserted-display',
             id: this.constStrings.insertedDisplayID,
             style: loading ? ' opacity: 0.5;' : ''
@@ -238,9 +238,9 @@ module.exports = class GleitzeitkontoBrowser {
     // pDisplayText is optional
     moveFloatingToInsertedDisplay (pHeaderBar, pOldNode, pDisplayText) {
         pOldNode.id = this.constStrings.insertedDisplayID;
-        pHeaderBar.append(pOldNode); // moves the Node
+        pHeaderBar.prepend(pOldNode); // moves the Node
 
-        const newDisplay = document.getElementById(this.constStrings.insertedDisplayID); // get the newly added display
+        const newDisplay = this.getInsertedDisplay(); // get the newly added display
 
         document.getElementById(this.constStrings.buttonID).style.alignSelf = 'center';
         newDisplay.className = 'inserted-display';        
@@ -339,6 +339,11 @@ module.exports = class GleitzeitkontoBrowser {
                 this.addInsertedDisplay(pHeaderBar, displayText, loading);
             }
         });
+
+        // add the display to make sure the observer can actually observe something and the display isn't already removed
+        if (this.checkCorrectMenuIsOpen() && !this.getInsertedDisplay()) {
+            this.addInsertedDisplay(pHeaderBar, displayText, loading);
+        }
 
         observer.observe(pHeaderBar, { 
             // config
