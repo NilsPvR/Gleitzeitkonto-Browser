@@ -1,1 +1,1 @@
-CreateObject("Wscript.Shell").Run "node main.js", 0
+CreateObject("WScript.Shell").Run "npm install && node main.js", 0

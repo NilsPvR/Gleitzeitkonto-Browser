@@ -16,7 +16,12 @@ const fs = require('fs');
         fs.copyFileSync('./Webserver/icon.ico', './compressed/packedWebserver/icon.ico');
         fs.copyFileSync('./Webserver/main.js', './compressed/unpackedWebserver/main.js');
         fs.copyFileSync('./Webserver/gleitzeitkonto-api/gleitzeitkonto-api.js', './compressed/unpackedWebserver/gleitzeitkonto-api/gleitzeitkonto-api.js');
-        fs.copyFileSync('package.json', './compressed/unpackedWebserver/package.json');
+        // only copy the dependencies into the new package to avoid duplicate npm scripts for developers
+        fs.writeFileSync('./compressed/unpackedWebserver/package.json', 
+            '{ "dependencies": ' +
+                JSON.stringify(JSON.parse(fs.readFileSync('./package.json')).dependencies) +
+            '}'        
+        );
 
         fs.writeFileSync('./compressed/unpackedWebserver/url.json', '""');
 
