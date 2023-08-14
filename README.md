@@ -3,7 +3,7 @@
 # Gleitzeitkonto-Browser - Anzeigen der Überstunden per Erweiterung
 
 Die Browser Erweiterung, die das aktuelle Gleitzeitkonto mit Hilfe der [Gleitzeitkonto-API](https://github.com/julius-boettger/gleitzeitkonto-api) anzeigt. Man muss nicht mehr umständlich die Überstunden ausrechnen oder aus PDF-Datein ablesen. Es werden einfach im Fiori-Launchpad auf der Seite der Zeiterfassung die aktuellen Überstunden angezeigt, ebenfalls im Popup-Menu der Erweiterung selber.
-Alternativ: [Gleitzeitkont-Desktop](https://github.com/julius-boettger/gleitzeitkonto-desktop)
+Alternativ: [Gleitzeitkonto-Desktop](https://github.com/julius-boettger/gleitzeitkonto-desktop)
 <br><br>
 *Das Gleitzeitkonto im Fiori-Launchpad:*
 <br>
@@ -64,12 +64,12 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 
 <details><summary><b>❓ Die Datei lässt sich nicht mit Firefox öffnen</b></summary>
 <ol>
-    <li>In Firefox neuen Tab mit `about:addons` öffnen</li>
+    <li>In Firefox neuen Tab mit <code>about:addons</code> öffnen</li>
     <li>Links "Erweiterungen" auswählen</li>
     <li>"Erweiterungen verwalten" Einstellungsrad klicken</li>
     <li>"Add-on aus Datei installieren..." klicken</li>
-    <img src="./Assets/firefox-installation.png" alt="Installation in Firefox">
-    <li>In die Adressleiste `%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser` eingeben und "Gleitzeitkonto-Browser-Firefox.xpi" auswählen</li>
+    <img src="./Assets/Firefox-installation.png" alt="Installation in Firefox">
+    <li>In die Adressleiste <code>%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser</code> eingeben und "Gleitzeitkonto-Browser-Firefox.xpi" auswählen</li>
     <li>"Öffnen" klicken</li>
     <li>Fertig! 🥳</li>
 </ul>
@@ -80,23 +80,23 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 2. Rechts "Entwicklermodus" aktivieren
 3. "Entpackte Erweiterung laden" klicken
 
-<img src="./Assets/chrome-installation.png" style="margin-left: 1.7rem" alt="Installation in Chrome">
+<img src="./Assets/chrome-installation.png" alt="Installation in Chrome">
 
-1. In die Adressleiste `%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser` eingeben und "Chromium Extension" auswählen
-2. "Ordner auswählen" klicken
-3. Fertig! 🥳
+4. In die Adressleiste `%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser` eingeben und "Chromium Extension" auswählen
+5. "Ordner auswählen" klicken
+6. Fertig! 🥳
 
 ### Edge
 1. In Edge neuen Tab mit `about:extensions` öffnen
 2. Links "Entwicklermodus" aktivieren
 3. "Entpackte Dateien laden" klicken
 
-<img src="./Assets/installation-edge.png" style="margin-left: 1.7rem" alt="Installation in Edge">
+<img src="./Assets/installation-edge.png" alt="Installation in Edge">
 
 
-1. In die Adressleiste `%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser` eingeben und "Chromium Extension" auswählen
-2. "Ordner auswählen" klicken
-3. Fertig! 🥳
+4. In die Adressleiste `%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser` eingeben und "Chromium Extension" auswählen
+5. "Ordner auswählen" klicken
+6. Fertig! 🥳
 <br><br>
 <hr>
 
