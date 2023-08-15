@@ -25,12 +25,10 @@ module.exports = class GleitzeitkontoBrowser {
         // Check if extern or intern Fiori website, since these have different amounts of icons    
         if (window.location.origin == url) { // Internal Fiori
             this.config.siteVersion = 'internal';
-            this.config.amountIcons = 4; // amount of icons to wait for to load
             this.config.sideDistance = '11rem'; // css margin from the right for floating display
         }
         else { // extern
             this.config.siteVersion = 'external';
-            this.config.amountIcons = 2;
             this.config.sideDistance = '9rem';
         }
 
@@ -226,7 +224,7 @@ module.exports = class GleitzeitkontoBrowser {
         const HTMLElements = this.getInnerHTMLElements(pDisplayText, loading, true);
 
         pHeaderBar.prepend(this.createRichElement('div', {
-            class: 'inserted-display',
+            class: `inserted-display ${this.config.siteVersion}`,
             id: this.constStrings.insertedDisplayID,
             style: loading ? ' opacity: 0.5;' : ''
             },
@@ -243,7 +241,7 @@ module.exports = class GleitzeitkontoBrowser {
         const newDisplay = this.getInsertedDisplay(); // get the newly added display
 
         document.getElementById(this.constStrings.buttonID).style.alignSelf = 'center';
-        newDisplay.className = 'inserted-display';        
+        newDisplay.className = `inserted-display ${this.config.siteVersion}`;
         if (pDisplayText) this.updateDisplayText(pDisplayText);
        
     };

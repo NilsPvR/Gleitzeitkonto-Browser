@@ -32,11 +32,11 @@ const time = new GleitzeitkontoBrowser();
             time.addFloatingDisplay(time.constStrings.prefixOvertime + time.constStrings.overtimeLoading, true);
         }
         else if (config.siteVersion == 'external') {
-            // Load event fires too early so no point using that
             window.addEventListener('DOMContentLoaded', () => {
                 time.addFloatingDisplay(time.constStrings.prefixOvertime + time.constStrings.overtimeLoading, true);
-            })
+            });
         }
+        // Load event fires too early so no point using that
 
         // register button click for reload
         document.getElementById(time.constStrings.buttonID).addEventListener('click', () => { time.reloadGleitzeitKonto() });

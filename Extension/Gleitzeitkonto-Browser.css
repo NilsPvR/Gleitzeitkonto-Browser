@@ -55,8 +55,8 @@
     box-shadow: 0px 0px 8px 0px var(--primaer-dunkelblau);
 }
 
-.gleitzeit-display-line {
-    /* margin-top: 0px; */
+.floating-display > .gleitzeit-display-line {
+    margin-top: 0px;
 }
 
 .inserted-display {
@@ -65,19 +65,22 @@
     color: var(--primaer-dunkelblau); 
 }
 
+.inserted-display.external {
+    margin-right: 0.5rem;
+}
+
 .floating-display {
     display: flex;
-    margin-top: 11px;
+    position: absolute;
+    margin-top: 15px;
+    z-index: 5;
     color: var(--primaer-dunkelblau);
 }
 
 .floating-display.internal {
-    position: absolute;
-    right: 11rem;
-    z-index: 1;
+    right: 9rem;
 }
 
 .floating-display.external {
-    justify-content: end;
-    margin-right: 9rem;
+    right: 6rem;
 }
