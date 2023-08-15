@@ -60,8 +60,9 @@
 }
 
 .inserted-display {
-    display:flex;
-    line-height: 2.25rem;
+    display: flex;
+    white-space: break-spaces;
+    line-height: 1;
     color: var(--primaer-dunkelblau); 
 }
 
