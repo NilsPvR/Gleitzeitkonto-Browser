@@ -74,7 +74,7 @@ const server = http.createServer(async (request, response) => {
                 '<html><body><div>Es gibt folgenden Seiten:<br><br>' +
                 `<button onclick="window.location.href = 'http://${hostname}:${port}/downloadWorkingTimes'">Download Zeiten</button><br>` +
                 `<button onclick="window.location.href = 'http://${hostname}:${port}/calculateFromWorkingTimes'">Zeiten aus Datei berechnen</button> <br>` +
-                `<button onclick="window.location.href = 'http://${hostname}:${port}/waitForDownlaod'">Warten bis Download fertig</button> <br>` +
+                `<button onclick="window.location.href = 'http://${hostname}:${port}/waitForDownload'">Warten bis Download fertig</button> <br>` +
                 `<button onclick="window.location.href = 'http://${hostname}:${port}/version'">Version anzeigen</button> <br>` +
                 `<button onclick="window.location.href = 'http://${hostname}:${port}/kill'">Webserver stoppen</button> <br></div></body></html>`
             );
