@@ -1,0 +1,497 @@
+﻿<head>
+<title>Gleitzeitkonto-Browser</title>
+<HTA:APPLICATION 
+     APPLICATIONNAME = "Gleitzeitkonto-Browser"
+     BORDER = "thin"
+     INNERBORDER = "no"
+     MAXIMIZEBUTTON = "no"
+     SCROLL = "no"
+     SINGLEINSTANCE = "yes"
+     WINDOWSTATE = "normal"
+>
+<meta http-equiv="x-ua-compatible" content="ie=10">
+</head>
+<style type="text/css">
+    body {
+        background-color: #222222;
+        color: #00aab4;
+        font-family: Roobert BTC, sans-serif;
+    }
+    tr {
+        margin-bottom: 7px;
+    }
+    h3 {
+        width: 100%;
+        text-align: center;
+    }
+
+
+    .btn {
+        background-color: #484e5b;
+        border-radius: 5px;
+        padding-top: 4px !important;
+        color: #00aab4;
+    }
+    .btn:hover {
+        background-color: #6a7285;
+    }
+
+
+    .customSelect {
+        background-color: #484e5b;
+        color: #00aab4;
+        border: none;
+    }
+
+
+    .helpBtn {
+        margin-left: 5px;
+    }
+    .installBtn {
+        width: 100px;
+        position: relative;
+        left: 50%;
+        margin: -50px 0 0 -50px;
+        margin-top: 15px;
+    }
+    .finishedBtn {
+        width: 120px;
+        position: relative;
+        left: 50%;
+        margin: -60px 0 0 -60px;
+        margin-top: 5px;
+    }
+    .githubLink {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+    }
+    .resetBtn {
+        border-width: 0;
+        font-family: inherit;
+        font-size: inherit;
+        font-style: inherit;
+        font-weight: inherit;
+    }
+    .errorField {
+        margin-left: 10px;
+        color: red;
+    }
+
+    @keyframes refreshRotate {
+        from {
+        transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+    .loadingIcon {
+        width: 60px;
+        height: 60px;
+        position: relative;
+        left: 50%;
+        margin: -30px 0 0 -30px;
+        margin-top: -10px;
+        margin-bottom: 5px;
+
+        animation-name: refreshRotate;
+        animation-duration: 1s;
+        animation-fill-mode: forwards;
+        animation-iteration-count: infinite;
+        animation-timing-function: cubic-bezier(0.2, 0.6, 0.8, 0.4);
+    }
+</style>
+
+<body>
+<div id="mainFrame">
+    <h3><b>Gleitzeitkonto-Browser</b></h3>
+    <p id="infoText">
+        <i>Installation für Gleitzeitkonto-Browser gerstartet ...</i><br>
+        <br>
+        Bitte wähle für welchen Browser die Erweiterung installiert werden soll und welche Version des Hintergrund-Prozesses installiert werden soll:
+    </p>
+    <p class="errorField" id="errorField"></p>
+    <div id="loadingBox" style="display: none;">
+        <svg id="loadingSvg" class="loadingIcon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="163.839" height="163.839" viewBox="0,0,256,256"><defs><linearGradient x1="59.51" y1="2348.17" x2="4275.66" y2="2348.17" gradientUnits="userSpaceOnUse" id="color-1"><stop offset="0" stop-color="#00aab4"></stop><stop offset="1" stop-color="#222222"></stop></linearGradient></defs><g fill="url(#color-1)" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(0.05905,0.05905)"><path d="M1279,2858c274,348 670,567 1111,567c826,0 1496,-768 1496,-1716c0,-473 -167,-901 -437,-1212c11,-10 21,-19 31,-29c197,167 392,375 555,601c154,300 242,642 242,1005c0,1189 -938,2154 -2096,2154c-1052,0 -1922,-796 -2073,-1833c-47,-326 13,-700 464,-700c584,0 335,690 708,1164z"></path></g></g></svg>
+    </div>
+    <table id="installTable">
+        <tr>
+            <td><label><b>Browser:</b></label></td>
+            <td>
+                <select class="customSelect" required="true" name="browser" style="width: 100%;">
+                    <option value="" disabled=true selected=true>-- auswählen --</option>
+                    <option value="1">Firefox</option>
+                    <option value="2">Chrome/Edge (Chromium)</option>
+                    <option value="3">Mehrere Browser</option>
+                    <option value="4">NICHT installieren</option>
+                </select>
+            </td>
+            <td><input type="button" class="btn resetBtn helpBtn" name="browserHelpBtn" value="?"></td>
+        </tr>
+        <tr>
+            <td><label><b>Hintergrund-Prozess:</b></label></td>
+            <td>
+                <select class="customSelect" required="true" name="webserver">
+                    <option value="" disabled=true selected=true>-- auswählen --</option>
+                    <option value="1">Hintergrund-Package (Empfohlen)</option>
+                    <option value="2">Hintergrund-Node.js-Skript (für Experten)</option>
+                    <option value="3">NICHT installieren</option>
+                </select>
+            </td>
+            <td><input type="button" class="btn resetBtn helpBtn" name="webserverHelpBtn" value="?"></td>
+        </tr>
+    </table>
+
+    <div id="submitWrapper" style="position: relative;"><input type="submit" class="btn resetBtn installBtn" name="submitBtn" value="Installieren"></div>
+    <span id="finishedBtnWrapper" style="display: none;"><input class="btn resetBtn finishedBtn" type="button" name="allDoneBtn" value="Fertig stellen"></span>
+    <input type="button" class="btn resetBtn githubLink" name="githubBtn" value="Github">
+</div>
+
+</body>
+
+
+
+<script language="VBScript">
+    ' This takes care of the installation for Gleitzeitkonto-Browser and does summed up the following
+
+    ' Await user input for which Browser they are installing:
+        ' option 1: Firefox, option 2: Chrome, Edge (Chromium), option 3: multiple, option 4: none
+    ' Await user input which webserver they are installing:
+        ' option 1: packed, option 2: unpacked, option 3: none
+    ' Confirm installation parts
+        ' cancel or continue
+
+    ' Download zip files from Github to %Local AppData%/Programs/Gleitzeitkonto-Browser
+    '   see chromiumURL, firefoxURL, packedWebserverURL, unpackedWebserverULR
+
+    ' Extract zip contents for Webserver (if selected)
+    ' Extract zip contents for Chromium-Extension (if selected)
+    ' When unpacked is selected link to extended instructions
+
+    ' Create Shortcut for startWebserver.vbs in %AppData%\Microsoft\Windows\Start Menu\Programs\Startup\
+    ' Start Webserver
+    ' Inform user about successful installation
+    
+
+    ' ----- initialize path and url variables -----
+    chromiumURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/NICHT-Herunterladen-win-x64-chromium.zip"
+    firefoxURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/NICHT-Herunterladen-win-x64-firefox.xpi"
+    packedWebserverURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/NICHT-Herunterladen-win-x64-webserver.zip"
+    unpackedWebserverURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/NICHT-Herunterladen-win-x64-webserver-script.zip"
+
+    ' set shell obj
+    set objWShell = CreateObject("WScript.Shell")
+    set FSO = CreateObject("Scripting.FileSystemObject")
+
+    userprofile = objWShell.ExpandEnvironmentStrings("%userprofile%")
+    localPrograms = userprofile + "\AppData\Local\Programs"
+    installationFolder = localPrograms + "\Gleitzeitkonto-Browser"
+    appDataFolder = objWShell.ExpandEnvironmentStrings("%appdata%")
+
+    boxTitle = "Gleitzeitkonto-Browser"
+    dim strBrowserAnswer, strWebserverAnswer' set global since params are not getting parsed with setTimeout
+
+    sub window_onLoad
+        window.resizeTo 600,360
+    end sub
+
+    ' ----- Subs Download, Unzip and Killwebserver -----
+
+    sub downloadUnzipAndDelete (downloadURL, fileDir, destination)
+        call download(downloadURL, fileDir)
+        call unzip(fileDir, destination)
+        call FSO.DeleteFile(fileDir, true)
+    end sub
+
+    ' Downloads a file from the given downloadURL and writes the content into the given fileDir.
+    ' @param url        string  URL to download from
+    ' @parma fileDir    string  path to a file location to save the downloaded file (with file name and extension)
+    sub download (url, fileDir)
+        set objHTTP = CreateObject( "WinHttp.WinHttpRequest.5.1" )
+        call objHTTP.open("GET", url, False)
+        objHTTP.send ' send request
+
+        set objFSO = CreateObject("Scripting.FileSystemObject")
+        dim bStrm: set bStrm = Createobject("Adodb.Stream")
+
+
+        with bStrm ' save response of request in file
+            .type = 1 ' binary
+            .open
+            .write objHTTP.responseBody
+            .savetofile fileDir, 2 'overwrite
+        end with
+    end sub
+
+    ' Unzips a given zip file. 
+    ' @param source     string  path of the zip file to be unzipped
+    ' @param target     string  path for the contents to be placed
+    sub unzip(source, target)
+        set objShell = CreateObject("Shell.Application")
+
+        set filesInZip = objShell.NameSpace(source).Items ' get all items in zip
+        call objShell.NameSpace(target).CopyHere(filesInZip, &H14&) ' extract the items
+    end sub
+
+    ' Sends a webrequest to the kill subdomain of the Gleitzeitkont-Webserver. Will only send
+    ' if the given param is 1 or 2
+    ' @param    pstrWebserverAnswer string  will send the request if the string is "1" or "2"
+    sub killWebserver (pstrWebserverAnswer)
+        ' ----- Kill old Webserver if existant -----
+        On Error Resume Next ' define only in sub to ignore error when Webserver not running
+        if (pstrWebserverAnswer = "1" OR pstrWebserverAnswer = "2") then
+            set objHTTP = CreateObject( "WinHttp.WinHttpRequest.5.1" )
+            call objHTTP.open("GET", "http://localhost:35221/kill", False)
+            objHTTP.send
+        end if
+    end sub
+
+    ' =====>> Events <<=====
+
+    ' ----- Install Button clicked -----
+    sub submitBtn_onClick
+        ' get answer for browser
+        browserElements = Window.browser.SelectedIndex
+        strBrowserAnswer = Window.browser.Options(browserElements).Value
+
+        ' get answer for webserver
+        webserverElements = Window.webserver.SelectedIndex
+        strWebserverAnswer = Window.webserver.Options(webserverElements).Value
+
+        ' validate Browser answer
+        if (strBrowserAnswer = "") then
+            errorField.innerHTML = "<i>Bitte eine Option für den Browser auswählen.</i>"
+            exit sub
+        elseif NOT (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3" OR strBrowserAnswer = "4") then
+            errorField.innerHTML = "<i>'" + strBrowserAnswer + "' ist eine ungültige Eingabe für den Browser.</i>"
+            exit sub
+        end if
+
+
+        ' validate webserver answer
+        if (strWebserverAnswer = "") then
+            errorField.innerHTML = "<i>Bitte eine Option für den Hintergrund-Prozess auswählen</i>"
+            exit sub
+        elseif NOT (strWebserverAnswer = "1" OR strWebserverAnswer = "2" OR strWebserverAnswer = "3") then
+            errorField.innerHTML = "<i>'" + strWebserverAnswer + "' ist eine ungültige Eingabe für den Hintergrund-Prozess.</i>"
+            exit sub
+        end if
+
+        if (strBrowserAnswer = "4" and strWebserverAnswer = "3") then' nothing to install
+            errorField.innerHTML = "<i>Es wurden keine Komponenten zum Installieren ausgewählt.</i>"
+            exit sub
+        end if
+
+        ' everything went fine so remove any possible previous error messages
+        errorField.innerHTML = ""
+
+        ' ----- Confirm parts to be installed -----
+        strInstallParts = ""
+        if (strBrowserAnswer = "1") then strInstallParts = strInstallParts + Chr(13) + "- Browser-Erweiterung Firefox"
+        if (strBrowserAnswer = "2") then strInstallParts = strInstallParts + Chr(13) + "- Browser-Erweiterung Chrome/Edge (Chromium)"
+        if (strBrowserAnswer = "3") then strInstallParts = strInstallParts + Chr(13) + "- Browser-Erweiterung Firefox + Chrome/Edge (Chromium)"
+        if (strWebserverAnswer = "1") then strInstallParts = strInstallParts + Chr(13) + "- Hintergrund-Package"
+        if (strWebserverAnswer = "2") then strInstallParts = strInstallParts + Chr(13) + "- Hintergrund-Node.js-Skript"
+
+
+        continueRespone = MsgBox("Folgende Komponenten werden installiert:" + Chr(13) + strInstallParts + Chr(13) + Chr(13) + "Fortfahren?", "1", boxTitle)
+
+        if (continueRespone = "2") then ' cancelled
+            exit sub
+        end if
+
+
+        ' ----- Start Installation -----
+
+        ' -- Add loading Animation --
+        infoText.innerHTML = "" ' remove old html
+        installTable.innerHTML = ""
+        submitWrapper.innerHTML = ""
+        loadingBox.style.display = "block" ' make loading svg visable
+        loadingBox.innerHTML = loadingBox.innerHTML + "<br>" ' add linebreak after svg
+
+        ' create installation folder if not already present
+        if not (FSO.FolderExists(installationFolder)) then
+            FSO.CreateFolder(installationFolder)
+            loadingBox.innerHTML = loadingBox.innerHTML + "Installations Ordner erstellt<br>"
+        end if
+
+
+        if (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3") then
+            loadingBox.innerHTML = loadingBox.innerHTML + "Download Browser-Erweiterung gestartet ...<br>"
+            ' calls a chain of subs to allow screen updates everytime
+            call window.SetTimeout("downloadProcessBrowser()", 0, "VBScript") ' timeout to update screen
+
+        elseif (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then
+            loadingBox.innerHTML = loadingBox.innerHTML + "Download Hintergrund-Prozess gestartet ...<br>"
+            call window.SetTimeout("downloadProcessWebserver()", 0, "VBScript") ' timeout to update screen
+
+        else
+            call window.SetTimeout("downloadProcessFinish()", 0, "VBScript") ' timeout to update screen
+        end if
+
+
+    end sub
+
+    sub downloadProcessBrowser ()
+        ' ----- Download Browser Extension -----
+        if (strBrowserAnswer = "1") then ' Firefox
+            fileDir =  installationFolder + "\" + Split(firefoxURL, "/")(8)
+            call download(firefoxURL, fileDir) ' do not unzip for firefox
+
+            oldFirefoxXPI = installationFolder + "\Gleitzeitkonto-Browser-Firefox.xpi"
+            if (FSO.FileExists(oldFirefoxXPI)) then ' if old file available delete it
+                call FSO.DeleteFile(oldFirefoxXPI)
+            end if
+            call FSO.MoveFile(fileDir, oldFirefoxXPI) ' rename download file
+
+        elseif (strBrowserAnswer = "2") then ' Chromium
+            fileDir = installationFolder + "\" + Split(chromiumURL, "/")(8)
+            call downloadUnzipAndDelete(chromiumURL, fileDir, installationFolder)
+
+            
+        elseif (strBrowserAnswer = "3") then ' Firefox + Chromium
+            fileDir = installationFolder + "\" + Split(firefoxURL, "/")(8)
+            call download(firefoxURL, fileDir) ' do not unzip for firefox
+
+            oldFirefoxXPI = installationFolder + "\Gleitzeitkonto-Browser-Firefox.xpi"
+            if (FSO.FileExists(oldFirefoxXPI)) then ' if old file available delete it
+                call FSO.DeleteFile(oldFirefoxXPI)
+            end if
+            call FSO.MoveFile(fileDir, oldFirefoxXPI) ' rename download file
+
+            fileDir = installationFolder + "\" + Split(chromiumURL, "/")(8)
+            call downloadUnzipAndDelete(chromiumURL, fileDir, installationFolder)
+        end if
+
+        loadingBox.innerHTML = loadingBox.innerHTML + "Download Browser-Erweiterung beendet<br>"
+        if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then ' when webserver is getting installed
+            loadingBox.innerHTML = loadingBox.innerHTML + "Download Hintergrund-Prozess gestartet ...<br>"
+            call window.SetTimeout("downloadProcessWebserver()", 0, "VBScript") ' timeout to update screen
+
+        else
+            call window.SetTimeout("downloadProcessFinish()", 0, "VBScript") ' timeout to update screen
+        end if
+
+    end sub
+
+    sub downloadProcessWebserver ()
+        ' end webserver so no issues with overwriting files which are in use
+        call killWebserver(strWebserverAnswer)
+
+
+        ' ----- Download Webserver -----
+        if (strWebserverAnswer = "1") then
+            filedir = installationFolder + "\" + Split(packedWebserverURL, "/")(8)
+            call downloadUnzipAndDelete(packedWebserverURL, fileDir, installationFolder)
+
+        elseif strWebserverAnswer = "2" then
+            filedir = installationFolder + "\" + Split(unpackedWebserverURL, "/")(8)
+            call downloadUnzipAndDelete(unpackedWebserverURL, fileDir, installationFolder)
+
+        end if
+
+        loadingBox.innerHTML = loadingBox.innerHTML + "Download Hintergrund-Prozess beendet<br>"
+        loadingBox.innerHTML = loadingBox.innerHTML + "Erstelle Verknüpfung für automatischen start ...<br>"
+
+        call window.SetTimeout("downloadProcessShortcut()", 0, "VBScript") ' timeout to update screen
+    end sub
+
+    sub downloadProcessShortcut ()
+        ' ----- Create Shortcut for Webserver Startup -----
+        if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then ' when webserver is getting installed
+            webserverFolder = installationFolder + "\Webserver"
+
+            strProgramTitle = "Start Gleitzeitkonto-Webserver"
+            strProgram = webserverFolder + "\start-Gleitzeitkonto-Webserver.vbs"
+            strTarget = appDataFolder + "\Microsoft\Windows\Start Menu\Programs\Startup\"
+            strIcon = webserverFolder + "\icon.ico"
+
+            set objShortcut = objWShell.CreateShortcut(strTarget + "\" + strProgramTitle + ".lnk")
+            objShortcut.TargetPath = strProgram
+            objShortcut.Description = strProgramTitle
+            objShortcut.WorkingDirectory = webserverFolder
+            objShortcut.IconLocation = strIcon
+            objShortcut.Save
+
+        end if
+
+        loadingBox.innerHTML = loadingBox.innerHTML + "Verknüpfung erstellt<br>"
+
+        if (strWebserverAnswer = "1") then ' when packed version is selected
+            call window.SetTimeout("downloadProcessStartWebserver()", 0, "VBScript") ' timeout to update screen
+
+        else
+            call window.SetTimeout("downloadProcessFinish()", 0, "VBScript") ' timeout to update screen
+        end if
+
+    end sub
+
+    sub downloadProcessStartWebserver ()
+        ' ----- Start webserver -----
+        if (strWebserverAnswer = "1") then ' when packed version is selected
+            objWShell.Run installationFolder + "\Gleitzeitkonto-Webserver.exe", 0
+        end if
+
+        loadingBox.innerHTML = loadingBox.innerHTML + "Hintergrund-Prozess wurde gestartet<br>"
+        call window.SetTimeout("downloadProcessFinish()", 0, "VBScript") ' timeout to update screen
+    end sub
+
+    sub downloadProcessFinish ()
+        ' ----- Installation finished -----
+
+        ' show additional instructions for unpacked/script webserver
+        if (strWebserverAnswer = "2") then
+            openLinkAnswer = MsgBox("!!!!" + Chr(13) + "Beachte die Installations Hinweise unter 'Experten - Nodes.js Webserver':  https://github.com/NilsPvR/Gleitzeitkonto-Browser#experten---nodejs-webserver" + _
+            " um Gleitzeitkonto-Browser final einzurichten." + Chr(13) + "!!!!" + Chr(13) + _
+            Chr(13) + "Website öffnen?", 4, boxTitle)
+
+
+            if (openLinkAnswer = "6") then ' yes clicked
+                objWShell.Run("https://github.com/NilsPvR/Gleitzeitkonto-Browser#experten---nodejs-webserver"), 0 ' open website
+            end if
+        end if
+
+        loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: green;'>Installation erfolgreich abgeschlossen</span><br>"
+        finishedBtnWrapper.style.display = "block"
+        loadingSvg.style.animationPlayState = "paused"
+
+
+        if (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3") then 'a browser got selected, ask to open the folder
+            loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: orange;'>Richte die Browser-Erweiterung in deinem Browser ein, um Gleitzeitkonto-Browser verwenden zu können</span><br>"
+            openExplorerAnswer = MsgBox("Soll der Ordner zum Installieren der Browser-Erweiterung geöffnet werden?", 4, boxTitle)
+
+            if (openExplorerAnswer = "6") then 'yes clicked
+                CreateObject("Shell.Application").Explore installationFolder 'open a explorer window
+            end if
+        end if
+
+    end sub
+
+
+    ' ----- Help Button for Browser clicked -----
+    sub browserHelpBtn_onClick
+        MsgBox "'Gleitzeitkonto-Browser' ist eine Erweiterung für den Browser. Bitte wähle für welchen Browser die Erweiterung installiert werden soll.", 0, boxTitle
+    end sub
+
+
+    ' ----- Help Button for Webserver clicked -----
+    sub webserverHelpBtn_onClick
+        MsgBox "Gleitzeitkonto-Browser benötigt einen Hintergrund-Prozess zum Funktionieren (Infos auf Github)." + Chr(13) + _
+            Chr(13) + _
+            "Es wird 'Hintergrund-Package' empfohlen, da es die einfachste Installation bietet. Bitte den Hintergrund-Prozess nur abwählen, " + _
+            "wenn dieser bereits installiert und nicht geupdated werden soll.", 0, boxTitle
+    end sub
+
+    ' ----- Github Link clicked -----
+    sub githubBtn_onClick
+        objWShell.Run("https://github.com/NilsPvR/Gleitzeitkonto-Browser"), 0 ' open website
+    end sub
+
+    ' ----- Installation finished Button clicked
+    sub allDoneBtn_onClick
+        self.close() ' close the hta window
+    end sub
+
+</script>
