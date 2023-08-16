@@ -37,6 +37,7 @@ module.exports = class GleitzeitkontoBrowser {
             insertedDisplayID: 'gleitzeitkonto-display',
             cssID: 'gleitzeitkonto-css',
             buttonID: 'gleitzeitkonto-reload-button',
+            refreshIconID: 'refresh-icon',
             prefixOvertime: 'Gleitzeitkonto: ',
             prefixError: 'Fehler: ',
             overtimeLoading: 'Loading...',
@@ -58,6 +59,7 @@ module.exports = class GleitzeitkontoBrowser {
         // Strings defined by external third parties, e.g. Fiori 
         this.givenStrings = {
             gleitzeitHash: '#btccatstime-create',
+            headerID: 'shell-header',
             headerEndID: 'shell-header-hdr-end',
             searchBarID: 'searchFieldInShell-input',
             errorMsgs: {
@@ -174,8 +176,8 @@ module.exports = class GleitzeitkontoBrowser {
     // different styling for loading and inserted bools
     getInnerHTMLElements (pDisplayText, loading, inserted) {
         const refreshImage = this.createRichElement('img', {
-            id: 'refresh-icon',
-            src: browser.runtime.getURL('./Assets/refresh.svg'),
+            id: this.constStrings.refreshIconID,
+            src: this.getRefreshIconURL(),
             style: `animation-play-state: ${loading ? "running;" : "paused;" }` 
         });
 
@@ -198,7 +200,7 @@ module.exports = class GleitzeitkontoBrowser {
 
         canvas.insertAdjacentElement('beforebegin',
             this.createRichElement('div', {
-                class: `floating-display ${this.config.siteVersion}`,
+                class: `floating-display ${this.config.siteVersion} ${this.getLightingMode()}`,
                 id: this.constStrings.floatingDisplayID,
                 style: loading ? ' opacity: 0.5;' : ''
                 },
@@ -224,7 +226,7 @@ module.exports = class GleitzeitkontoBrowser {
         const HTMLElements = this.getInnerHTMLElements(pDisplayText, loading, true);
 
         pHeaderBar.prepend(this.createRichElement('div', {
-            class: `inserted-display ${this.config.siteVersion}`,
+            class: `inserted-display ${this.config.siteVersion} ${this.getLightingMode()}`,
             id: this.constStrings.insertedDisplayID,
             style: loading ? ' opacity: 0.5;' : ''
             },
@@ -241,7 +243,10 @@ module.exports = class GleitzeitkontoBrowser {
         const newDisplay = this.getInsertedDisplay(); // get the newly added display
 
         document.getElementById(this.constStrings.buttonID).style.alignSelf = 'center';
-        newDisplay.className = `inserted-display ${this.config.siteVersion}`;
+        // update the refresh icon
+        document.getElementById(this.constStrings.refreshIconID).src = this.getRefreshIconURL()
+
+        newDisplay.className = `inserted-display ${this.config.siteVersion} ${this.getLightingMode()}`;
         if (pDisplayText) this.updateDisplayText(pDisplayText);
        
     };
@@ -391,4 +396,39 @@ module.exports = class GleitzeitkontoBrowser {
         
         return false;
     };
+
+
+    // weather the user has set their page to light or dark mode
+    getLightingMode () {
+        const header = document.getElementById(this.givenStrings.headerID);
+        if (!header) return 'gleitzeitkonto-light' // default to lightmode if header not available
+
+        // the rgb value of the header, is normally either white or dark grey/black
+        const rgbColor = window.getComputedStyle(header, null)
+            .getPropertyValue('background-color');
+
+        // convert the rgb string representation into the red green and blue values
+        const colors = rgbColor
+            .replace('rgb(', '')
+            .replace('(', '')
+            .split(',')
+            .map(value => parseInt(value.trim(), 10));
+
+        // luminance calculation according to: https://www.w3.org/TR/WCAG20-TECHS/G17.html#G17-procedure
+        const luminance = (0.2126 * colors[0] + 0.7152 * colors[1] + 0.0722 * colors[2]);
+        
+        if (luminance > 128)
+            return 'gleitzeitkonto-light'
+        else
+            return 'gleitzeitkonto-dark';
+    };
+
+
+    // returns the URL for the refresh icon based on the current lightingMode
+    getRefreshIconURL () {
+        if (this.getLightingMode() == 'gleitzeitkonto-light')
+            return browser.runtime.getURL('./Assets/refresh-light.svg');
+        else
+            return browser.runtime.getURL('./Assets/refresh-dark.svg');
+    }
 };
