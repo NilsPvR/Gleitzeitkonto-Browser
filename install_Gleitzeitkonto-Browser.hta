@@ -311,7 +311,7 @@
         loadingBox.style.display = "block" ' make loading svg visable
         loadingBox.innerHTML = loadingBox.innerHTML + "<br>" ' add linebreak after svg
 
-        ' create installation folder is not already present
+        ' create installation folder if not already present
         if not (FSO.FolderExists(installationFolder)) then
             FSO.CreateFolder(installationFolder)
             loadingBox.innerHTML = loadingBox.innerHTML + "Installations Ordner erstellt<br>"
@@ -401,16 +401,17 @@
     sub downloadProcessShortcut ()
         ' ----- Create Shortcut for Webserver Startup -----
         if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then ' when webserver is getting installed
-            
+            webserverFolder = installationFolder + "\Webserver"
+
             strProgramTitle = "Start Gleitzeitkonto-Webserver"
-            strProgram = installationFolder + "\start-Gleitzeitkonto-Webserver.vbs"
+            strProgram = webserverFolder + "\start-Gleitzeitkonto-Webserver.vbs"
             strTarget = appDataFolder + "\Microsoft\Windows\Start Menu\Programs\Startup\"
-            strIcon = installationFolder + "\icon.ico"
+            strIcon = webserverFolder + "\icon.ico"
 
             set objShortcut = objWShell.CreateShortcut(strTarget + "\" + strProgramTitle + ".lnk")
             objShortcut.TargetPath = strProgram
             objShortcut.Description = strProgramTitle
-            objShortcut.WorkingDirectory = installationFolder
+            objShortcut.WorkingDirectory = webserverFolder
             objShortcut.IconLocation = strIcon
             objShortcut.Save
 
@@ -455,6 +456,17 @@
         loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: green;'>Installation erfolgreich abgeschlossen</span><br>"
         finishedBtnWrapper.style.display = "block"
         loadingSvg.style.animationPlayState = "paused"
+
+
+        if (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3") then 'a browser got selected, ask to open the folder
+            loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: orange;'>Richte die Browser-Erweiterung in deinem Browser ein, um Gleitzeitkonto-Browser verwenden zu können</span><br>"
+            openExplorerAnswer = MsgBox("Soll der Ordner zum Installieren der Browser-Erweiterung geöffnet werden?", 4, boxTitle)
+
+            if (openExplorerAnswer = "6") then 'yes clicked
+                CreateObject("Shell.Application").Explore installationFolder 'open a explorer window
+            end if
+        end if
+
     end sub
 
 

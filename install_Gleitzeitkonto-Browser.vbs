@@ -37,6 +37,7 @@ appDataFolder = objWShell.ExpandEnvironmentStrings("%appdata%")
 boxTitle = "Gleitzeitkonto-Browser"
 
 set FSO = CreateObject("Scripting.FileSystemObject")
+' create installation folder if not already present
 if not (FSO.FolderExists(installationFolder)) then
     FSO.CreateFolder(installationFolder)
 end if
@@ -202,16 +203,17 @@ end if
 
 ' ----- Create Shortcut for Webserver Startup -----
 if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then
-    
+    webserverFolder = installationFolder + "\Webserver"
+
     strProgramTitle = "Start Gleitzeitkonto-Webserver"
-    strProgram = installationFolder + "\start-Gleitzeitkonto-Webserver.vbs"
+    strProgram = webserverFolder + "\start-Gleitzeitkonto-Webserver.vbs"
     strTarget = appDataFolder + "\Microsoft\Windows\Start Menu\Programs\Startup\"
-    strIcon = installationFolder + "\icon.ico"
+    strIcon = webserverFolder + "\icon.ico"
 
     set objShortcut = objWShell.CreateShortcut(strTarget + "\" + strProgramTitle + ".lnk")
     objShortcut.TargetPath = strProgram
     objShortcut.Description = strProgramTitle
-    objShortcut.WorkingDirectory = installationFolder
+    objShortcut.WorkingDirectory = webserverFolder
     objShortcut.IconLocation = strIcon
     objShortcut.Save
 
@@ -230,6 +232,14 @@ if (strWebserverAnswer = "2") then
 
     if (openLinkAnswer = "6") then ' yes
         CreateObject("WScript.Shell").Run("https://github.com/NilsPvR/Gleitzeitkonto-Browser#experten---nodejs-webserver"), 0 ' open website
+    end if
+end if
+
+if (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3") then 'a browser got selected, ask to open the folder
+    openExplorerAnswer = MsgBox("Soll der Ordner zum Installieren der Browser-Erweiterung ge" + ChrW(&H00F6) + "ffnet werden?", 4, boxTitle)
+
+    if (openExplorerAnswer = "6") then 'yes clicked
+        CreateObject("Shell.Application").Explore userprofile + "\AppData\Local\Programs\Gleitzeitkonto-Browser" 'open a explorer window
     end if
 end if
 
