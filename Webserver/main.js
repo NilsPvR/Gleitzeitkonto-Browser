@@ -109,7 +109,11 @@ const server = http.createServer(async (request, response) => {
 
 
 server.listen(port, hostname, (error) => {
-    if(!error) console.log(`Gleitzeitkonto-Webserver läuft auf http://${hostname}:${port}`);
+    if(!error) {
+        process.title = 'Gleitzeitkonto-Webserver'; // rename the process (is not the main process visable in taskmanaer or similar)
+
+        console.log(`Gleitzeitkonto-Webserver läuft auf http://${hostname}:${port}`);
+    }
     else { 
         console.error('Fehler beim starten des Gleitzeitkonto-Webservers:');
         console.error(error);
