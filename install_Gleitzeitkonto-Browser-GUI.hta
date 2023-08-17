@@ -135,7 +135,7 @@
                 <select class="customSelect" required="true" name="webserver">
                     <option value="" disabled=true selected=true>-- auswählen --</option>
                     <option value="1">Hintergrund-Package (Empfohlen)</option>
-                    <option value="2">Hintergrund-Node.js-Skript (für Experten)</option>
+                    <option value="2">Hintergrund-Node.js-Skript</option>
                     <option value="3">NICHT installieren</option>
                 </select>
             </td>
@@ -187,6 +187,7 @@
     userprofile = objWShell.ExpandEnvironmentStrings("%userprofile%")
     localPrograms = userprofile + "\AppData\Local\Programs"
     installationFolder = localPrograms + "\Gleitzeitkonto-Browser"
+    webserverFolder = installationFolder + "\Webserver"
     appDataFolder = objWShell.ExpandEnvironmentStrings("%appdata%")
 
     boxTitle = "Gleitzeitkonto-Browser"
@@ -401,7 +402,6 @@
     sub downloadProcessShortcut ()
         ' ----- Create Shortcut for Webserver Startup -----
         if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then ' when webserver is getting installed
-            webserverFolder = installationFolder + "\Webserver"
 
             strProgramTitle = "Start Gleitzeitkonto-Webserver"
             strProgram = webserverFolder + "\start-Gleitzeitkonto-Webserver.vbs"
@@ -429,12 +429,27 @@
     end sub
 
     sub downloadProcessStartWebserver ()
-        ' ----- Start webserver -----
+        ' ----- Start or perpare webserver -----
+
         if (strWebserverAnswer = "1") then ' when packed version is selected
-            objWShell.Run installationFolder + "\Gleitzeitkonto-Webserver.exe", 0
+            errorCode = objWShell.Run(webserverFolder + "\Gleitzeitkonto-Webserver.exe", 0, true)
+            if (errorCode = "0") then ' success
+                loadingBox.innerHTML = loadingBox.innerHTML + "Hintergrund-Prozess wurde gestartet<br>"
+            else
+                loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Hintergrund-Prozess konnte nicht gestartet werden</span><br>"
+            end if
         end if
 
-        loadingBox.innerHTML = loadingBox.innerHTML + "Hintergrund-Prozess wurde gestartet<br>"
+        if (strWebserverAnswer = "2") then ' unpacked version selected
+            ' try to install npm packages
+            errorCode = objWShell.Run("cmd /c cd /d " & webserverFolder & " && " & "npm install", 0, true)
+            if (errorCode = "0") then ' success
+                loadingBox.innerHTML = loadingBox.innerHTML + "Node-Packages wurden installiert<br>"
+            else
+                loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Node-Packages konnten nicht installiert werden</span><br>"
+            end if
+        end if
+
         call window.SetTimeout("downloadProcessFinish()", 0, "VBScript") ' timeout to update screen
     end sub
 
@@ -480,8 +495,10 @@
     sub webserverHelpBtn_onClick
         MsgBox "Gleitzeitkonto-Browser benötigt einen Hintergrund-Prozess zum Funktionieren (Infos auf Github)." + Chr(13) + _
             Chr(13) + _
-            "Es wird 'Hintergrund-Package' empfohlen, da es die einfachste Installation bietet. Bitte den Hintergrund-Prozess nur abwählen, " + _
-            "wenn dieser bereits installiert und nicht geupdated werden soll.", 0, boxTitle
+            "Es wird 'Hintergrund-Package' empfohlen, da es die einfachste Installation bietet. " + _
+            "Für das 'Node.js Skript' muss Node und npm installiert sein." + Chr(13) + _
+            "Bitte den Hintergrund-Prozess nur abwählen, " + _
+            "wenn dieser bereits installiert ist und nicht geupdated werden soll.", 0, boxTitle
     end sub
 
     ' ----- Github Link clicked -----

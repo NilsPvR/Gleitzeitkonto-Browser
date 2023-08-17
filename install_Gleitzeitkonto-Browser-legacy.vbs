@@ -32,6 +32,7 @@ set objWShell = CreateObject("WScript.Shell")
 userprofile = objWShell.ExpandEnvironmentStrings("%userprofile%")
 localPrograms = userprofile + "\AppData\Local\Programs"
 installationFolder = localPrograms + "\Gleitzeitkonto-Browser"
+webserverFolder = installationFolder + "\Webserver"
 appDataFolder = objWShell.ExpandEnvironmentStrings("%appdata%")
 
 boxTitle = "Gleitzeitkonto-Browser"
@@ -108,7 +109,7 @@ function askWebserver ()
         " (Nur abw" + ChrW(&H00E4) + "hlen, wenn bereits installiert)" + Chr(13) + _
         Chr(13) + _
         "1: Hintergrund-Package (Empfohlen)" + Chr(13) + _
-        "2: Hintergrund-Node.js-Skript (f" + ChrW(&H00FC) + "r Experten)" + Chr(13) + _
+        "2: Hintergrund-Node.js-Skript" + Chr(13) + _
         "3: Hintergrund-Prozess NICHT installieren", _
     boxTitle, _
     "1")
@@ -203,7 +204,6 @@ end if
 
 ' ----- Create Shortcut for Webserver Startup -----
 if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then
-    webserverFolder = installationFolder + "\Webserver"
 
     strProgramTitle = "Start Gleitzeitkonto-Webserver"
     strProgram = webserverFolder + "\start-Gleitzeitkonto-Webserver.vbs"
@@ -219,8 +219,15 @@ if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then
 
 end if
 
-if (strWebserverAnswer = "1") then
-    CreateObject("Wscript.Shell").Run installationFolder + "\Gleitzeitkonto-Webserver.exe", 0
+' ----- Start or perpare webserver -----
+
+if (strWebserverAnswer = "1") then ' when packed version is selected
+    objWShell.Run(webserverFolder + "\Gleitzeitkonto-Webserver.exe", 0, true)
+end if
+
+if (strWebserverAnswer = "2") then ' unpacked version selected
+    ' try to install npm packages
+    objWShell.Run("cmd /c cd /d " & webserverFolder & " && " & "npm install", 0, true)
 end if
 
 
