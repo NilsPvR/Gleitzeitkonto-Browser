@@ -233,12 +233,12 @@ end if
 
 ' ===== Installation finished =====
 if (strWebserverAnswer = "2") then
-        openLinkAnswer = MsgBox("!!!!" + Chr(13) + "Beachte die Installations Hinweise unter 'Experten - Nodes.js Webserver':  https://github.com/NilsPvR/Gleitzeitkonto-Browser#experten---nodejs-webserver" + _
+        openLinkAnswer = MsgBox("!!!!" + Chr(13) + "Beachte die Installations Hinweise unter 'Nodes.js-Skript Webserver':  https://github.com/NilsPvR/Gleitzeitkonto-Browser#nodejs-skript-webserver" + _
         " um Gleitzeitkonto-Browser final einzurichten." + Chr(13) + "!!!!" + Chr(13) + _
         Chr(13) + "Website " + ChrW(&H00F6) + "ffnen?", 4, boxTitle)
 
     if (openLinkAnswer = "6") then ' yes
-        CreateObject("WScript.Shell").Run("https://github.com/NilsPvR/Gleitzeitkonto-Browser#experten---nodejs-webserver"), 0 ' open website
+        CreateObject("WScript.Shell").Run("https://github.com/NilsPvR/Gleitzeitkonto-Browser#nodejs-skript-webserver"), 0 ' open website
     end if
 end if
 
