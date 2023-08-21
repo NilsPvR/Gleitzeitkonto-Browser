@@ -223,6 +223,10 @@
             .write objHTTP.responseBody
             .savetofile fileDir, 2 'overwrite
         end with
+
+        set objHTTP = nothing
+        set objFSO = nothing
+        set bStrm = nothing
     end sub
 
     ' Unzips a given zip file. 
@@ -233,6 +237,8 @@
 
         set filesInZip = objShell.NameSpace(source).Items ' get all items in zip
         call objShell.NameSpace(target).CopyHere(filesInZip, &H14&) ' extract the items
+
+        set objShell = nothing
     end sub
 
     ' Sends a webrequest to the kill subdomain of the Gleitzeitkont-Webserver. Will only send
@@ -245,6 +251,8 @@
             set objHTTP = CreateObject( "WinHttp.WinHttpRequest.5.1" )
             call objHTTP.open("GET", "http://localhost:35221/kill", False)
             objHTTP.send
+
+            set objHTTP = nothing
         end if
     end sub
 
@@ -509,6 +517,12 @@
     ' ----- Installation finished Button clicked
     sub allDoneBtn_onClick
         self.close() ' close the hta window
+    end sub
+
+    ' ----- Remove alle variables -----
+    sub cleanUp
+        set objWShell = nothing
+        set FSO = nothing
     end sub
 
 </script>

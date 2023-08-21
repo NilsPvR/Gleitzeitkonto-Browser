@@ -59,6 +59,10 @@ sub download (url, fileDir)
         .write objHTTP.responseBody
         .savetofile fileDir, 2 'overwrite
     end with
+
+    set objHTTP = nothing
+    set objFSO = nothing
+    set bStrm = nothing
 end sub
 
 sub unzip(source, target)
@@ -66,6 +70,8 @@ sub unzip(source, target)
 
     set filesInZip = objShell.NameSpace(source).Items ' get all items in zip
     call objShell.NameSpace(target).CopyHere(filesInZip, &H14&) ' extract the items
+
+    set objShell = nothing
 end sub
 
 sub killWebserver (pstrWebserverAnswer)
@@ -75,6 +81,8 @@ sub killWebserver (pstrWebserverAnswer)
         set objHTTP = CreateObject( "WinHttp.WinHttpRequest.5.1" )
         call objHTTP.open("GET", "http://localhost:35221/kill", False)
         objHTTP.send
+        
+        set objHTTP = nothing
     end if
 end sub
 
@@ -246,8 +254,11 @@ if (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3") 
     openExplorerAnswer = MsgBox("Soll der Ordner zum Installieren der Browser-Erweiterung ge" + ChrW(&H00F6) + "ffnet werden?", 4, boxTitle)
 
     if (openExplorerAnswer = "6") then 'yes clicked
-        CreateObject("Shell.Application").Explore userprofile + "\AppData\Local\Programs\Gleitzeitkonto-Browser" 'open a explorer window
+        CreateObject("Shell.Application").Explore installationFolder 'open a explorer window
     end if
 end if
 
 MsgBox "Installation erfolgreich abgeschlossen", 0, boxTitle
+
+set objWShell = nothing
+set FSO = nothing
