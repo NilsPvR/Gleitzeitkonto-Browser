@@ -156,16 +156,41 @@ if (continueRespone = "2") then
     Wscript.Quit
 end if
 
+
+' ----- Delete old Browser Extension -----
+    ' delete the old versions of the browsers which are getting installed now
+    ' do not delete anything else since a user might install browser and webserver separately 
+if (FSO.FolderExists(installationFolder)) then
+
+    if (strBrowserAnswer = "1" OR strBrowserAnswer = "3") then ' Firefox is getting installed -> delete old version
+        oldFirefoxPath = installationFolder + "\Gleitzeitkonto-Browser-Firefox.xpi"
+        if (FSO.FileExists(oldFirefoxPath)) then
+            FSO.DeleteFile(oldFirefoxPath)
+        end if
+    end if
+
+    if (strBrowserAnswer = "2" OR strBrowserAnswer = "3") then ' Chromium is getting installed -> delete old version
+        oldChromiumPath = installationFolder + "\Chromium" ' old folder name
+        if (FSO.FolderExists(oldChromiumPath)) then
+            FSO.DeleteFolder(oldChromiumPath)
+        end if
+
+        oldChromiumPath = installationFolder + "\Chrome-Edge(Chromium)" ' new folder name
+        if (FSO.FolderExists(oldChromiumPath)) then
+            FSO.DeleteFolder(oldChromiumPath)
+        end if            
+    end if
+
+end if
+
+
 ' ----- Download Browser Erweiterung -----
 if (strBrowserAnswer = "1") then ' Firefox
     fileDir =  installationFolder + "\" + Split(firefoxURL, "/")(8)
     call download(firefoxURL, fileDir) ' do not unzip for firefox
 
-    oldFirefoxXPI = installationFolder + "\Gleitzeitkonto-Browser-Firefox.xpi"
-    if (FSO.FileExists(oldFirefoxXPI)) then ' if old file available delete it
-        call FSO.DeleteFile(oldFirefoxXPI)
-    end if
-    call FSO.MoveFile(fileDir, oldFirefoxXPI) ' rename download file
+    firefoxInstallPath = installationFolder + "\Gleitzeitkonto-Browser-Firefox.xpi"
+    call FSO.MoveFile(fileDir, firefoxInstallPath) ' rename download file
 
 elseif (strBrowserAnswer = "2") then ' Chromium
     fileDir = installationFolder + "\" + Split(chromiumURL, "/")(8)
@@ -178,11 +203,8 @@ elseif (strBrowserAnswer = "3") then ' Firefox + Chromium
     fileDir = installationFolder + "\" + Split(firefoxURL, "/")(8)
     call download(firefoxURL, fileDir) ' do not unzip for firefox
 
-    oldFirefoxXPI = installationFolder + "\Gleitzeitkonto-Browser-Firefox.xpi"
-    if (FSO.FileExists(oldFirefoxXPI)) then ' if old file available delete it
-        call FSO.DeleteFile(oldFirefoxXPI)
-    end if
-    call FSO.MoveFile(fileDir, oldFirefoxXPI) ' rename download file
+    firefoxInstallPath = installationFolder + "\Gleitzeitkonto-Browser-Firefox.xpi"
+    call FSO.MoveFile(fileDir, firefoxInstallPath) ' rename download file
 
     fileDir = installationFolder + "\" + Split(chromiumURL, "/")(8)
     call download(chromiumURL, fileDir)
@@ -191,6 +213,39 @@ elseif (strBrowserAnswer = "3") then ' Firefox + Chromium
 end if
 
 call killWebserver(strWebserverAnswer)
+
+' ----- Delete old Webserver -----
+if (FSO.FolderExists(installationFolder)) then
+
+    if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then
+
+        if (FSO.FolderExists(webserverFolder)) then
+            FSO.DeleteFolder(webserverFolder)
+        end if
+
+        ' In previous versions the webserver was not installed in a seperate dir -> check for loose files
+        Dim strings(7) ' array with 6 strings
+        strings(0) = installationFolder + "\Gleitzeitkonto-Webserver.exe"
+        strings(1) = installationFolder + "\icon.ico"
+        strings(2) = installationFolder + "\main.js"
+        strings(3) = installationFolder + "\package.json"
+        strings(4) = installationFolder + "\package-lock.json"
+        strings(5) = installationFolder + "\start-Gleitzeitkonto-Webserver.vbs"
+        strings(6) = installationFolder + "\url.json"
+        strings(7) = installationFolder + "\version.txt"
+        
+        ' loop over the array to delete files
+        For i = LBound(strings) To UBound(strings)
+            if (FSO.FileExists(strings(i))) then FSO.DeleteFile(strings(i)) end if
+        Next
+        nodeModulesPath = installationFolder + "\node_modules"
+        if (FSO.FolderExists(nodeModulesPath)) then FSO.DeleteFolder(nodeModulesPath) end if
+
+        oldWebserverAPIPath = installationFolder + "\gleitzeitkonto-api"
+        if (FSO.FolderExists(oldWebserverAPIPath)) then FSO.DeleteFolder(oldWebserverAPIPath) end if
+    end if
+
+end if
 
 ' ----- Download Webserver -----
 if (strWebserverAnswer = "1") then
@@ -230,12 +285,12 @@ end if
 ' ----- Start or perpare webserver -----
 
 if (strWebserverAnswer = "1") then ' when packed version is selected
-    objWShell.Run(webserverFolder + "\Gleitzeitkonto-Webserver.exe", 0, true)
+    call objWShell.Run(webserverFolder + "\Gleitzeitkonto-Webserver.exe", 0, true)
 end if
 
 if (strWebserverAnswer = "2") then ' unpacked version selected
     ' try to install npm packages
-    objWShell.Run("cmd /c cd /d " & webserverFolder & " && " & "npm install", 0, true)
+    call objWShell.Run("cmd /c cd /d " & webserverFolder & " && " & "npm install", 0, true)
 end if
 
 
