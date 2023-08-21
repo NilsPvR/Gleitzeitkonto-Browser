@@ -283,14 +283,22 @@ if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then
 end if
 
 ' ----- Start or perpare webserver -----
+On Error Resume Next ' define ignore error when exe file can't be opened (virus scan in progress)
 
 if (strWebserverAnswer = "1") then ' when packed version is selected
-    call objWShell.Run(webserverFolder + "\Gleitzeitkonto-Webserver.exe", 0, true)
+    webserverExePath = webserverFolder + "\Gleitzeitkonto-Webserver.exe"
+    if (FSO.FileExists(webserverExePath)) then
+        call objWShell.Run(webserverExePath, 0, true)
+    end if
 end if
+
+On Error Goto 0 ' enable errors again
 
 if (strWebserverAnswer = "2") then ' unpacked version selected
     ' try to install npm packages
-    call objWShell.Run("cmd /c cd /d " & webserverFolder & " && " & "npm install", 0, true)
+    if (FSO.FileExists(webserverFolder + "\package.json")) then
+        call objWShell.Run("cmd /c cd /d " & webserverFolder & " && " & "npm install", 0, true)
+    end if
 end if
 
 

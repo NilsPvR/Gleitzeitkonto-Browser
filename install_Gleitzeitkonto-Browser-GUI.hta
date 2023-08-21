@@ -518,27 +518,41 @@
 
     sub downloadProcessStartWebserver ()
         ' ----- Start or prepare webserver -----
-        On Error Resume Next ' define only in sub to ignore error when exe file can't be opened
+        On Error Resume Next ' define only in sub to ignore error when exe file can't be opened (virus scan in progress)
 
         if (strWebserverAnswer = "1") then ' when packed version is selected
-            errorCode = objWShell.Run(webserverFolder + "\Gleitzeitkonto-Webserver.exe", 0, true)
-            if (errorCode = "0") then ' success
-                loadingBox.innerHTML = loadingBox.innerHTML + "Hintergrund-Prozess wurde gestartet<br>"
+
+            webserverExePath = webserverFolder + "\Gleitzeitkonto-Webserver.exe"
+            if (FSO.FileExists(webserverExePath)) then ' check to avoid unecessary errors
+                errorCode = objWShell.Run(webserverExePath, 0, true)
+                if (errorCode = "0") then ' success
+                    loadingBox.innerHTML = loadingBox.innerHTML + "Hintergrund-Prozess wurde gestartet<br>"
+                else
+                    loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Hintergrund-Prozess konnte nicht gestartet werden</span><br>"
+                end if
             else
                 loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Hintergrund-Prozess konnte nicht gestartet werden</span><br>"
             end if
+
         end if
 
         if (strWebserverAnswer = "2") then ' unpacked version selected
-            ' try to install npm packages
-            errorCode = objWShell.Run("cmd /c cd /d " & webserverFolder & " && " & "npm install", 0, true)
-            if (errorCode = "0") then ' success
-                loadingBox.innerHTML = loadingBox.innerHTML + "Node-Packages wurden installiert<br>"
+
+            if (FSO.FileExists(webserverFolder + "\package.json")) then ' check to avoid unecessary errors
+                ' try to install npm packages
+                errorCode = objWShell.Run("cmd /c cd /d " & webserverFolder & " && " & "npm install", 0, true)
+                if (errorCode = "0") then ' success
+                    loadingBox.innerHTML = loadingBox.innerHTML + "Node-Packages wurden installiert<br>"
+                else
+                    loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Node-Packages konnten nicht installiert werden</span><br>"
+                end if
             else
                 loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Node-Packages konnten nicht installiert werden</span><br>"
             end if
+
         end if
 
+        On Error Goto 0 ' enable errors again
         call window.SetTimeout("downloadProcessFinish()", 0, "VBScript") ' timeout to update screen
     end sub
 
