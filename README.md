@@ -17,9 +17,8 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 
 ## 1. Automatisch 
 
-1. **[Installations-Skript](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/download/v1.0.0-script/install_Gleitzeitkonto-Browser.hta)** herunterladen und ausführen.
-2. Installation durchführen. Warten bis *"Installation erfolgreich abgeschlossen"* erscheint.
-3. [Hinzufügen der Erweiterung](#2-hinzufügen-der-erweiterung)
+1. **[Installations-Skript](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/download/v1.1.0/install_Gleitzeitkonto-Browser-GUI.hta)** herunterladen und ausführen.
+2. [Hinzufügen der Erweiterung](#2-hinzufügen-der-erweiterung)
 
 <details><summary><b>❓ Es kommt eine Fehlermeldung</b></summary>
     <i>Folgende Fehlermeldung kann auftauchen:</i><br>
@@ -53,14 +52,21 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 <br>
 
 ### Firefox
-1. "Windows-Taste" + "R" (gleichzeitig) drücken
-2. `%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser` eingeben + "OK" klicken
-3. Datei mit dem Namen: "Gleitzeitkonto-Browser-Firefox.xpi" öffnen
-4. Firefox zum Öffnen wählen + "OK" klicken
-5. "Hinzufügen" klicken in Firefox
-6. Fertig! 🥳
 
-<img alt="Erweiterungsdatei mit Firefox öffnen" src="Assets/Firefox-easy-installation.png" style="height: 300px; margin-left: 1.7rem">
+
+1. Der Installations-Ordner wurde bei der Installation automatisch geöffnet
+2. Datei mit dem Namen: "Gleitzeitkonto-Browser-Firefox.xpi" öffnen
+3. Firefox zum Öffnen wählen + "OK" klicken
+4. "Hinzufügen" klicken in Firefox
+5. Fertig! 🥳
+
+
+<details><summary><b>❓ Der InstallationsOrdner ist noch nicht offen</b></summary>
+    <ol>
+        <li>"Windows-Taste" + "R" (gleichzeitig) drücken</li>
+        <li><code>%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser</code> eingeben + "OK" klicken</li>
+    </ol>
+</details>
 
 <details><summary><b>❓ Die Datei lässt sich nicht mit Firefox öffnen</b></summary>
 <ol>
@@ -72,33 +78,58 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
     <li>In die Adressleiste <code>%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser</code> eingeben und "Gleitzeitkonto-Browser-Firefox.xpi" auswählen</li>
     <li>"Öffnen" klicken</li>
     <li>Fertig! 🥳</li>
-</ul>
+</ol>
 </details>
+
+<img alt="Erweiterungsdatei mit Firefox öffnen" src="Assets/Firefox-easy-installation.png" style="height: 250px; margin-left: 1.7rem">
+
+
 
 ### Chrome
 1. In Chrome neuen Tab mit `about:extensions` öffnen
-2. Rechts "Entwicklermodus" aktivieren
-3. "Entpackte Erweiterung laden" klicken
+2. Rechts "Entwicklermodus" aktivieren<br>
+<img src="./Assets/chrome-developer-mode.png" style="height: 150px;" alt="Entwicklermodus in Chrome aktivieren">
+3. Der Installations-Ordner wurde bei der Installation automatisch geöffnet
+4. Per Drag und Drop den Ordner "Chrome-Edge(Chromium)" in das Fenster ziehen
+    <img src="./Assets/chrome-installation-draganddrop.PNG" alt="Per Drag und drop die Erweiterung hinzufügen">
+5. Fertig! 🥳
 
-<img src="./Assets/chrome-installation.png" alt="Installation in Chrome">
+<details><summary><b>❓ Ordner nicht offen / Drag und Drop funktioniert nicht</b></summary>
+<ol>
+    <li>"Entpackte Erweiterung laden" klicken<br>
+    <img src="./Assets/chrome-installation.png" alt="Installation in Chrome">
+    </li>
+    <li>In die Adressleiste <code>%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser</code> eingeben und "Chrome-Edge(Chromium)" auswählen</li>
+    <li>"Ordner auswählen" klicken</li>
+    <li>Fertig! 🥳</li>
+</ol>
+</details>
 
-4. In die Adressleiste `%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser` eingeben und "Chromium Extension" auswählen
-5. "Ordner auswählen" klicken
-6. Fertig! 🥳
+
 
 ### Edge
 1. In Edge neuen Tab mit `about:extensions` öffnen
 2. Links "Entwicklermodus" aktivieren
-3. "Entpackte Dateien laden" klicken
+    <img src="./Assets/edge-developer-mode.png" style="height: 150px;" alt="Entwicklermodus in Edge aktivieren">
+3. Der Installations-Ordner wurde bei der Installation automatisch geöffnet
+4. Per Drag und Drop den Ordner "Chrome-Edge(Chromium)" in das Fenster ziehen
+    <img src="./Assets/edge-installation-draganddrop.PNG" alt="Per Drag und drop die Erweiterung hinzufügen">
+5. Fertig! 🥳
 
-<img src="./Assets/installation-edge.png" alt="Installation in Edge">
 
 
-4. In die Adressleiste `%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser` eingeben und "Chromium Extension" auswählen
-5. "Ordner auswählen" klicken
-6. Fertig! 🥳
-<br><br>
-<hr>
+<details><summary><b>❓ Ordner nicht offen / Drag und Drop funktioniert nicht</b></summary>
+<ol>
+    <li>"Entpackte Erweiterung laden" klicken<br>
+    <img src="./Assets/installation-edge.png" alt="Installation in Edge">
+    </li>
+    <li>In die Adressleiste <code>%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser</code> eingeben und "Chrome-Edge(Chromium)" auswählen</li>
+    <li>"Ordner auswählen" klicken</li>
+    <li>Fertig! 🥳</li>
+</ol>
+</details>
+
+
 
 ## 1. Manuell (alternativ)
 Gleitzeitkonto-Browser kann auch manuell installiert werden. Die Dateien, die unter [releases](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases) nicht heruntergeladen werden sollen müssen hierfür heruntergeladen werden. Bei vorhandener Node.js Installation kann die webserver-script.zip, ansonsten die webserver.zip Datei, heruntergeladen werden. Die Dateien nun in ein gewünschtes Verzeichnis extrahieren. Bei der Skript-Version [erweiterte Schritte](#experten---nodejs-webserver) beachten.<br>
@@ -107,10 +138,11 @@ Das vbscript "start-Gleitzeitkonto-Webserver" kann dazu verwendet werden um den 
 Für die Erweiterung muss die entsprechende .zip oder .xpi Datei heruntergeladen werden. Für Chromium-Browser muss die zip Datei entpackt werden. Für Firefox die .xpi Datei unverändert lassen. Die Dateien können in ein beliebiges Verzeichnis gelegt werden. Anschließend [Hinzufügen der Erweiterung](#2-hinzufügen-der-erweiterung) folgen, mit angepasstem Pfad.
 <br><br>
 
-## Experten - Node.js Webserver
-Diese Schritte nur folgen, wenn bei der Installation "Hintergrund-Node.js-Skript" ausgewählt wurde. Zunächst muss [Node.js](https://nodejs.org/) auf dem PC installiert sein. Damit der Hintergrund-Prozess (Webserver) funktionieren kann, muss eine URL hinzugefügt werden:
+## Node.js-Skript Webserver
+Diese Schritte nur folgen, wenn bei der Installation "Hintergrund-Node.js-Skript" ausgewählt wurde. Zunächst muss [Node.js](https://nodejs.org/) zusammen mit npm auf dem PC installiert sein. Falls Node.js erst nach der Installation installiert wird, am besten die Installation erneut durchführen. <br>
+Damit der Hintergrund-Prozess (Webserver) funktionieren kann, muss eine URL hinzugefügt werden:
 1. "Windows-Taste" + "R" (gleichzeitig) drücken
-2. `%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser` eingeben
+2. `%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser\Webserver` eingeben
 3. Die Datei "url.json" öffnen
 4. Zwischen die Anführungszeichen den Link zur "Meine Zeitenübersicht"-Seite im internen Fiori eingeben. Es sollte dann ungefähr so aussehen:
    ```"https://abc.cdef.domain.com:1234/bla/bla/bla#btccatstime-display"```
