@@ -74,7 +74,7 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
     <li>Links "Erweiterungen" auswählen</li>
     <li>"Erweiterungen verwalten" Einstellungsrad klicken</li>
     <li>"Add-on aus Datei installieren..." klicken</li>
-    <img src="./Assets/Firefox-installation.png" alt="Installation in Firefox">
+    <img src="./Assets/Firefox-installation.png" alt="Installation in Firefox" style="width: 70%;">
     <li>In die Adressleiste <code>%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser</code> eingeben und "Gleitzeitkonto-Browser-Firefox.xpi" auswählen</li>
     <li>"Öffnen" klicken</li>
     <li>Fertig! 🥳</li>
@@ -88,16 +88,16 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 ### Chrome
 1. In Chrome neuen Tab mit `about:extensions` öffnen
 2. Rechts "Entwicklermodus" aktivieren<br>
-<img src="./Assets/chrome-developer-mode.png" style="height: 150px;" alt="Entwicklermodus in Chrome aktivieren">
+    <img src="./Assets/chrome-developer-mode.png" style="height: 150px;" alt="Entwicklermodus in Chrome aktivieren">
 3. Der Installations-Ordner wurde bei der Installation automatisch geöffnet
-4. Per Drag und Drop den Ordner "Chrome-Edge(Chromium)" in das Fenster ziehen
-    <img src="./Assets/chrome-installation-draganddrop.PNG" alt="Per Drag und drop die Erweiterung hinzufügen">
+4. Per Drag und Drop den Ordner "Chrome-Edge(Chromium)" in das Fenster ziehen<br>
+    <img src="./Assets/chrome-installation-draganddrop.PNG" alt="Per Drag und drop die Erweiterung hinzufügen" style="width: 70%;">
 5. Fertig! 🥳
 
 <details><summary><b>❓ Ordner nicht offen / Drag und Drop funktioniert nicht</b></summary>
 <ol>
     <li>"Entpackte Erweiterung laden" klicken<br>
-    <img src="./Assets/chrome-installation.png" alt="Installation in Chrome">
+    <img src="./Assets/chrome-installation.png" alt="Installation in Chrome" style="width: 70%;">
     </li>
     <li>In die Adressleiste <code>%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser</code> eingeben und "Chrome-Edge(Chromium)" auswählen</li>
     <li>"Ordner auswählen" klicken</li>
@@ -109,11 +109,11 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 
 ### Edge
 1. In Edge neuen Tab mit `about:extensions` öffnen
-2. Links "Entwicklermodus" aktivieren
+2. Links "Entwicklermodus" aktivieren<br>
     <img src="./Assets/edge-developer-mode.png" style="height: 150px;" alt="Entwicklermodus in Edge aktivieren">
 3. Der Installations-Ordner wurde bei der Installation automatisch geöffnet
-4. Per Drag und Drop den Ordner "Chrome-Edge(Chromium)" in das Fenster ziehen
-    <img src="./Assets/edge-installation-draganddrop.PNG" alt="Per Drag und drop die Erweiterung hinzufügen">
+4. Per Drag und Drop den Ordner "Chrome-Edge(Chromium)" in das Fenster ziehen<br>
+    <img src="./Assets/edge-installation-draganddrop.PNG" alt="Per Drag und drop die Erweiterung hinzufügen" style="width: 70%;">
 5. Fertig! 🥳
 
 
@@ -121,7 +121,7 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 <details><summary><b>❓ Ordner nicht offen / Drag und Drop funktioniert nicht</b></summary>
 <ol>
     <li>"Entpackte Erweiterung laden" klicken<br>
-    <img src="./Assets/installation-edge.png" alt="Installation in Edge">
+    <img src="./Assets/installation-edge.png" alt="Installation in Edge" style="width: 70%;">
     </li>
     <li>In die Adressleiste <code>%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser</code> eingeben und "Chrome-Edge(Chromium)" auswählen</li>
     <li>"Ordner auswählen" klicken</li>
