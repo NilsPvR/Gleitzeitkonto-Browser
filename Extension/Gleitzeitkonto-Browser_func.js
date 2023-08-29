@@ -371,7 +371,7 @@ module.exports = class GleitzeitkontoBrowser {
         const localBrowserVersion = browser.runtime.getManifest().version;
 
         let localWebserverVersion = await this.fetchServer(this.givenStrings.versionURL); // get version obj
-        if (localBrowserVersion?.version) localWebserverVersion = localWebserverVersion.version; // get version string out of object
+        if (localWebserverVersion?.version) localWebserverVersion = localWebserverVersion.version; // get version string out of object
 
         let onlineVersion;
         try {
