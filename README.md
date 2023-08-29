@@ -17,7 +17,7 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 
 ## 1. Automatisch 
 
-1. **[Installations-Skript](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/download/v1.1.0/install_Gleitzeitkonto-Browser-GUI.hta)** herunterladen und ausführen.
+1. **[Installations-Skript](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/download/v1.1.1/install_Gleitzeitkonto-Browser-GUI.hta)** herunterladen und ausführen.
 2. [Hinzufügen der Erweiterung](#2-hinzufügen-der-erweiterung)
 
 <details><summary><b>❓ Es kommt eine Fehlermeldung</b></summary>
