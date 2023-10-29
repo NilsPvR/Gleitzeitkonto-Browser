@@ -61,86 +61,9 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 </details>
 
 ## 2. Hinzufügen der Erweiterung
-[Firefox](#firefox) oder [Chrome](#chrome) oder [Edge](#edge)
-<br>
+Die Erweiterung muss im entsprechenden Browser installiert werden.
 
-### Firefox
-
-
-1. Der Installations-Ordner wurde bei der Installation automatisch geöffnet
-2. Datei mit dem Namen: "Gleitzeitkonto-Browser-Firefox.xpi" öffnen
-3. Firefox zum Öffnen wählen + "OK" klicken<br>
-<img alt="Erweiterungsdatei mit Firefox öffnen" src="Assets/Firefox-easy-installation.png" style="height: 250px">
-1. "Hinzufügen" klicken in Firefox
-2. Fertig! 🥳
-
-
-<details><summary><b>❓ Der Installations-Ordner ist noch nicht offen</b></summary>
-    <ol>
-        <li>"Windows-Taste" + "R" (gleichzeitig) drücken</li>
-        <li><code>%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser</code> eingeben + "OK" klicken</li>
-    </ol>
-</details>
-
-<details><summary><b>❓ Die Datei lässt sich nicht mit Firefox öffnen</b></summary>
-<ol>
-    <li>In Firefox neuen Tab mit <code>about:addons</code> öffnen</li>
-    <li>Links "Erweiterungen" auswählen</li>
-    <li>"Erweiterungen verwalten" Einstellungsrad klicken</li>
-    <li>"Add-on aus Datei installieren..." klicken</li>
-    <img src="./Assets/Firefox-installation.png" alt="Installation in Firefox" style="width: 70%;">
-    <li>In die Adressleiste <code>%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser</code> eingeben und "Gleitzeitkonto-Browser-Firefox.xpi" auswählen</li>
-    <li>"Öffnen" klicken</li>
-    <li>Fertig! 🥳</li>
-</ol>
-</details>
-
-
-
-### Chrome
-1. In Chrome neuen Tab mit `about:extensions` öffnen
-2. Rechts "Entwicklermodus" aktivieren<br>
-    <img src="./Assets/chrome-developer-mode.png" style="height: 150px;" alt="Entwicklermodus in Chrome aktivieren">
-3. Der Installations-Ordner wurde bei der Installation automatisch geöffnet
-4. Per Drag und Drop den Ordner "Chrome-Edge(Chromium)" in das Fenster ziehen<br>
-    <img src="./Assets/chrome-installation-draganddrop.PNG" alt="Per Drag und drop die Erweiterung hinzufügen" style="width: 70%;">
-5. Fertig! 🥳
-
-<details><summary><b>❓ Ordner nicht offen / Drag und Drop funktioniert nicht</b></summary>
-<ol>
-    <li>"Entpackte Erweiterung laden" klicken<br>
-    <img src="./Assets/chrome-installation.png" alt="Installation in Chrome" style="width: 70%;">
-    </li>
-    <li>In die Adressleiste <code>%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser</code> eingeben und "Chrome-Edge(Chromium)" auswählen</li>
-    <li>"Ordner auswählen" klicken</li>
-    <li>Fertig! 🥳</li>
-</ol>
-</details>
-
-
-
-### Edge
-1. In Edge neuen Tab mit `about:extensions` öffnen
-2. Links "Entwicklermodus" aktivieren<br>
-    <img src="./Assets/edge-developer-mode.png" style="height: 150px;" alt="Entwicklermodus in Edge aktivieren">
-3. Der Installations-Ordner wurde bei der Installation automatisch geöffnet
-4. Per Drag und Drop den Ordner "Chrome-Edge(Chromium)" in das Fenster ziehen<br>
-    <img src="./Assets/edge-installation-draganddrop.PNG" alt="Per Drag und drop die Erweiterung hinzufügen" style="width: 70%;">
-5. Fertig! 🥳
-
-
-
-<details><summary><b>❓ Ordner nicht offen / Drag und Drop funktioniert nicht</b></summary>
-<ol>
-    <li>"Entpackte Erweiterung laden" klicken<br>
-    <img src="./Assets/installation-edge.png" alt="Installation in Edge" style="width: 70%;">
-    </li>
-    <li>In die Adressleiste <code>%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser</code> eingeben und "Chrome-Edge(Chromium)" auswählen</li>
-    <li>"Ordner auswählen" klicken</li>
-    <li>Fertig! 🥳</li>
-</ol>
-</details>
-
+[Firefox](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Firefox-Installation) oder [Chrome](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Chrome-Installation) oder [Edge](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Edge-Installation)
 
 
 ## 1. Manuell (alternativ)
