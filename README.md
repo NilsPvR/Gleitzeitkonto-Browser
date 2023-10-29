@@ -13,10 +13,8 @@ Alternativ: [Gleitzeitkonto-Desktop](https://github.com/julius-boettger/gleitzei
 # Installation (Windows)
 Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur experimentell.
 
-## 1. Automatisch 
-
-1. **[Installations-Skript](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/download/v1.1.1/install_Gleitzeitkonto-Browser-GUI.hta)** herunterladen und ausführen.
-2. [Hinzufügen der Erweiterung](#2-hinzufügen-der-erweiterung)
+1. <b>Webserver installieren <i>(automatisch)</i></b><br>
+   **[Installations-Skript](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/download/v1.1.1/install_Gleitzeitkonto-Browser-GUI.hta)** herunterladen und ausführen.
 
 <details><summary><b>❓ Es kommt eine Fehlermeldung</b></summary>
     <details><summary><b>Fehler:</b> "Erlaubnis verweigert"</summary>
@@ -59,15 +57,15 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
     </details>
 
 </details>
+<br><br>
 
-## 2. Hinzufügen der Erweiterung
-Die Erweiterung muss im entsprechenden Browser installiert werden.
+2. **Erweiterung hinzufügen**<br>
+Die Erweiterung muss im entsprechenden Browser installiert werden: [Firefox](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Firefox-Installation) oder [Chrome](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Chrome-Installation) oder [Edge](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Edge-Installation)
+3. Fertig! 🥳
+<hr>
 
-[Firefox](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Firefox-Installation) oder [Chrome](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Chrome-Installation) oder [Edge](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Edge-Installation)
-
-
-## 1. Manuell (alternativ)
-Gleitzeitkonto-Browser kann auch manuell installiert werden. Die Dateien, die unter [releases](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases) nicht heruntergeladen werden sollen müssen hierfür heruntergeladen werden. Bei vorhandener Node.js Installation kann die webserver-script.zip, ansonsten die webserver.zip Datei, heruntergeladen werden. Die Dateien nun in ein gewünschtes Verzeichnis extrahieren. Bei der Skript-Version [erweiterte Schritte](#experten---nodejs-webserver) beachten.<br>
+## 1. Webserver manuell (alternativ)
+Gleitzeitkonto-Browser kann auch manuell installiert werden, falls eine automatische Installation nicht gewünscht ist. Die Dateien, die unter [releases](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases) nicht heruntergeladen werden sollen müssen hierfür heruntergeladen werden. Bei vorhandener Node.js Installation kann die webserver-script.zip, ansonsten die webserver.zip Datei, heruntergeladen werden. Die Dateien nun in ein gewünschtes Verzeichnis extrahieren. Bei der Skript-Version [erweiterte Schritte](#experten---nodejs-webserver) beachten.<br>
 Das vbscript "start-Gleitzeitkonto-Webserver" kann dazu verwendet werden um den Webserver zu starten. Es kann hierfür eine Verknüpfung erstellt werden, um diese in den Autostart zu legen.
 
 Für die Erweiterung muss die entsprechende .zip oder .xpi Datei heruntergeladen werden. Für Chromium-Browser muss die zip Datei entpackt werden. Für Firefox die .xpi Datei unverändert lassen. Die Dateien können in ein beliebiges Verzeichnis gelegt werden. Anschließend [Hinzufügen der Erweiterung](#2-hinzufügen-der-erweiterung) folgen, mit angepasstem Pfad.
