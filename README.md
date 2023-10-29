@@ -21,29 +21,44 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 2. [Hinzufügen der Erweiterung](#2-hinzufügen-der-erweiterung)
 
 <details><summary><b>❓ Es kommt eine Fehlermeldung</b></summary>
-    <i>Folgende Fehlermeldung kann auftauchen:</i><br>
-    <img src="Assets/Errormsg-Scanning-by-Defender.png" alt="Fehlermeldung durch Defender">
-    <br><br>
-    <p>Die Fehlermeldung taucht auf, wenn der Antivirus, die Datei noch nicht vollständig überprüft und frei gegeben hat. Eine solche Überprüfung passiert automatisch und kann leider einige Zeit dauern.<p>
-    <p>Mit Admin Rechten kann diese Überprüfung übersprungen werden.</p>
-    <ol>
-        <li>"Windows-Sicherheit" öffnen</li>
-        <li>"Viren- & Bedrohungsschutz"</li>
-        <li>Unter "Einstellungen für Viren- und Bedrohungsschutz": "Einstellungen verwalten"</li>
-        <li>Unter "Ausschlüsse" (weit unten): "Ausschlüsse hinzufügen oder entfernen"</li>
-        <li>"Ausschluss hinzufügen"</li>
-        <li>"Ordner"</li>
-        <li><code>%UserProfile%\AppData\Local\Programs</code> in der Adressleite eingeben</li>
-        <li>Ordner "Gleitzeitkonto-Browser" auswählen</li>
-        <li>"Ordner auswählen"</li>
-        <li>Der Antivirus ignoriert nun den Installations-Ordner und das Programm kann ausgeführt werden.
-            <ol>
-                <li>Hierzu "Windows-Taste" + "R" (gleichzeitig) drücken</li>
-                <li><code>%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser</code> eingeben </li>
-                <li>"start-Gleitzeitkonto-Webserver.vsb" ausführen</li>
-            </ol>
-        </li>
-    </ol>
+    <details><summary><b>Fehler:</b> "Erlaubnis verweigert"</summary>
+        <i>Die Fehlermeldung sieht folgendermaßend aus:</i><br>
+        <img src="Assets/Errormsg-Scanning-by-Defender.png" alt="Fehlermeldung durch Defender." style="width: 50%;">
+        <br><br>
+        <p>Die Fehlermeldung taucht auf, wenn der Antivirus, die Datei noch nicht vollständig überprüft und frei gegeben hat. Eine solche Überprüfung passiert automatisch und kann leider einige Zeit dauern.<p>
+        <p>Mit Admin Rechten kann diese Überprüfung übersprungen werden.</p>
+        <ol>
+            <li>"Windows-Sicherheit" öffnen</li>
+            <li>"Viren- & Bedrohungsschutz"</li>
+            <li>Unter "Einstellungen für Viren- und Bedrohungsschutz": "Einstellungen verwalten"</li>
+            <li>Unter "Ausschlüsse" (weit unten): "Ausschlüsse hinzufügen oder entfernen"</li>
+            <li>"Ausschluss hinzufügen"</li>
+            <li>"Ordner"</li>
+            <li><code>%UserProfile%\AppData\Local\Programs</code> in der Adressleite eingeben</li>
+            <li>Ordner "Gleitzeitkonto-Browser" auswählen</li>
+            <li>"Ordner auswählen"</li>
+            <li>Der Antivirus ignoriert nun den Installations-Ordner und das Programm kann ausgeführt werden.
+                <ol>
+                    <li>Hierzu "Windows-Taste" + "R" (gleichzeitig) drücken</li>
+                    <li><code>%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser</code> eingeben </li>
+                    <li>"start-Gleitzeitkonto-Webserver.vsb" ausführen</li>
+                </ol>
+            </li>
+        </ol>
+    </details>
+    <details><summary><b>Fehler:</b> "Die Sicherheitseinstellungen des Computers..."</summary>
+        <i>Die Fehlermeldung sieht folgendermaßen aus:</i><br>
+        <img src="Assets/installation-script-error.png" alt="Fehlermeldung für Sicherheitseinstellungen des Computers." style="width: 50%;">
+        <br><br>
+        <ol>
+            <li>Installations-Programm schließen</li>
+            <li>Rechtsklick auf die Datei (Installations-Skript) -> Eigenschaften</li>
+            <li>Unter Sicherheit: Häckchen bei "Zulassen" setzen -> OK<br>
+                <img src="Assets/installation-allow-external.png" alt="Screenshot zum Zulassen des Installations-Scripts.">
+            </li>
+            <li>Installation erneut starten</li>
+        </ol>
+    </details>
 
 </details>
 
