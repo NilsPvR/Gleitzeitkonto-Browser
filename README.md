@@ -1,5 +1,3 @@
-# ==> [Anleitung hier](#1-automatisch) <==
-
 # Gleitzeitkonto-Browser - Anzeigen der Überstunden per Erweiterung
 
 Die Browser Erweiterung, die das aktuelle Gleitzeitkonto mit Hilfe der [Gleitzeitkonto-API](https://github.com/julius-boettger/gleitzeitkonto-api) anzeigt. Man muss nicht mehr umständlich die Überstunden ausrechnen oder aus PDF-Datein ablesen. Es werden einfach im Fiori-Launchpad auf der Seite der Zeiterfassung die aktuellen Überstunden angezeigt, ebenfalls im Popup-Menu der Erweiterung selber.
@@ -10,7 +8,7 @@ Alternativ: [Gleitzeitkonto-Desktop](https://github.com/julius-boettger/gleitzei
 ![Gleitzeitkonto im Fiori-Launchpad](./Assets/GleitzeitkontoFioriLaunchpad.png)
 
 > ### 🚨 Disclaimer
-> Die Erweiterung ist noch in der **BETA Phase**, es fehlen viele Features und wenig ist ordentlich dokumentiert. Dies ist **keine offizielle Software** und auch nicht in irgendeiner Form mit Fiori oder SAP verbunden! Es gibt **keine Gewährleistung** für die Richtigkeit der Überstunden!
+> Dies ist **keine offizielle Software** und auch nicht in irgendeiner Form mit Fiori oder SAP verbunden! Es gibt **keine Gewährleistung** für die Richtigkeit der Überstunden!
 
 # Installation (Windows)
 Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur experimentell.
@@ -71,12 +69,13 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 
 1. Der Installations-Ordner wurde bei der Installation automatisch geöffnet
 2. Datei mit dem Namen: "Gleitzeitkonto-Browser-Firefox.xpi" öffnen
-3. Firefox zum Öffnen wählen + "OK" klicken
-4. "Hinzufügen" klicken in Firefox
-5. Fertig! 🥳
+3. Firefox zum Öffnen wählen + "OK" klicken<br>
+<img alt="Erweiterungsdatei mit Firefox öffnen" src="Assets/Firefox-easy-installation.png" style="height: 250px">
+1. "Hinzufügen" klicken in Firefox
+2. Fertig! 🥳
 
 
-<details><summary><b>❓ Der InstallationsOrdner ist noch nicht offen</b></summary>
+<details><summary><b>❓ Der Installations-Ordner ist noch nicht offen</b></summary>
     <ol>
         <li>"Windows-Taste" + "R" (gleichzeitig) drücken</li>
         <li><code>%UserProfile%\AppData\Local\Programs\Gleitzeitkonto-Browser</code> eingeben + "OK" klicken</li>
@@ -95,8 +94,6 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
     <li>Fertig! 🥳</li>
 </ol>
 </details>
-
-<img alt="Erweiterungsdatei mit Firefox öffnen" src="Assets/Firefox-easy-installation.png" style="height: 250px; margin-left: 1.7rem">
 
 
 
