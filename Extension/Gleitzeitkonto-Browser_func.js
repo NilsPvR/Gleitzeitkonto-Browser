@@ -79,7 +79,7 @@ module.exports = class GleitzeitkontoBrowser {
 
     // Boolean value weather or not the user is on "Meine Zeiterfassung" page
     checkCorrectMenuIsOpen () {
-        if (window.location.hash === this.givenStrings.gleitzeitHash) {
+        if (window.location.hash.startsWith(this.givenStrings.gleitzeitHash)) {
             return true;
         }
         return false;

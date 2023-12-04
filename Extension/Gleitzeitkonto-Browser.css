@@ -89,6 +89,7 @@
 
 .floating-display {
     display: flex;
+    width: revert;
     position: absolute;
     margin-top: 15px;
     z-index: 5;
