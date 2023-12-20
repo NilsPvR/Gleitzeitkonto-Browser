@@ -167,7 +167,7 @@
 
     ' Extract zip contents for Webserver (if selected)
     ' Extract zip contents for Chromium-Extension (if selected)
-    ' When unpacked is selected link to extended instructions
+    ' When unpacked webserver is selected link to extended instructions
 
     ' Create Shortcut for startWebserver.vbs in %AppData%\Microsoft\Windows\Start Menu\Programs\Startup\
     ' Start Webserver
@@ -534,7 +534,21 @@
 
             webserverExePath = webserverFolder + "\Gleitzeitkonto-Webserver.exe"
             if (FSO.FileExists(webserverExePath)) then ' check to avoid unecessary errors
-                errorCode = objWShell.Run(webserverExePath, 0, true)
+                ' -- Start the webserver in the background --
+                set objWMIService = GetObject("winmgmts:\\.\root\cimv2")
+                set objProcess = objWMIService.Get("Win32_Process")
+                set objStartup = objWMIService.Get("Win32_ProcessStartup")
+
+                set objConfig = objStartup.SpawnInstance_ ' config will make process without a window 
+                objConfig.CreateFlags = 8 ' CREATE_NO_WINDOW
+                errorCode = objProcess.Create(webserverExePath, null, objConfig, 35221)
+
+                ' clean up
+                set objWMIService = nothing
+                set objProcess = nothing
+                set objStartup = nothing
+                set objConfig = nothing
+
                 if (errorCode = "0") then ' success
                     loadingBox.innerHTML = loadingBox.innerHTML + "Hintergrund-Prozess wurde gestartet<br>"
                 else
