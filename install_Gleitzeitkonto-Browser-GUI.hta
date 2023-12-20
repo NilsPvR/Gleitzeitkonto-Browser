@@ -1,4 +1,4 @@
-﻿<head>
+<head>
 <title>Gleitzeitkonto-Browser</title>
 <HTA:APPLICATION 
      APPLICATIONNAME = "Gleitzeitkonto-Browser"
@@ -194,7 +194,15 @@
     dim strBrowserAnswer, strWebserverAnswer' set global since params are not getting parsed with setTimeout
 
     sub window_onLoad
-        window.resizeTo 600,360
+        htaWidth = 600
+        htaHeight = 360
+        window.resizeTo htaWidth, htaHeight ' set the widht and height of the hta
+        ' calcualte the window position to center it
+        posX = CInt( ( window.screen.width  - htaWidth  ) / 2 )
+        posY = CInt( ( window.screen.height - htaHeight ) / 2 )
+        If posX < 0 Then posX = 0
+        If posY < 0 Then posY = 0
+        window.moveTo posX, posY ' move to center
     end sub
 
     ' ----- Subs Download, Unzip and Killwebserver -----
