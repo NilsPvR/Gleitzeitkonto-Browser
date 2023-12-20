@@ -196,13 +196,13 @@
     sub window_onLoad
         htaWidth = 600
         htaHeight = 360
-        window.resizeTo htaWidth, htaHeight ' set the widht and height of the hta
+        call window.resizeTo(htaWidth, htaHeight) ' set the widht and height of the hta
         ' calcualte the window position to center it
         posX = CInt( ( window.screen.width  - htaWidth  ) / 2 )
         posY = CInt( ( window.screen.height - htaHeight ) / 2 )
-        If posX < 0 Then posX = 0
-        If posY < 0 Then posY = 0
-        window.moveTo posX, posY ' move to center
+        if posX < 0 then posX = 0
+        if posY < 0 then posY = 0
+        call window.moveTo(posX, posY) ' move to center
     end sub
 
     ' ----- Subs Download, Unzip and Killwebserver -----
@@ -219,7 +219,7 @@
     sub download (url, fileDir)
         set objHTTP = CreateObject( "WinHttp.WinHttpRequest.5.1" )
         call objHTTP.open("GET", url, False)
-        objHTTP.send ' send request
+        call objHTTP.send() ' send request
 
         set objFSO = CreateObject("Scripting.FileSystemObject")
         dim bStrm: set bStrm = Createobject("Adodb.Stream")
@@ -227,8 +227,8 @@
 
         with bStrm ' save response of request in file
             .type = 1 ' binary
-            .open
-            .write objHTTP.responseBody
+            .open()
+            .write(objHTTP.responseBody)
             .savetofile fileDir, 2 'overwrite
         end with
 
@@ -254,11 +254,11 @@
     ' @param    pstrWebserverAnswer string  will send the request if the string is "1" or "2"
     sub killWebserver (pstrWebserverAnswer)
         ' ----- Kill old Webserver if existant -----
-        On Error Resume Next ' define only in sub to ignore error when Webserver not running
+        on error resume next ' define only in sub to ignore error when Webserver not running
         if (pstrWebserverAnswer = "1" OR pstrWebserverAnswer = "2") then
             set objHTTP = CreateObject( "WinHttp.WinHttpRequest.5.1" )
             call objHTTP.open("GET", "http://localhost:35221/kill", False)
-            objHTTP.send
+            call objHTTP.send()
 
             set objHTTP = nothing
         end if
@@ -423,9 +423,9 @@
             strings(7) = installationFolder + "\version.txt"
             
             ' loop over the array to delete files
-            For i = LBound(strings) To UBound(strings)
+            for i = LBound(strings) to UBound(strings)
                 if (FSO.FileExists(strings(i))) then FSO.DeleteFile(strings(i)) end if
-            Next
+            next
             nodeModulesPath = installationFolder + "\node_modules"
             if (FSO.FolderExists(nodeModulesPath)) then FSO.DeleteFolder(nodeModulesPath) end if
             
@@ -528,7 +528,7 @@
 
     sub downloadProcessStartWebserver ()
         ' ----- Start or prepare webserver -----
-        On Error Resume Next ' define only in sub to ignore error when exe file can't be opened (virus scan in progress)
+        on error resume next ' define only in sub to ignore error when exe file can't be opened (virus scan in progress)
 
         if (strWebserverAnswer = "1") then ' when packed version is selected
 
@@ -564,7 +564,7 @@
 
             if (FSO.FileExists(webserverFolder + "\package.json")) then ' check to avoid unecessary errors
                 ' try to install npm packages
-                errorCode = objWShell.Run("cmd /c cd /d " & webserverFolder & " && " & "npm install", 0, true)
+                errorCode = objWShell.Run("cmd /c cd /d " & webserverFolder & " && " & "npm install", 0, true) ' TODO this causes a lot of lag and takes forever
                 if (errorCode = "0") then ' success
                     loadingBox.innerHTML = loadingBox.innerHTML + "Node-Packages wurden installiert<br>"
                 else
@@ -576,7 +576,7 @@
 
         end if
 
-        On Error Goto 0 ' enable errors again
+        on error goto 0 ' enable errors again
         call window.SetTimeout("downloadProcessFinish()", 1, "VBScript") ' timeout to update screen
     end sub
 
@@ -605,7 +605,7 @@
             openExplorerAnswer = MsgBox("Soll der Ordner zum Installieren der Browser-Erweiterung geöffnet werden?", 4, boxTitle)
 
             if (openExplorerAnswer = "6") then 'yes clicked
-                CreateObject("Shell.Application").Explore installationFolder 'open a explorer window
+                CreateObject("Shell.Application").Explore(installationFolder) 'open a explorer window
             end if
         end if
 
