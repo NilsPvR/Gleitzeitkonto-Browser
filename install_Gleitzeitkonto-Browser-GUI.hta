@@ -191,7 +191,8 @@
     appDataFolder = objWShell.ExpandEnvironmentStrings("%appdata%")
 
     boxTitle = "Gleitzeitkonto-Browser"
-    dim strBrowserAnswer, strWebserverAnswer' set global since params are not getting parsed with setTimeout
+    dim strBrowserAnswer, strWebserverAnswer, sleeping' set global since params are not getting parsed with setTimeout
+    sleeping = false
 
     sub window_onLoad
         htaWidth = 600
@@ -205,7 +206,7 @@
         call window.moveTo(posX, posY) ' move to center
     end sub
 
-    ' ----- Subs Download, Unzip and Killwebserver -----
+    ' ----- Subs Download, Unzip, Killwebserver and sleep -----
 
     sub downloadUnzipAndDelete (downloadURL, fileDir, destination)
         call download(downloadURL, fileDir)
@@ -263,6 +264,22 @@
             set objHTTP = nothing
         end if
     end sub
+
+    ' Subroutine which allows a simulation of sleeping the script
+    ' The common sleeping method WScript.Sleep is in hta not available
+    ' Usage: Call this method and check in a loop if the `sleeping` variable is false. When it's
+    ' false exit the loop. The variable will be set to true after the specified time  
+    ' @param timeoutInMs    int timeout in milliseconds 
+    sub sleep (timeoutInMs)
+        sleep = true
+        call window.SetTimeout("sleepHelper()", timeoutInMs, "VBScript")
+    end sub
+
+    ' Helper subroutine used for the sleep subroutine. Don't call this yourself
+    sub sleepHelper ()
+        sleep = false
+    end sub
+
 
     ' =====>> Events <<=====
 
@@ -399,6 +416,10 @@
 
 
     sub uninstallWebserver ()
+        dim maxDeleteAttempts, deleteAttemptTimout, everythingDeleted
+        maxDeleteAttempts = 200
+        deleteAttemptTimout = 50 ' ms
+
         ' end webserver so no issues with overwriting files which are in use
         call killWebserver(strWebserverAnswer)
 
@@ -407,12 +428,8 @@
         end if
 
         if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then
-            if (FSO.FolderExists(webserverFolder)) then
-                FSO.DeleteFolder(webserverFolder)
-            end if
-
             ' In previous versions the webserver was not installed in a seperate dir -> check for loose files
-            Dim strings(7) ' array with 6 strings
+            dim strings(7) ' array with 8 strings
             strings(0) = installationFolder + "\Gleitzeitkonto-Webserver.exe"
             strings(1) = installationFolder + "\icon.ico"
             strings(2) = installationFolder + "\main.js"
@@ -422,18 +439,52 @@
             strings(6) = installationFolder + "\url.json"
             strings(7) = installationFolder + "\version.txt"
             
-            ' loop over the array to delete files
-            for i = LBound(strings) to UBound(strings)
-                if (FSO.FileExists(strings(i))) then FSO.DeleteFile(strings(i)) end if
+            ' Loop over deletion in case the files can't be deleted (still in use)
+            for deleteAttempts = 0 to maxDeleteAttempts
+                on error resume next ' ignore errors in case files can't be delted
+
+                ' loop over the array to delete files
+                for i = LBound(strings) to UBound(strings)
+                    if (FSO.FileExists(strings(i))) then FSO.DeleteFile(strings(i)) end if
+                next
+
+                ' Delete folders
+                if (FSO.FolderExists(webserverFolder)) then FSO.DeleteFolder(webserverFolder) end if
+                nodeModulesPath = installationFolder + "\node_modules"
+                if (FSO.FolderExists(nodeModulesPath)) then FSO.DeleteFolder(nodeModulesPath) end if
+                oldWebserverAPIPath = installationFolder + "\gleitzeitkonto-api"
+                if (FSO.FolderExists(oldWebserverAPIPath)) then FSO.DeleteFolder(oldWebserverAPIPath) end if
+
+                on error goto 0 ' enable errors again
+
+
+                ' Check if all files got deleted
+                everythingDeleted = true
+                for i = LBound(strings) to UBound(strings)
+                    if (FSO.FileExists(strings(i))) then everythingDeleted = false end if
+                next
+                if (FSO.FolderExists(nodeModulesPath)) then everythingDeleted = false end if
+                if (FSO.FolderExists(oldWebserverAPIPath)) then everythingDeleted = false end if
+
+                if (everythingDeleted) then
+                    exit for ' deletion successful
+                else 
+                    call sleep(deleteAttemptTimout)
+                    do while sleeping = false 
+                        ' nothing / waiting until sleep is over
+                    loop
+                end if
             next
-            nodeModulesPath = installationFolder + "\node_modules"
-            if (FSO.FolderExists(nodeModulesPath)) then FSO.DeleteFolder(nodeModulesPath) end if
-            
 
-            oldWebserverAPIPath = installationFolder + "\gleitzeitkonto-api"
-            if (FSO.FolderExists(oldWebserverAPIPath)) then FSO.DeleteFolder(oldWebserverAPIPath) end if
 
-            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte Hintergrund-Prozess Version wurde entfernt<br>"
+            ' Check if deletion got cancelled or was successful
+            if (everythingDeleted = true) then
+                loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte Hintergrund-Prozess Version wurde entfernt<br>"
+            else
+                loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + _
+                    "Alte Hintergrund-Prozess Version konnte nicht entfernt werden. Installation wird trotzdem fortgesetzt.<br>"
+            end if
+
             loadingBox.innerHTML = loadingBox.innerHTML + "Download Hintergrund-Prozess gestartet ...<br>"
             call window.SetTimeout("downloadProcessWebserver()", 1, "VBScript") ' timeout to update screen
         end if
