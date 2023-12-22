@@ -1,4 +1,4 @@
-﻿<head>
+<head>
 <title>Gleitzeitkonto-Browser</title>
 <HTA:APPLICATION 
      APPLICATIONNAME = "Gleitzeitkonto-Browser"
@@ -564,9 +564,9 @@
             objShortcut.IconLocation = strIcon
             objShortcut.Save
 
+            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Verknüpfung erstellt<br>"
         end if
 
-        loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Verknüpfung erstellt<br>"
 
         if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then ' when a webserver version is selected
             call window.SetTimeout("downloadProcessStartWebserver()", 1, "VBScript") ' timeout to update screen
