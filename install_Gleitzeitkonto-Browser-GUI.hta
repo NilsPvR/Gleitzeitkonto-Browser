@@ -279,7 +279,7 @@
         if (strBrowserAnswer = "") then
             errorField.innerHTML = "<i>Bitte eine Option für den Browser auswählen.</i>"
             exit sub
-        elseif NOT (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3" OR strBrowserAnswer = "4") then
+        elseif not (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3" OR strBrowserAnswer = "4") then
             ' unsanitizes user input in innerHTML, could be manipulated with HTML edits but won't lead to any security issues
             errorField.innerHTML = "<i>'" + strBrowserAnswer + "' ist eine ungültige Eingabe für den Browser.</i>"
             exit sub
@@ -290,7 +290,7 @@
         if (strWebserverAnswer = "") then
             errorField.innerHTML = "<i>Bitte eine Option für den Hintergrund-Prozess auswählen</i>"
             exit sub
-        elseif NOT (strWebserverAnswer = "1" OR strWebserverAnswer = "2" OR strWebserverAnswer = "3") then
+        elseif not (strWebserverAnswer = "1" OR strWebserverAnswer = "2" OR strWebserverAnswer = "3") then
             ' unsanitizes user input in innerHTML, could be manipulated with HTML edits but won't lead to any security issues
             errorField.innerHTML = "<i>'" + strWebserverAnswer + "' ist eine ungültige Eingabe für den Hintergrund-Prozess.</i>"
             exit sub
@@ -637,22 +637,22 @@
         call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
     end sub
 
-
+    
     sub installationProcessEnd ()
-        finishedBtnWrapper.style.display = "block" ' make the ;finished' button visable
+        finishedBtnWrapper.style.display = "block" ' make the 'finished' button visable
         loadingSvg.style.animationPlayState = "paused"
         call window.SetTimeout("cleanUp()", 1, "VBScript") ' timeout to update screen
     end sub
 
 
     ' ----- Help Button for Browser clicked -----
-    sub browserHelpBtn_onClick
+    sub browserHelpBtn_onClick ()
         MsgBox "'Gleitzeitkonto-Browser' ist eine Erweiterung für den Browser. Bitte wähle für welchen Browser die Erweiterung installiert werden soll.", 0, boxTitle
     end sub
 
 
     ' ----- Help Button for Webserver clicked -----
-    sub webserverHelpBtn_onClick
+    sub webserverHelpBtn_onClick ()
         MsgBox "Gleitzeitkonto-Browser benötigt einen Hintergrund-Prozess zum Funktionieren (Infos auf Github)." + Chr(13) + _
             Chr(13) + _
             "Es wird 'Hintergrund-Package' empfohlen, da es die einfachste Installation bietet. " + _
@@ -662,16 +662,16 @@
     end sub
 
     ' ----- Github Link clicked -----
-    sub githubBtn_onClick
+    sub githubBtn_onClick ()
         objWShell.Run("https://github.com/NilsPvR/Gleitzeitkonto-Browser"), 0 ' open website
     end sub
 
     ' ----- Installation finished Button clicked
-    sub allDoneBtn_onClick
+    sub allDoneBtn_onClick ()
         self.close() ' close the hta window
     end sub
 
-    ' ----- Remove alle variables -----
+    ' ----- Remove all variables -----
     sub cleanUp ()
         set objWShell = nothing
         set FSO = nothing
