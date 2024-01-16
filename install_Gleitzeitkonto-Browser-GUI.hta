@@ -466,7 +466,7 @@
                 if (deleteAttempts = 1) then
                     loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte Webserver-Version wird beendet...<br>"
                 end if
-                call window.SetTimeout("uninstallWebserver()", deleteAttemptTimout, "VBScript")
+                call window.SetTimeout("uninstallWebserver()", deleteAttemptTimout, "VBScript") ' call uninstallWebserver again after specified timeout
 
             else ' failed to uninstall
                 loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + _
