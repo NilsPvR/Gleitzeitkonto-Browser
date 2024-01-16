@@ -1,4 +1,4 @@
-<head>
+﻿<head>
 <title>Gleitzeitkonto-Browser</title>
 <HTA:APPLICATION 
      APPLICATIONNAME = "Gleitzeitkonto-Browser"
@@ -335,8 +335,9 @@
 
         else
             loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Unerwarteter Fehler." + _
-                " Es wurden keine Komponenten zum installieren ausgewählt.</span><br>"
+                " Es wurden keine Komponenten zum installieren ausgewählt. Installation wird abgebrochen.</span><br>"
             call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
+            exit sub ' nothing to do
         end if
 
 
@@ -346,6 +347,10 @@
     ' do not delete anything else since a user might install browser and webserver separately 
     sub uninstallBrowser ()
         if not (FSO.FolderExists(installationFolder)) then
+            loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Unerwarteter Fehler." + _
+                " Der Installationsordner der alten Webserverversion ist nicht mehr vorhanden. Installation wird abgebrochen.</span><br>"
+
+            call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
             exit sub ' nothing to uninstall
         end if
 
@@ -399,7 +404,13 @@
         deleteAttemptTimout = 100 ' ms
 
         ' double check if the installation folder still exists, if not cancel the whole installation
-        if not (FSO.FolderExists(installationFolder)) then exit sub end if
+        if not (FSO.FolderExists(installationFolder)) then 
+            loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Unerwarteter Fehler." + _
+                " Der Installationsordner ist nicht mehr vorhanden. Installation wird abgebrochen.</span><br>"
+
+            call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
+            exit sub ' can't install anything
+        end if
 
         if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then
             ' In previous versions the webserver was not installed in a seperate dir -> check for loose files
