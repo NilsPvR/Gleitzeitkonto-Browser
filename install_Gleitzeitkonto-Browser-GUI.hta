@@ -159,8 +159,6 @@
         ' option 1: Firefox, option 2: Chrome, Edge (Chromium), option 3: multiple, option 4: none
     ' Await user input which webserver they are installing:
         ' option 1: packed, option 2: unpacked, option 3: none
-    ' Confirm installation parts
-        ' cancel or continue
 
     ' Download zip files from Github to %Local AppData%/Programs/Gleitzeitkonto-Browser
     '   see chromiumURL, firefoxURL, packedWebserverURL, unpackedWebserverULR
@@ -305,21 +303,6 @@
 
         ' everything went fine so remove any possible previous error messages
         errorField.innerHTML = ""
-
-        ' ----- Confirm parts to be installed -----
-        strInstallParts = ""
-        if (strBrowserAnswer = "1") then strInstallParts = strInstallParts + Chr(13) + "- Browser-Erweiterung Firefox"
-        if (strBrowserAnswer = "2") then strInstallParts = strInstallParts + Chr(13) + "- Browser-Erweiterung Chrome/Edge (Chromium)"
-        if (strBrowserAnswer = "3") then strInstallParts = strInstallParts + Chr(13) + "- Browser-Erweiterung Firefox + Chrome/Edge (Chromium)"
-        if (strWebserverAnswer = "1") then strInstallParts = strInstallParts + Chr(13) + "- Hintergrund-Package"
-        if (strWebserverAnswer = "2") then strInstallParts = strInstallParts + Chr(13) + "- Hintergrund-Node.js-Skript"
-
-
-        continueRespone = MsgBox("Folgende Komponenten werden installiert:" + Chr(13) + strInstallParts + Chr(13) + Chr(13) + "Fortfahren?", "1", boxTitle)
-
-        if (continueRespone = "2") then ' cancelled
-            exit sub
-        end if
 
 
         ' ----- Start Installation -----
