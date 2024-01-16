@@ -1,4 +1,4 @@
-﻿<head>
+<head>
 <title>Gleitzeitkonto-Browser</title>
 <HTA:APPLICATION 
      APPLICATIONNAME = "Gleitzeitkonto-Browser"
@@ -455,7 +455,7 @@
                 if (deleteAttempts = 1) then
                     loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte Webserver-Version wird beendet...<br>"
                 end if
-                call window.SetTimeout("uninstallWebserver()", deleteAttemptTimout, "VBScript")
+                call window.SetTimeout("uninstallWebserver()", 1, "VBScript")
 
             else ' failed to uninstall
                 loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + _
