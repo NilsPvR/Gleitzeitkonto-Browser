@@ -189,6 +189,8 @@
     appDataFolder = objWShell.ExpandEnvironmentStrings("%appdata%")
 
     boxTitle = "Gleitzeitkonto-Browser"
+    dim scriptStopped ' used if a soubroutine wants to stop the script but not the whole hta
+    scriptStopped = false
     dim strBrowserAnswer, strWebserverAnswer, deleteAttempts ' set global since params are not getting parsed with setTimeout
     deleteAttempts = 0 ' initialize for later use during uninstallation
 
@@ -206,34 +208,57 @@
 
     ' ----- Subs Download, Unzip and Killwebserver -----
 
+    ' Calling methods have to check for the scriptStopped variable as a measure of error handling.
     sub downloadUnzipAndDelete (downloadURL, fileDir, destination)
         call download(downloadURL, fileDir)
+        if (scriptStopped) then exit sub end if
         call unzip(fileDir, destination)
         call FSO.DeleteFile(fileDir, true)
     end sub
 
     ' Downloads a file from the given downloadURL and writes the content into the given fileDir.
+    ' Calling methods have to check for the scriptStopped variable as a measure of error handling.
     ' @param url        string  URL to download from
     ' @parma fileDir    string  path to a file location to save the downloaded file (with file name and extension)
     sub download (url, fileDir)
+        requestFailed = false
+
         set objHTTP = CreateObject( "WinHttp.WinHttpRequest.5.1" )
-        call objHTTP.open("GET", url, False)
-        call objHTTP.send() ' send request
+        call objHTTP.open("GET", url, true) ' async request
 
-        set objFSO = CreateObject("Scripting.FileSystemObject")
-        dim bStrm: set bStrm = Createobject("Adodb.Stream")
+        on error resume next ' ignore error when url unavailable
+        someResponse = objHTTP.send() ' send request
+        call objHTTP.WaitForResponse(120000) ' timeout of 2min 
+        
+        if (objHTTP.status <> 200) then ' error occurs when status not available -> resume next will continue with next line
+            requestFailed = true
+        end if
+        on error goto 0
 
 
-        with bStrm ' save response of request in file
-            .type = 1 ' binary
-            .open()
-            .write(objHTTP.responseBody)
-            .savetofile fileDir, 2 'overwrite
-        end with
+        if (not requestFailed) then ' request succesful
+            set objFSO = CreateObject("Scripting.FileSystemObject")
+            dim bStrm: set bStrm = Createobject("Adodb.Stream")
 
-        set objHTTP = nothing
-        set objFSO = nothing
-        set bStrm = nothing
+
+            with bStrm ' save response of request in file
+                .type = 1 ' binary
+                .open()
+                .write(objHTTP.responseBody)
+                .savetofile fileDir, 2 'overwrite
+            end with
+
+            set objHTTP = nothing
+            set objFSO = nothing
+            set bStrm = nothing
+        else
+            loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Der Download konnte nicht abgeschlossen werden." + _
+                " Installation wird abgebrochen.</span><br>"
+            call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
+            scriptStopped = true
+            exit sub
+        end if
+
     end sub
 
     ' Unzips a given zip file. 
@@ -485,6 +510,7 @@
         if (strBrowserAnswer = "1") then ' Firefox
             fileDir =  installationFolder + "\" + Split(firefoxURL, "/")(8)
             call download(firefoxURL, fileDir) ' do not unzip for firefox
+            if (scriptStopped) then exit sub end if
 
             firefoxInstallPath = installationFolder + "\Gleitzeitkonto-Browser-Firefox.xpi"
             call FSO.MoveFile(fileDir, firefoxInstallPath) ' rename download file
@@ -492,17 +518,20 @@
         elseif (strBrowserAnswer = "2") then ' Chromium
             fileDir = installationFolder + "\" + Split(chromiumURL, "/")(8)
             call downloadUnzipAndDelete(chromiumURL, fileDir, installationFolder)
+            if (scriptStopped) then exit sub end if
 
             
         elseif (strBrowserAnswer = "3") then ' Firefox + Chromium
             fileDir = installationFolder + "\" + Split(firefoxURL, "/")(8)
             call download(firefoxURL, fileDir) ' do not unzip for firefox
+            if (scriptStopped) then exit sub end if
 
             firefoxInstallPath = installationFolder + "\Gleitzeitkonto-Browser-Firefox.xpi"
             call FSO.MoveFile(fileDir, firefoxInstallPath) ' rename download file
 
             fileDir = installationFolder + "\" + Split(chromiumURL, "/")(8)
             call downloadUnzipAndDelete(chromiumURL, fileDir, installationFolder)
+            if (scriptStopped) then exit sub end if
         end if
 
         loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Download Browser-Erweiterung beendet<br>"
@@ -522,10 +551,12 @@
         if (strWebserverAnswer = "1") then
             filedir = installationFolder + "\" + Split(packedWebserverURL, "/")(8)
             call downloadUnzipAndDelete(packedWebserverURL, fileDir, installationFolder)
+            if (scriptStopped) then exit sub end if
 
         elseif strWebserverAnswer = "2" then
             filedir = installationFolder + "\" + Split(unpackedWebserverURL, "/")(8)
             call downloadUnzipAndDelete(unpackedWebserverURL, fileDir, installationFolder)
+            if (scriptStopped) then exit sub end if
 
         end if
 
