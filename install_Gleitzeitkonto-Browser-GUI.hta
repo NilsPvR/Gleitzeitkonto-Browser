@@ -236,28 +236,29 @@
         on error goto 0
 
 
-        if (not requestFailed) then ' request succesful
-            set objFSO = CreateObject("Scripting.FileSystemObject")
-            dim bStrm: set bStrm = Createobject("Adodb.Stream")
-
-
-            with bStrm ' save response of request in file
-                .type = 1 ' binary
-                .open()
-                .write(objHTTP.responseBody)
-                .savetofile fileDir, 2 'overwrite
-            end with
-
-            set objHTTP = nothing
-            set objFSO = nothing
-            set bStrm = nothing
-        else
+        if (requestFailed) then 
             loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Der Download konnte nicht abgeschlossen werden." + _
                 " Installation wird abgebrochen.</span><br>"
             call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
-            scriptStopped = true
+            scriptStopped = true ' let calling subroutines know the request failed
             exit sub
         end if
+        
+        ' request succesful
+        set objFSO = CreateObject("Scripting.FileSystemObject")
+        dim bStrm: set bStrm = Createobject("Adodb.Stream")
+
+
+        with bStrm ' save response of request in file
+            .type = 1 ' binary
+            .open()
+            .write(objHTTP.responseBody)
+            .savetofile fileDir, 2 'overwrite
+        end with
+
+        set objHTTP = nothing
+        set objFSO = nothing
+        set bStrm = nothing
 
     end sub
 
