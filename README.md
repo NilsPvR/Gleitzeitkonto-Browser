@@ -14,7 +14,7 @@ Alternativ: [Gleitzeitkonto-Desktop](https://github.com/julius-boettger/gleitzei
 Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur experimentell.
 
 1. <b>Webserver installieren <i>(automatisch)</i></b><br>
-   **[Installations-Skript](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/download/v1.1.1/install_Gleitzeitkonto-Browser-GUI.hta)** herunterladen und ausführen.
+   **[Installations-Skript](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/install_Gleitzeitkonto-Browser-GUI.hta)** herunterladen und ausführen.
 
 <details><summary><b>❓ Es kommt eine Fehlermeldung</b></summary>
     <details><summary><b>Fehler:</b> "Erlaubnis verweigert"</summary>
