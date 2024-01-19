@@ -61,6 +61,11 @@
         margin: -60px 0 0 -60px;
         margin-top: 5px;
     }
+    .openFolderBtn {
+        width: 120px;
+        position: relative;
+        margin-top: 5px;
+    }
     .githubLink {
         position: absolute;
         right: 10px;
@@ -485,7 +490,7 @@
             if (everythingDeleted = true) then ' deletion successful, continue with installation
                 loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte Hintergrund-Prozess Version wurde entfernt.<br>"
 
-                loadingBox.innerHTML = loadingBox.innerHTML + "Download Hintergrund-Prozess gestartet ...<br>"
+                loadingBox.innerHTML = loadingBox.innerHTML + "Download Hintergrund-Prozess gestartet, bitte warten ...<br>"
                 call window.SetTimeout("downloadProcessWebserver()", 1, "VBScript") ' timeout to update screen
 
             elseif (deleteAttempts < maxDeleteAttempts) then '  more attempts available, try again
@@ -668,11 +673,11 @@
         loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: green;'>Installation erfolgreich abgeschlossen</span><br>"
 
 
-        if (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3") then 'a browser got selected, ask to open the folder
+        if (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3") then 'a browser got selected
             loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: orange;'>Richte die Browser-Erweiterung in deinem Browser ein, um Gleitzeitkonto-Browser verwenden zu können</span><br>"
+            loadingBox.innerHTML = loadingBox.innerHTML + "<input class='btn resetBtn openFolderBtn' type='button' name='openInstallationFolder' value='Ordner öffnen'>"
 
-            CreateObject("Shell.Application").Explore(installationFolder) 'open a explorer window
-            objWShell.Run("https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Gleitzeitkonto%E2%80%90Browser-im-Browser-einrichten"), 0
+            objWShell.Run("https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Gleitzeitkonto%E2%80%90Browser-im-Browser-einrichten"), 0 ' tutorial site
         end if
 
         call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
@@ -710,6 +715,12 @@
     ' ----- Installation finished Button clicked
     sub allDoneBtn_onClick ()
         self.close() ' close the hta window
+    end sub
+
+
+    ' ----- Open Installation Folder Button clicked
+    sub openInstallationFolder_onClick ()
+        CreateObject("Shell.Application").Explore(installationFolder) 'open a explorer window
     end sub
 
     ' ----- Remove all variables -----
