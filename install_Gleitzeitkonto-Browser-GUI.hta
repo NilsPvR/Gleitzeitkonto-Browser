@@ -670,11 +670,9 @@
 
         if (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3") then 'a browser got selected, ask to open the folder
             loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: orange;'>Richte die Browser-Erweiterung in deinem Browser ein, um Gleitzeitkonto-Browser verwenden zu können</span><br>"
-            openExplorerAnswer = MsgBox("Soll der Ordner zum Installieren der Browser-Erweiterung geöffnet werden?", 4, boxTitle)
 
-            if (openExplorerAnswer = "6") then 'yes clicked
-                CreateObject("Shell.Application").Explore(installationFolder) 'open a explorer window
-            end if
+            CreateObject("Shell.Application").Explore(installationFolder) 'open a explorer window
+            objWShell.Run("https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Gleitzeitkonto%E2%80%90Browser-im-Browser-einrichten"), 0
         end if
 
         call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
