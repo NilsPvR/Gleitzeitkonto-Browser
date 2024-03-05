@@ -2,15 +2,6 @@ import * as fs from 'fs';
 import * as resedit from 'resedit';
 
 (async function() {
-    const exePathOut = './compressed/packedWebserver/Gleitzeitkonto-Webserver.exe'
-
-    try {
-        fs.renameSync('./compressed/packedWebserver/main.exe', exePathOut);
-    }
-    catch (e) {
-        console.error(e);
-    }
-
     // Update the exe data
     try {
         
