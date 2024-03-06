@@ -1,7 +1,13 @@
+# Node files and folders
 /node_modules
 package-lock.json
-/compressed
 
+# Project building folder
+/compressed
+# temp folder for building webserver with nexe
+.nexe
+
+# Secrets
 /Webserver/url.json
 /Extension/url.json
 

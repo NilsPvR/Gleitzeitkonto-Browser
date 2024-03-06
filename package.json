@@ -10,13 +10,13 @@
     "publishExtension": "node publishExtension.js && npm run combineBrowserJS && npm run compressJS && npm run sass-prod && npm run zipChromium && npm run zipFirefox",
     "publishWebserver": "node publishWebserver.js && npm run buildNexe && node postprocessPublishWebserver.mjs && npm run zipWebserver",
     "combineBrowserJS": "browserify Extension/Gleitzeitkonto-Browser.js > compressed/extension/Gleitzeitkonto-Browser.js",
-    "compressBrowserJS": "terser compressed/extension/Gleitzeitkonto-Browser.js -c --comments -o compressed/extension/Gleitzeitkonto-Browser.js && terser Extension/Popup/popup-script.js -c -m --comments -o compressed/extension/Popup/popup-script.js",
+    "compressBrowserJS": "terser compressed/extension/Gleitzeitkonto-Browser.js --compress --comments -o compressed/extension/Gleitzeitkonto-Browser.js && terser Extension/Popup/popup-script.js --compress -m --comments -o compressed/extension/Popup/popup-script.js",
     "zipChromium": "zip-build ./compressed/extension ./compressed/Gleitzeitkonto-Browser-ZIP --interactive --template NICHT-Herunterladen-win-x64-chromium.zip --subDir Chrome-Edge(Chromium) --override true",
     "zipFirefox": "zip-build ./compressed/extension ./compressed/Gleitzeitkonto-Browser-ZIP --interactive --template NICHT-Herunterladen-win-x64-firefox.zip --override true",
     "sass-dev": "sass --watch --update --no-source-map --style=expanded Extension/Popup/Gleitzeitkonto-Browser.scss:Extension/Popup/Gleitzeitkonto-Browser.css",
     "sass-prod": "sass --no-source-map --style=compressed Extension/Popup/Gleitzeitkonto-Browser.scss:compressed/extension/Popup/Gleitzeitkonto-Browser.css",
     "buildPKG": "pkg --targets latest-win --out-path ./compressed/packedWebserver --compress Brotli --public --no-bytecode --public-packages \"*\" ./Webserver/main.js",
-    "buildNexe": "nexe webserver/main.js --build -o compressed/packedWebserver/Gleitzeitkonto-Webserver.exe",
+    "buildNexe": "nexe -i webserver/main.js --build --temp ./.nexe -o compressed/packedWebserver/Gleitzeitkonto-Webserver.exe",
     "zipWebserver": "zip-build ./compressed/unpackedWebserver ./compressed/Gleitzeitkonto-Browser-ZIP --interactive --template NICHT-Herunterladen-win-x64-webserver-script.zip --subDir Webserver --override true && zip-build ./compressed/packedWebserver ./compressed/Gleitzeitkonto-Browser-ZIP --interactive --template NICHT-Herunterladen-win-x64-webserver.zip --subDir Webserver --override true"
   },
   "repository": {
