@@ -28,8 +28,8 @@ import * as resedit from 'resedit';
         const vi = resedit.Resource.VersionInfo.fromEntries(res.entries)[0];
 
         // update versions
-        vi.setFileVersion(1, 1, 3, 0, language); // current version 1.1.3
-        vi.setProductVersion(1, 1, 3, 0, language);
+        vi.setFileVersion(2, 0, 0, 0, language); // current version 2.0.0
+        vi.setProductVersion(2, 0, 0, 0, language);
 
         // remove originalFileName entry
         vi.removeStringValue({lang: language, codepage: 1200}, 'OriginalFilename');
