@@ -8,7 +8,7 @@ package-lock.json
 .nexe
 
 # Secrets
-/Webserver/url.json
+/CompanionApp/url.json
 /Extension/url.json
 
 # environment variables
