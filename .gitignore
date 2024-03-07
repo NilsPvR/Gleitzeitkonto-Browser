@@ -4,8 +4,7 @@ package-lock.json
 
 # Project building folder
 /compressed
-# temp folder for building webserver with nexe
-.nexe
+
 
 # Secrets
 /CompanionApp/url.json
