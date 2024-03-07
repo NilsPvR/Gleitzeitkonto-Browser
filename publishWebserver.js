@@ -9,7 +9,7 @@ const fs = require('fs');
 
         fs.copyFileSync('./CompanionApp/start-Gleitzeitkonto-Browser CompanionApp.vbs', './compressed/companionApp/start-Gleitzeitkonto-Browser CompanionApp.vbs');
         fs.copyFileSync('./CompanionApp/version.txt', './compressed/companionApp/version.txt');
-        fs.copyFileSync('./CompanionApp/url.txt', './compressed/companionApp/url.txt');
+        fs.copyFileSync('./CompanionApp/url.json', './compressed/companionApp/url.json');
         fs.copyFileSync('./CompanionApp/main.js', './compressed/companionApp/main.js');
         fs.copyFileSync('./CompanionApp/gleitzeitkonto-api/gleitzeitkonto-api.js', './compressed/companionApp/gleitzeitkonto-api/gleitzeitkonto-api.js');
         // only copy the dependencies into the new package to avoid duplicate npm scripts for developers
