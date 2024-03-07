@@ -1,21 +1,99 @@
-const http = require('http');
-const { EventEmitter } = require('events');
 const path = require('path');
 const fs = require('fs');
+const { EventEmitter } = require('events');
 
+// ===== Constants and global variables =====
 // DEBUG=true starts webscraper in foreground and do logging, DEBUG=false in background
 const DEBUG = false;
+const version = '2.0.0';
+
+// prevent running multiple downloadCommands of API at the same time
+let isRunning = false;
+const isRunningEmitter = new EventEmitter(); // allows async/await for isRunning
+let lastDownloadStatusCode;
+
+// ===== Functions =====
+
+function printDebug (output) {
+    if (DEBUG) {
+        console.debug(output);
+    }
+}
+
+// Function to read 4-byte length prefix from standard input
+async function readLengthPrefixFromExtension () {
+    const prefixBuffer = await new Promise((resolve) => {
+        process.stdin.once('readable', () => {
+            const chunk = process.stdin.read(4);
+            resolve(chunk);
+        });
+    });
+    return prefixBuffer.readUInt32LE(); // convert 4-byte buffer to integer
+}
+
+// Function to read message from standard input
+async function readMessageFromExtension (length) {
+    const messageBuffer = await new Promise((resolve) => {
+        process.stdin.once('readable', () => {
+            const chunk = process.stdin.read(length);
+            resolve(chunk);
+        });
+    });
+    return messageBuffer.toString('utf8') // convert buffer to string with utf-8 encoding
+}
+
+async function sendMessageToExtension (messageString) {
+    // encode the message to UTF-8
+    const encodedMessage = Buffer.from(messageString, 'utf8');
+    // create a buffer for the length prefix
+    const lengthPrefix = Buffer.alloc(4);
+
+    // write the message length as a 32-bit unsigned integer
+    lengthPrefix.writeUInt32LE(encodedMessage.length);
+
+    // write both to standard-output
+    process.stdout.write(lengthPrefix);
+    process.stdout.write(encodedMessage);
+}
+
+
+async function manageDownloadWorkingTimes (DEBUG) {
+
+    // start webscraper if its not running already
+    if (!isRunning) {
+        isRunning = true;
+        isRunningEmitter.emit('running');
+
+        printDebug('Sending Download request to Gleitzeitkonto-API...')
+        statusCode = await gzk.downloadWorkingTimes(DEBUG);
+        printDebug(`Request finished with Status-Code: "${statusCode}"`);
+
+        lastDownloadStatusCode = statusCode;
+        isRunning = false;
+        isRunningEmitter.emit('stoppedRunning');
+
+        return String(statusCode);
+    } else {
+        return '-1'; // StatusCode for Webserver is still running
+    }
+};
+
+
+async function waitForDownload () {
+    if (!isRunning) return; // no need to wait, it already finished
+
+    await new Promise(resolve => isRunningEmitter.once('stoppedRunning', resolve));
+    return String(lastDownloadStatusCode);
+};
+
+
+// ===== Gleitzeitkonto-API Setup =====
 
 // "%AppData%/Gleitzeitkonto-Browser" Path or similar for other plattforms
 const downloadPath = path.join(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + '/.local/share'),
                     'Gleitzeitkonto-Browser', 'gleitzeitkonto-api');
 
 if (!fs.existsSync(downloadPath)) fs.mkdirSync(downloadPath, { recursive: true }); // creates folder if not existant, including parent folders
-
-// prevent running multiple downloadCommands of API at the same time
-let isRunning = false;
-const isRunningEmitter = new EventEmitter(); // allows async/await for isRunning
-let lastDownloadStatusCode;
 
 // import and setup gleitzeit-api
 const GleitzeitkontoAPI = require('./gleitzeitkonto-api/gleitzeitkonto-api.js').default;
@@ -27,95 +105,38 @@ const gzk = new GleitzeitkontoAPI(
     DEBUG
 );
 
-const manageDownloadWorkingTimes = async (DEBUG) => {
 
-    // start webscraper if its not running already
-    if (!isRunning) {
-        isRunning = true;
-        isRunningEmitter.emit('running');
-
-        if (DEBUG) console.debug('Sending Download request to Gleitzeitkonto-API...')
-        statusCode = await gzk.downloadWorkingTimes(DEBUG);
-        if (DEBUG) console.debug(`Request finished with Status-Code: "${statusCode}"`);
-
-        isRunning = false;
-        isRunningEmitter.emit('stoppedRunning');
-        lastDownloadStatusCode = statusCode;
-
-        return String(statusCode);
-    } else {
-        return "-1"; // StatusCode for Webserver is still running
+// ===== Companion App Messaging =====
+while (true) {
+    let parsedMessage;
+    try {
+        // retrieve new message from extension via std input
+        const length = await readLengthPrefixFromExtension();
+        const message = await readMessageFromExtension(length);
+        // parse JSON message
+        parsedMessage = JSON.parse(message);
+    } catch (error) {
+        console.error('Error reading message from standard input:', error);
     }
-};
 
-
-const waitForDownload = async () => {
-    if (!isRunning) return; // no need to wait, it already finished
-
-    await new Promise(resolve => isRunningEmitter.once('stoppedRunning', resolve));
-    return String(lastDownloadStatusCode);
-};
-
-
-// ===== Webserver =====
-const hostname = 'localhost';
-const port = 35221;
-const version = '2.0.0';
-
-// webserver stuff
-const server = http.createServer(async (request, response) => {
-    response.setHeader('Access-Control-Allow-Origin', '*') // since only local allow any client
-    response.setHeader('Content-Type', 'application/json');
-
-    switch (request.url.toLocaleLowerCase()) {
-        case '/':
-            response.setHeader('Content-Type', 'text/html');
-            response.end(
-                '<html><body><div>Es gibt folgenden Seiten:<br><br>' +
-                `<button onclick="window.location.href = 'http://${hostname}:${port}/downloadWorkingTimes'">Download Zeiten</button><br>` +
-                `<button onclick="window.location.href = 'http://${hostname}:${port}/calculateFromWorkingTimes'">Zeiten aus Datei berechnen</button> <br>` +
-                `<button onclick="window.location.href = 'http://${hostname}:${port}/waitForDownload'">Warten bis Download fertig</button> <br>` +
-                `<button onclick="window.location.href = 'http://${hostname}:${port}/version'">Version anzeigen</button> <br>` +
-                `<button onclick="window.location.href = 'http://${hostname}:${port}/kill'">Webserver stoppen</button> <br></div></body></html>`
-            );
+    switch (parsedMessage?.command) {
+        case 'downloadworkingtimes':
+            sendMessageToExtension(JSON.stringify(await manageDownloadWorkingTimes(DEBUG)))
             break;
-        case '/downloadworkingtimes':
-            response.writeHead(200);
-            response.end(JSON.stringify(await manageDownloadWorkingTimes(DEBUG)))
+
+        case 'calculatefromworkingtimes':
+            sendMessageToExtension(JSON.stringify(gzk.calculateFromWorkingTimes()));
             break;
-        case '/calculatefromworkingtimes':
-            response.writeHead(200);
-            response.end(JSON.stringify(gzk.calculateFromWorkingTimes()));
+
+        case 'waitfordownload':
+            sendMessageToExtension(await waitForDownload());
             break;
-        case '/waitfordownload':
-            response.writeHead(200);
-            response.end(await waitForDownload());
+
+        case 'version':
+            sendMessageToExtension(JSON.stringify({ version: version }));
             break;
-        case '/version':
-            response.writeHead(200);
-            response.end(JSON.stringify({ version: version }));
-            break;
-        case '/kill':
-            response.writeHead(200);
-            response.end();
-            if (DEBUG) console.debug('Server über /kill aufruf gestoppt.');
-            process.exit();
+
         default:
-            response.writeHead(404);
-            response.end();
+            sendMessageToExtension("5") // unknown command
     }
-
-});
-
-
-server.listen(port, hostname, (error) => {
-    if(!error) {
-        process.title = 'Gleitzeitkonto-Webserver'; // rename the process (is not the main process visable in taskmanaer or similar)
-
-        console.log(`Gleitzeitkonto-Webserver läuft auf http://${hostname}:${port}`);
-    }
-    else { 
-        console.error('Fehler beim starten des Gleitzeitkonto-Webservers:');
-        console.error(error);
-    }
-});
+}
