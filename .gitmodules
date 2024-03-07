@@ -1,0 +1,3 @@
+[submodule "CompanionApp/gleitzeitkonto-api"]
+	path = CompanionApp/gleitzeitkonto-api
+	url = https://github.com/julius-boettger/gleitzeitkonto-api
