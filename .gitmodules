@@ -1,3 +1,0 @@
-[submodule "Webserver/gleitzeitkonto-api"]
-	path = Webserver/gleitzeitkonto-api
-	url = https://github.com/julius-boettger/gleitzeitkonto-api
