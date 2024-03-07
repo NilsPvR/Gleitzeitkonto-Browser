@@ -4,8 +4,6 @@
   "description": "Browser Erweiterung für Chromium und Firefox, welche erlaubt die Überstunden bzw. ein Gleitzeitkonto direkt in der Fiori-Zeiterfassung oder in der Erweiterung einzusehen.",
   "main": "Gleitzeitkonto-Browser.js",
   "scripts": {
-    "startTestserver": "node testWebserver.js",
-    "startDevWebserverGleitzeitkonto:": "cd Webserver && node main.js",
     "publishProject": "npm run publishExtension && npm run publishCompanionApp",
     "publishExtension": "node publishExtension.js && npm run combineBrowserJS && npm run compressJS && npm run sass-prod && npm run zipChromium && npm run zipFirefox",
     "publishCompanionApp": "node publishCompanionApp.js && npm run zipWebserver",
