@@ -60,7 +60,8 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 <br><br>
 
 2. **Erweiterung hinzufügen**<br>
-Die Erweiterung muss im entsprechenden Browser installiert werden: [Firefox](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Firefox-Installation) oder [Chrome](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Chrome-Installation) oder [Edge](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Edge-Installation)
+Die Erweiterung muss im entsprechenden Browser installiert werden: [Firefox](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Firefox-Installation) oder [Chrome](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Chrome-Installation)<br>
+❗ Edge wird leider nicht als Browser unterstützt.
 3. Fertig! 🥳
 <hr>
 
