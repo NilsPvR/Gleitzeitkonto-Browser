@@ -28,12 +28,8 @@
   "devDependencies": {
     "browserify": "^17.0.0",
     "fs-extra": "^11.2.0",
-    "nexe": "^4.0.0-rc.4",
-    "pkg": "^5.8.1",
-    "resedit": "^2.0.0",
     "sass": "^1.65.1",
     "terser": "^5.27.2",
-    "web-ext": "^7.11.0",
     "webextension-polyfill": "^0.10.0",
     "zip-build": "^1.8.0"
   },
