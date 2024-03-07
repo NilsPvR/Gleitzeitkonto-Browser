@@ -80,7 +80,7 @@ async function manageDownloadWorkingTimes (DEBUG) {
 
 
 async function waitForDownload () {
-    if (!isRunning) return; // no need to wait, it already finished
+    if (!isRunning) return String(lastDownloadStatusCode); // no need to wait, it already finished
 
     await new Promise(resolve => isRunningEmitter.once('stoppedRunning', resolve));
     return String(lastDownloadStatusCode);
