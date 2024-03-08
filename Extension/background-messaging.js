@@ -1,3 +1,5 @@
+const browser = require('webextension-polyfill');
+
 // Constants
 const applicationName = 'Gleitzeitkonto-Browser CompanionApp';
 const errorMsgs = {
