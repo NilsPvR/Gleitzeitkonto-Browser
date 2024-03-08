@@ -81,7 +81,7 @@ module.exports = class GleitzeitkontoBrowser {
     /**
      * Checks if the user is on the "Meine Zeiterfassung" page. This is possible
      * by checking the hash or the url (the part after #)
-     * @returns boolean, true if the user in on "Meine Zeiterfassung" page
+     * @returns     Boolean - true if the user in on "Meine Zeiterfassung" page
      */
     checkCorrectMenuIsOpen () {
         if (window.location.hash.startsWith(this.givenStrings.gleitzeitHash)) {
@@ -93,7 +93,7 @@ module.exports = class GleitzeitkontoBrowser {
     /**
      * Waits until the user opens the "Meine Zeiterfassung" page. The promise will
      * resolve with no data once the site is opened. 
-     * @returns a promise which resolves once the "Meine Zeiterfassung" page is opened
+     * @returns     Promise<> - resolves once the "Meine Zeiterfassung" page is opened
     */
     async continuousMenucheck () {
         if (this.checkCorrectMenuIsOpen()) {
@@ -116,9 +116,9 @@ module.exports = class GleitzeitkontoBrowser {
      * Sends a message to the background script which will normally be forwarded to the CompanionApp.
      * The response from the background script will be returned. Depending on the command this can 
      * be a string with different content.
-     * @param command the command to send to the background script, one of ['downloadworkingtimes', 
+     * @param command   String - the command to send to the background script, one of ['downloadworkingtimes', 
      * 'calculatefromworkingtimes', 'waitfordownload', 'version']
-     * @returns a promise which resolves to a string with the response for the command
+     * @returns     Promise<String> - resolves to a string with the response for the command
      */
     async sendMsgToBackgroundS (command) {
         try {
@@ -134,9 +134,9 @@ module.exports = class GleitzeitkontoBrowser {
     /**
      * Format the given kontoData object to a string which can be displayed. The object is expected to have either kontoData
      * or an error message however if neither of those is available a custom error string will be returned.
-     * @param kontoData the object holding the kontostring or an error message, expected to have a form of:
+     * @param kontoData     Object - holding the kontostring or an error message, expected to have a form of:
      * { kontoString: "string"} or { error: { message: "errorMessage" } }
-     * @returns the formatted string derived from the given kontoData object
+     * @returns     String - the formatted string derived from the given kontoData object
      */
     formatDisplayText (kontoData) {
         if (kontoData?.error?.message) return this.constStrings.prefixError + kontoData.error.message; // Error occured
@@ -148,10 +148,10 @@ module.exports = class GleitzeitkontoBrowser {
      * Contacts the CompanionApp via the background script to download the latest working times and calculate
      * the resulting kontoData. A kontoData object will be returned containing the working times data or an error with 
      * messsage and status code.
-     * @returns a kontoData object in the form of: 
+     * @returns Promise<Obejct> - Resolves to object containing informationen about the Gleitzeitkonto in the form of: 
      * { kontoString: "1h 15min", kontoInMin: "75", lastDate: "DD.MM.YYYY"} or if something went wrong
      * { error: { message: "errorMessage", statusCode?: INT } }
-     * StatusCode 1 - 4 are based on gleitzeitkonto-api.downloadWorkingTimes()
+     * StatusCodes are  1 - 4 and based on gleitzeitkonto-api.downloadWorkingTimes()
      */
     async getDownloadKontoData () {
         let response = await this.sendMsgToBackgroundS(this.givenStrings.downloadCommand);
@@ -183,6 +183,7 @@ module.exports = class GleitzeitkontoBrowser {
      * @param tagName       String - The name of the HTML-Tag, e.g: <div> -> 'div'
      * @param attributes    Object - key: attribute name, value: value of the attribute
      * @param content       HTMLElement | String - The nodes or strings to be placed inside of the element
+     * @returns     HTMLElement | String - the composed HTMLElement with given attributes and content
      */
     createRichElement (tagName, attributes, ...content) {
         let element = document.createElement(tagName);

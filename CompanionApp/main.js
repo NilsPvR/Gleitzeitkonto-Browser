@@ -17,8 +17,8 @@ let lastDownloadStatusCode;
 /**
  * Prints the received output to the console if the given debugging flag
  * is enabled.
- * @param   output  the string to print to the console
- * @param   DEBUG   boolean wheater or not to print the output
+ * @param   output  String - to print to the console
+ * @param   DEBUG   Boolean - prints the output if true
  */
 function printDebug (output, DEBUG) {
     if (DEBUG) {
@@ -32,7 +32,7 @@ function printDebug (output, DEBUG) {
  * following message.
  * 
  * When working with browser-extensions native messaging the standard output equals a message to the extension.
- * @returns a promise with the read message lenght as an integer
+ * @returns     Promise<Int> - resolves to the read message lenght as an integer
  * @see https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging#app_side
  */
 async function readLengthPrefixFromExtension () {
@@ -51,8 +51,8 @@ async function readLengthPrefixFromExtension () {
  * be converted into a string with utf8-encoding.
  * 
  * When working with browser-extensions native messaging the standard input equals a message from the extension.
- * @param length the amount of bytes to read from the standard input
- * @returns a promise with the read message as a string
+ * @param length    Int - the amount of bytes to read from the standard input
+ * @returns     Promise<String> - resolves to the read message as a string
  */
 async function readMessageFromExtension (length) {
     const messageBuffer = await new Promise((resolve) => {
@@ -70,7 +70,7 @@ async function readMessageFromExtension (length) {
  * byte order will be sent indicating the length of the message.
  * 
  * When working with browser-extensions native messaging the standard output equals a message to the extension.
- * @param messageString string to send into the standard output
+ * @param messageString     String - to send into the standard output
  */
 async function sendMessageToExtension (messageString) {
     // encode the message to UTF-8
@@ -90,8 +90,8 @@ async function sendMessageToExtension (messageString) {
  * Takes care of calling the api to download new working times. Prevents multiple downloads happeing at
  * the same time. Also emits events to let waiting callers know new working times have been downloaded.
  * Status will be printed when the debugging flag is true
- * @param DEBUG boolean debugging flag, wheather to print status
- * @returns a promise which resolves to the status code of the download, will be one of [-1, 0, 1, 2, 3, 4]
+ * @param DEBUG     Boolean - debugging flag, prints status of download when true
+ * @returns     Promise<-1, 0, 1, 2, 3, 4> - resolves to the status code of the download
  */
 async function manageDownloadWorkingTimes (DEBUG) {
 
@@ -118,7 +118,7 @@ async function manageDownloadWorkingTimes (DEBUG) {
  * Helper function to wait until the currently running download has finished.
  * Once the download has finished the status code of that just executed download will
  * be returned.
- * @returns a promise which resolves once the last download has finished to the statuscode of that download
+ * @returns     Promise<String> - resolves once the last download has finished to the statuscode of that download
  */
 async function waitForDownload () {
     if (!isRunning) return String(lastDownloadStatusCode); // no need to wait, it already finished
