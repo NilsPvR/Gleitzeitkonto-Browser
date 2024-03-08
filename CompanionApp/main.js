@@ -61,7 +61,7 @@ async function readMessageFromExtension (length) {
             resolve(chunk);
         });
     });
-    return messageBuffer.toString('utf8') // convert buffer to string with utf-8 encoding
+    return messageBuffer.toString('utf8'); // convert buffer to string with utf-8 encoding
 }
 
 /**
@@ -100,7 +100,7 @@ async function manageDownloadWorkingTimes (DEBUG) {
         isRunning = true;
         isRunningEmitter.emit('running');
 
-        printDebug('Sending Download request to Gleitzeitkonto-API...', DEBUG)
+        printDebug('Sending Download request to Gleitzeitkonto-API...', DEBUG);
         statusCode = await gzk.downloadWorkingTimes(DEBUG);
         printDebug(`Request finished with Status-Code: "${statusCode}"`, DEBUG);
 
@@ -163,7 +163,7 @@ while (true) {
     // act according to the received command in the message
     switch (parsedMessage?.command) {
         case 'downloadworkingtimes':
-            sendMessageToExtension(JSON.stringify(await manageDownloadWorkingTimes(DEBUG)))
+            sendMessageToExtension(JSON.stringify(await manageDownloadWorkingTimes(DEBUG)));
             break;
 
         case 'calculatefromworkingtimes':
@@ -179,6 +179,6 @@ while (true) {
             break;
 
         default:
-            sendMessageToExtension("5") // unknown command
+            sendMessageToExtension("5"); // unknown command
     }
 }
