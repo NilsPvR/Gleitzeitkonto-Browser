@@ -43,7 +43,8 @@ module.exports = class GleitzeitkontoBrowser {
             overtimeLoading: 'Loading...',
             errorMsgs: {
                 serverNichtGestartet: 'Der Lokale-Server wurde nicht gestartet!',
-                keineDatenVomServer: 'Keine Daten vom Lokalen-Server geladen',
+                keineDatenVonCompanionApp: 'Keine Daten von der CompanionApp erhalten.',
+                errorConnectingToBackend: 'Keine Verbindung zur CompanionApp möglich.',
                 pageloadingtimeExceeded: 'Die Seite hat zu lange geladen. Das Gleitzeitkonto kann nicht angezeigt werden.',
                 stillRunning: 'Erste Abfrage des Gleitzeitkonto\'s lädt noch', // code -1
                 incorrectPath: 'Falscher Browser-Pfad für die API. Bitte Einstellungen im Popup anpassen.', // code 1
@@ -66,10 +67,10 @@ module.exports = class GleitzeitkontoBrowser {
                 networkError: 'NetworkError when attempting to fetch resource.',
                 failedError: 'Failed to fetch',
             },
-            downloadURL: '/downloadWorkingTimes',
-            calcaulteURL: '/calculateFromWorkingTimes',
-            waitForDownlodURL: '/waitfordownload',
-            versionURL: '/version',
+            downloadCommand: 'downloadWorkingTimes',
+            calcaulteCommand: 'calculateFromWorkingTimes',
+            waitForDownlodCommand: 'waitfordownload',
+            versionCommand: 'version',
             githubAPIURL: 'https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest',
         };
     }
@@ -104,37 +105,37 @@ module.exports = class GleitzeitkontoBrowser {
         });
     };
 
-    async fetchServer (path) {
+    /**
+     * Sends a message to the background script which will normally be forwarded to the CompanionApp.
+     * The response from the background script will be returned. Depending on the command this can 
+     * be a string with different content.
+     * @param command the command to send to the background script, one of ['downloadworkingtimes', 
+     * 'calculatefromworkingtimes', 'waitfordownload', 'version']
+     * @returns a promise which resolves to a string with the response for the command
+     */
+    async sendMsgToBackgroundS (command) {
         try {
-            const url = this.config.loacalServerURL + path;
-            const data = await (await fetch(url)).json();
-            return data;
+            return await browser.runtime.sendMessage(command) // send the command to the background script
         }
         catch (e) {
-            if (e.message == this.givenStrings.errorMsgs.networkError || e.message == this.givenStrings.errorMsgs.failedError) {
-                console.log(e);
-                return {error: { message: this.constStrings.errorMsgs.serverNichtGestartet}};
-            }
-            else {
-                console.error(e);
-                return {error: { message: this.constStrings.errorMsgs.keineDatenVomServer}};
-            }
+            console.error(e);
+            return {error: { message: this.constStrings.errorMsgs.errorConnectingToBackend}};
         }
         
     };
 
     formatDisplayText (kontoData) {
         if (kontoData?.error?.message) return this.constStrings.prefixError + kontoData.error.message; // Error occured
-        if (!kontoData || !kontoData.kontoString) return this.constStrings.prefixError + this.constStrings.errorMsgs.keineDatenVomServer; // No Data
+        if (!kontoData || !kontoData.kontoString) return this.constStrings.prefixError + this.constStrings.errorMsgs.keineDatenVonCompanionApp; // No Data
         else return this.constStrings.prefixOvertime + kontoData.kontoString;
     };
 
     async getDownloadKontoData () {
-        let response = await this.fetchServer(this.givenStrings.downloadURL);
+        let response = await this.sendMsgToBackgroundS(this.givenStrings.downloadCommand);
         let kontoData = {};
 
         // -- Check StatusCode of Download --
-        if (response == -1) response = await this.fetchServer(this.givenStrings.waitForDownlodURL); // other request still downloading
+        if (response == -1) response = await this.sendMsgToBackgroundS(this.givenStrings.waitForDownlodCommand); // other request still downloading
 
         if (response == 1) kontoData.error = { message: this.constStrings.errorMsgs.incorrectPath, statusCode: 1 }
         else if (response == 2) kontoData.error = { message: this.constStrings.errorMsgs.notInNetwork, statusCode: 2 }
@@ -142,7 +143,7 @@ module.exports = class GleitzeitkontoBrowser {
         else if (response == 4) kontoData.error = { message: this.constStrings.errorMsgs.unknownAPI, statusCode: 4 }
         else if (response == 0) { // success
             // since download only returns statusCode calculate afterwards
-            kontoData = await this.fetchServer(this.givenStrings.calcaulteURL);
+            kontoData = await this.sendMsgToBackgroundS(this.givenStrings.calcaulteCommand);
         }
         else if (response?.error?.message) kontoData = response // fetchServer gave an error
 
@@ -359,7 +360,7 @@ module.exports = class GleitzeitkontoBrowser {
     // called from the reload btn, recalculates the Gleitzeitkontos
     reloadGleitzeitKonto () {
         this.startLoading(); // start loading immediately
-        const promiseCalcKontoData = this.fetchServer(this.givenStrings.calcaulteURL);
+        const promiseCalcKontoData = this.sendMsgToBackgroundS(this.givenStrings.calcaulteCommand);
         const promiseDownloadKontoData = this.getDownloadKontoData();
 
         this.updateDisplay(promiseCalcKontoData, true);
@@ -370,7 +371,7 @@ module.exports = class GleitzeitkontoBrowser {
     async checkVersionOutdated () {
         const localBrowserVersion = browser.runtime.getManifest().version;
 
-        let localWebserverVersion = await this.fetchServer(this.givenStrings.versionURL); // get version obj
+        let localWebserverVersion = await this.sendMsgToBackgroundS(this.givenStrings.versionCommand); // get version obj
         if (localWebserverVersion?.version) localWebserverVersion = localWebserverVersion.version; // get version string out of object
 
         let onlineVersion;
