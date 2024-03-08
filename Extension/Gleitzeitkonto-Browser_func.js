@@ -16,8 +16,6 @@ module.exports = class GleitzeitkontoBrowser {
                 blue: "#00aab4",
                 grey: "#222222",
             },
-
-            loacalServerURL: 'http://localhost:35221',
             maxPageloadingLoops: 120, // 2 minutes
         };
 
@@ -42,7 +40,6 @@ module.exports = class GleitzeitkontoBrowser {
             prefixError: 'Fehler: ',
             overtimeLoading: 'Loading...',
             errorMsgs: {
-                serverNichtGestartet: 'Der Lokale-Server wurde nicht gestartet!',
                 keineDatenVonCompanionApp: 'Keine Daten von der CompanionApp erhalten.',
                 errorConnectingToBackend: 'Keine Verbindung zur CompanionApp möglich.',
                 pageloadingtimeExceeded: 'Die Seite hat zu lange geladen. Das Gleitzeitkonto kann nicht angezeigt werden.',
@@ -52,7 +49,6 @@ module.exports = class GleitzeitkontoBrowser {
                 tooManyCSV: 'Zu viele CSV-Dateien im Ordner der API. Bitte Dateien manuell löschen.', // code 3
                 unknownAPI: 'Unbekannter Fehler der API', // code 4
                 unknown: 'Unbekannter Fehler',
-                unknownFetching: 'Unbekannter Fehler beim laden der Daten',
                 versionOutdated: 'Bitte die Erweiterung aktualisieren!'
             }
         };
@@ -63,10 +59,6 @@ module.exports = class GleitzeitkontoBrowser {
             headerID: 'shell-header',
             headerEndID: 'shell-header-hdr-end',
             searchBarID: 'searchFieldInShell-input',
-            errorMsgs: {
-                networkError: 'NetworkError when attempting to fetch resource.',
-                failedError: 'Failed to fetch',
-            },
             downloadCommand: 'downloadWorkingTimes',
             calcaulteCommand: 'calculateFromWorkingTimes',
             waitForDownlodCommand: 'waitfordownload',
