@@ -78,7 +78,11 @@ module.exports = class GleitzeitkontoBrowser {
     /* ==========================================================================================
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Functions <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
-    // Boolean value weather or not the user is on "Meine Zeiterfassung" page
+    /**
+     * Checks if the user is on the "Meine Zeiterfassung" page. This is possible
+     * by checking the hash or the url (the part after #)
+     * @returns boolean, true if the user in on "Meine Zeiterfassung" page
+     */
     checkCorrectMenuIsOpen () {
         if (window.location.hash.startsWith(this.givenStrings.gleitzeitHash)) {
             return true;
@@ -86,8 +90,11 @@ module.exports = class GleitzeitkontoBrowser {
         return false;
     };
 
-    // Resolves the promise only once the user is on "Meine Zeiterfassung" page
-    // This is done by checking the Hash of the URL (the bit after #)
+    /**
+     * Waits until the user opens the "Meine Zeiterfassung" page. The promise will
+     * resolve with no data once the site is opened. 
+     * @returns a promise which resolves once the "Meine Zeiterfassung" page is opened
+    */
     async continuousMenucheck () {
         if (this.checkCorrectMenuIsOpen()) {
             return true;
@@ -124,12 +131,28 @@ module.exports = class GleitzeitkontoBrowser {
         
     };
 
+    /**
+     * Format the given kontoData object to a string which can be displayed. The object is expected to have either kontoData
+     * or an error message however if neither of those is available a custom error string will be returned.
+     * @param kontoData the object holding the kontostring or an error message, expected to have a form of:
+     * { kontoString: "string"} or { error: { message: "errorMessage" } }
+     * @returns the formatted string derived from the given kontoData object
+     */
     formatDisplayText (kontoData) {
         if (kontoData?.error?.message) return this.constStrings.prefixError + kontoData.error.message; // Error occured
         if (!kontoData || !kontoData.kontoString) return this.constStrings.prefixError + this.constStrings.errorMsgs.keineDatenVonCompanionApp; // No Data
         else return this.constStrings.prefixOvertime + kontoData.kontoString;
     };
 
+    /**
+     * Contacts the CompanionApp via the background script to download the latest working times and calculate
+     * the resulting kontoData. A kontoData object will be returned containing the working times data or an error with 
+     * messsage and status code.
+     * @returns a kontoData object in the form of: 
+     * { kontoString: "1h 15min", kontoInMin: "75", lastDate: "DD.MM.YYYY"} or if something went wrong
+     * { error: { message: "errorMessage", statusCode?: INT } }
+     * StatusCode 1 - 4 are based on gleitzeitkonto-api.downloadWorkingTimes()
+     */
     async getDownloadKontoData () {
         let response = await this.sendMsgToBackgroundS(this.givenStrings.downloadCommand);
         let kontoData = {};
@@ -145,7 +168,7 @@ module.exports = class GleitzeitkontoBrowser {
             // since download only returns statusCode calculate afterwards
             kontoData = await this.sendMsgToBackgroundS(this.givenStrings.calcaulteCommand);
         }
-        else if (response?.error?.message) kontoData = response // fetchServer gave an error
+        else if (response?.error?.message) kontoData = response // sendMsgToBackgroundS gave an error
 
         
         return kontoData;
