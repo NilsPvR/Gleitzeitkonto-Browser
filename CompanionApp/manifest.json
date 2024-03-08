@@ -1,0 +1,10 @@
+{
+    "name": "Gleitzeitkonto-Browser CompanionApp",
+    "description": "Die CompanionApp, welche das Laden des Gleitzeitkontos ermöglicht.",
+    "path": "/start-Gleitzeitkonto-Browser CompanionApp.vbs",
+    "type": "stdio",
+    "allowed_extensions": "almkbljoennpfefdbbaceabgiighpjpc",
+    "allowed_origins": [
+        "chrome-extensions://almkbljoennpfefdbbaceabgiighpjpc/"
+    ]
+}
