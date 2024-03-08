@@ -179,6 +179,6 @@ while (true) {
             break;
 
         default:
-            sendMessageToExtension("5"); // unknown command
+            sendMessageToExtension(""); // unknown command
     }
 }
