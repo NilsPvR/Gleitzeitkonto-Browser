@@ -1,7 +1,7 @@
 {
     "name": "gleitzeitkonto_browser_companionapp",
     "description": "Die CompanionApp, welche das Laden des Gleitzeitkontos ermöglicht.",
-    "path": "./start-Gleitzeitkonto-Browser CompanionApp.vbs",
+    "path": "./main.js",
     "type": "stdio",
     "allowed_extensions": "{64137951-4205-4310-4679-103469087506}",
     "allowed_origins": [
