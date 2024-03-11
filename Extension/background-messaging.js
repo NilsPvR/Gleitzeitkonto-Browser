@@ -1,7 +1,7 @@
 const browser = require('webextension-polyfill');
 
 // Constants
-const applicationName = 'Gleitzeitkonto_Browser_CompanionApp';
+const applicationName = 'gleitzeitkonto_browser_companionapp';
 
 let portFromCS; // port form content script
 
