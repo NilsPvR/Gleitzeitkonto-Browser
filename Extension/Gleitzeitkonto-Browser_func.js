@@ -133,7 +133,7 @@ module.exports = class GleitzeitkontoBrowser {
                     console.log('Content script received resposne: ' + response)
                     resolve(response); // resolve the promise once a reponse has been received
                 });
-                this.portToBackground.postMessage(command);
+                this.portToBackground.postMessage({ command: command });
                 console.log('sent message to background script');
             }
             catch (e) {
