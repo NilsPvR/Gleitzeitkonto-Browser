@@ -7,7 +7,6 @@ const fs = require('fs');
 
         if (!fs.existsSync('./compressed/Gleitzeitkonto-Browser-ZIP')) fs.mkdirSync('./compressed/Gleitzeitkonto-Browser-ZIP'); // create folder
 
-        fs.copyFileSync('./CompanionApp/start-Gleitzeitkonto-Browser CompanionApp.vbs', './compressed/companionApp/start-Gleitzeitkonto-Browser CompanionApp.vbs');
         fs.copyFileSync('./CompanionApp/version.txt', './compressed/companionApp/version.txt');
         fs.copyFileSync('./CompanionApp/url.json', './compressed/companionApp/url.json');
         fs.copyFileSync('./CompanionApp/main.js', './compressed/companionApp/main.js');
