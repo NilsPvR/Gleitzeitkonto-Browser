@@ -1,5 +1,5 @@
 {
-    "name": "Gleitzeitkonto-Browser CompanionApp",
+    "name": "Gleitzeitkonto_Browser_CompanionApp",
     "description": "Die CompanionApp, welche das Laden des Gleitzeitkontos ermöglicht.",
     "path": "/start-Gleitzeitkonto-Browser CompanionApp.vbs",
     "type": "stdio",

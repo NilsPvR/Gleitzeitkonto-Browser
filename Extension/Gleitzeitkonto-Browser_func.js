@@ -65,6 +65,8 @@ module.exports = class GleitzeitkontoBrowser {
             versionCommand: 'version',
             githubAPIURL: 'https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest',
         };
+
+        this.portToBackground = null;
     }
 
     /* ==========================================================================================
@@ -113,13 +115,33 @@ module.exports = class GleitzeitkontoBrowser {
      * @returns     Promise<String> - resolves to a string with the response for the command
      */
     async sendMsgToBackgroundS (command) {
-        try {
-            return await browser.runtime.sendMessage(command) // send the command to the background script
-        }
-        catch (e) {
-            console.error(e);
-            return {error: { message: this.constStrings.errorMsgs.errorConnectingToBackend}};
-        }
+        const promiseResolver = (resolve) => { 
+            try {
+                if (!this.portToBackground) {
+                    // buid connection if not already established
+                    this.portToBackground = browser.runtime.connect();
+                    console.log('established connection to background script');
+                    // delete when connnection gets disconnected
+                    this.portToBackground.onDisconnect.addListener(() =>{
+                        console.log('connection got disconnected');
+                        this.portToBackground = null;
+                    });
+                }
+
+                // connection has been established
+                this.portToBackground.onMessage.addListener((response) => {
+                    console.log('Content script received resposne: ' + response)
+                    resolve(response); // resolve the promise once a reponse has been received
+                });
+                this.portToBackground.postMessage(command);
+                console.log('sent message to background script');
+            }
+            catch (e) {
+                console.error(e);
+                resolve({error: { message: this.constStrings.errorMsgs.errorConnectingToBackend}});
+            }
+        };
+        return new Promise(promiseResolver);
         
     };
 

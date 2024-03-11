@@ -1,36 +1,34 @@
 const browser = require('webextension-polyfill');
 
 // Constants
-const applicationName = 'Gleitzeitkonto-Browser CompanionApp';
-const errorMsgs = {
-    companionAppUnavailable: `Die ${applicationName} konnte nicht erreicht werden.`
-}
+const applicationName = 'Gleitzeitkonto_Browser_CompanionApp';
+
+let portFromCS; // port form content script
 
 
 // returns a promise which will resole to the received message or an error message
 // message should be a object which can be sent as JSON
 async function sendMessageToCompanionApp (message) {
     try {
-        return browser.runtime.sendNativeMessage(applicationName, message);
+        return await browser.runtime.sendNativeMessage(applicationName, message);
     } catch (err) {
-        return { error: { message: errorMsgs.companionAppUnavailable } };
+        throw err; // the error needs to be thrown to show up in the brwoser console   
     }
 };
 
 
-function handleContentScriptMessage(message, sender, sendResponse) {
+function connectedToContentScript(port) {
     // will only receive messages meant to be sent to companion app
-    // send command as is to companion app
-
-    sendMessageToCompanionApp(message)
-        .then((companionAppResponse) => {
-            sendResponse(companionAppResponse);
+    portFromCS = port;
+    portFromCS.onMessage.addListener((message) => {
+        console.log('backgrond received message: ' + message);
+        sendMessageToCompanionApp(message).then((response) => { // send command as is to companion app
+            portFromCS.postMessage(response); // send the response as is back to the content script
         });
-
-    return true; // let the browser know that the response will be sent later
+    });
 };
 
 
 
-// Listen for messages from the content script
-browser.runtime.onMessage.addListener(handleContentScriptMessage);
+// Listen for connection opening from the content script
+browser.runtime.onConnect.addListener(connectedToContentScript);
