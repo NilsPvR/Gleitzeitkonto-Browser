@@ -99,7 +99,16 @@ const gzk = new GleitzeitkontoAPI(
 
 
 // ===== Companion App Messaging =====
-// @param incomingMessage object
+/**
+ * Takes care of incoming messages from the extension. Depending on the received message 
+ * gleitzeitkonto-api calls are made or variables are checked. According responses are sent back to 
+ * the extension. When parsing the incoming message capitalization is ignored.
+ * Accepted commands are one of: ['downloadworkingtimes', 'calculatefromworkingtimes', 'waitfordownload',
+ * 'version']
+ * 
+ * @param incomingMessage Object - holding the received command from the extension in the form of:
+ * { command: "commandName" }
+ */
 function messageHandler (incomingMessage) {
     // act according to the received command in the message
     switch (incomingMessage?.command.toLowerCase()) {
