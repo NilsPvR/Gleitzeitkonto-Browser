@@ -113,31 +113,31 @@ function messageHandler (incomingMessage) {
     // act according to the received command in the message
     switch (incomingMessage?.command.toLowerCase()) {
         case 'downloadworkingtimes':
-            printDebug('Received command from extension: "downloadworkingtimes"', DEBUG)
+            printDebug('Received command from extension: "downloadworkingtimes"', DEBUG);
             manageDownloadWorkingTimes(DEBUG).then((result) => {
                 sendMessage(result);
             });
             break;
 
         case 'calculatefromworkingtimes':
-            printDebug('Received command from extension: "calculatefromworkingtimes"', DEBUG)
+            printDebug('Received command from extension: "calculatefromworkingtimes"', DEBUG);
             sendMessage(gzk.calculateFromWorkingTimes());
             break;
 
         case 'waitfordownload':
-            printDebug('Received command from extension: "waitfordownload"', DEBUG)
+            printDebug('Received command from extension: "waitfordownload"', DEBUG);
             waitForDownload().then((result) => {
                 sendMessage(result);
             });
             break;
 
         case 'version':
-            printDebug('Received command from extension: "version"', DEBUG)
+            printDebug('Received command from extension: "version"', DEBUG);
             sendMessage({ version: version });
             break;
 
         default:
-            printDebug(`Received invalid command from extension: "${incomingMessage.command}"`, DEBUG)
+            printDebug(`Received invalid command from extension: "${incomingMessage.command}"`, DEBUG);
             sendMessage({ error: "Ungültiger Befehl."}); // unknown command
     }
 }
