@@ -111,33 +111,32 @@ const gzk = new GleitzeitkontoAPI(
  */
 function messageHandler (incomingMessage) {
     // act according to the received command in the message
-    switch (incomingMessage?.command.toLowerCase()) {
+    const command = incomingMessage?.command.toLowerCase();
+    printDebug(`Received command from extension: "${command}"`, DEBUG);
+
+    switch (command) {
         case 'downloadworkingtimes':
-            printDebug('Received command from extension: "downloadworkingtimes"', DEBUG);
             manageDownloadWorkingTimes(DEBUG).then((result) => {
-                sendMessage(result);
+                sendMessage({ command: command, response: result });
             });
             break;
 
         case 'calculatefromworkingtimes':
-            printDebug('Received command from extension: "calculatefromworkingtimes"', DEBUG);
-            sendMessage(gzk.calculateFromWorkingTimes());
+            sendMessage({ command: command, response: gzk.calculateFromWorkingTimes() });
             break;
 
         case 'waitfordownload':
-            printDebug('Received command from extension: "waitfordownload"', DEBUG);
             waitForDownload().then((result) => {
-                sendMessage(result);
+                sendMessage({ command: command, response: result });
             });
             break;
 
         case 'version':
-            printDebug('Received command from extension: "version"', DEBUG);
-            sendMessage({ version: version });
+            sendMessage({ command: command, response: { version: version } });
             break;
 
         default:
-            printDebug(`Received invalid command from extension: "${incomingMessage.command}"`, DEBUG);
-            sendMessage({ error: "Ungültiger Befehl."}); // unknown command
+            printDebug(`Received command is invalid."`, DEBUG);
+            sendMessage({ command: command, response: { error: "Ungültiger Befehl."} }); // unknown command
     }
 }

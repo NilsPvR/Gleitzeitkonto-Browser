@@ -41,7 +41,6 @@ module.exports = class GleitzeitkontoBrowser {
             overtimeLoading: 'Loading...',
             errorMsgs: {
                 keineDatenVonCompanionApp: 'Keine Daten von der CompanionApp erhalten.',
-                errorConnectingToBackend: '(intern) Keine Verbindung zum Backend.',
                 pageloadingtimeExceeded: 'Die Seite hat zu lange geladen. Das Gleitzeitkonto kann nicht angezeigt werden.',
                 incorrectPath: 'Falscher Browser-Pfad für die API. Bitte Einstellungen im Popup anpassen.', // code 1
                 notInNetwork: 'Nicht im BTC Netz - Du musst mit LAN oder dem BTC-Office-WLAN verbunden sein.', // code 2
@@ -108,40 +107,34 @@ module.exports = class GleitzeitkontoBrowser {
     /**
      * Sends a message to the background script which will normally be forwarded to the CompanionApp.
      * The response from the background script will be returned. Depending on the command this can 
-     * be a string with different content.
+     * be an object or a string with different content.
      * @param command   String - the command to send to the background script, one of ['downloadworkingtimes', 
      * 'calculatefromworkingtimes', 'waitfordownload', 'version']
-     * @returns     Promise<String> - resolves to a string with the response for the command
+     * @returns     Promise<Object | String> - resolves to a object or string with the response for the command
      */
     async sendMsgToBackgroundS (command) {
-        const promiseResolver = (resolve) => { 
-            try {
-                if (!this.portToBackground) {
-                    // buid connection if not already established
-                    this.portToBackground = browser.runtime.connect();
-                    console.log('established connection to background script');
+        return new Promise((resolve) => {
+            if (!this.portToBackground) {
+                this.portToBackground = browser.runtime.connect(); // buid connection if not already established
+                
+                this.portToBackground.onDisconnect.addListener(() => {
                     // delete when connnection gets disconnected
-                    this.portToBackground.onDisconnect.addListener(() =>{
-                        console.log('connection got disconnected');
-                        this.portToBackground = null;
-                    });
+                    this.portToBackground = null;
+                });
+            }
+
+
+            // connection has been established
+            this.portToBackground.onMessage.addListener((response) => {
+
+                // check if the response is a response for this request
+                if (response?.command === command.toLowerCase()) { 
+                    resolve(response.response); // resolve the promise once a response has been received
                 }
 
-                // connection has been established
-                this.portToBackground.onMessage.addListener((response) => {
-                    console.log('Content script received resposne: ' + response)
-                    resolve(response); // resolve the promise once a reponse has been received
-                });
-                this.portToBackground.postMessage({ command: command });
-                console.log('sent message to background script');
-            }
-            catch (e) {
-                console.error(e);
-                resolve({error: { message: this.constStrings.errorMsgs.errorConnectingToBackend}});
-            }
-        };
-        return new Promise(promiseResolver);
-        
+            });
+            this.portToBackground.postMessage({ command: command });
+        });
     };
 
     /**
