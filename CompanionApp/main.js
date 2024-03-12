@@ -28,66 +28,6 @@ function printDebug (output, DEBUG) {
 }
 
 /**
- * Reads 4-bytes from the standard input. This is intepreted as an
- * 32-bit value in native byte order. The read value describes the lenght of the
- * following message.
- * 
- * When working with browser-extensions native messaging the standard output equals a message to the extension.
- * @returns     Promise<Int> - resolves to the read message lenght as an integer
- * @see https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging#app_side
- */
-async function readLengthPrefixFromExtension () {
-    const prefixBuffer = await new Promise((resolve) => {
-        process.stdin.once('readable', () => {
-            const chunk = process.stdin.read(4);
-            resolve(chunk);
-        });
-    });
-    return prefixBuffer.readUInt32LE(); // convert 4-byte buffer to integer
-}
-
-
-/**
- * Reads the given lenght in bytes from the standard input. The read bytes will
- * be converted into a string with utf8-encoding.
- * 
- * When working with browser-extensions native messaging the standard input equals a message from the extension.
- * @param length    Int - the amount of bytes to read from the standard input
- * @returns     Promise<String> - resolves to the read message as a string
- */
-async function readMessageFromExtension (length) {
-    const messageBuffer = await new Promise((resolve) => {
-        process.stdin.once('readable', () => {
-            const chunk = process.stdin.read(length);
-            resolve(chunk);
-        });
-    });
-    return messageBuffer.toString('utf8'); // convert buffer to string with utf-8 encoding
-}
-
-/**
- * Sends the given message to the standard output. The given string will be converted
- * to a utf-8 encoded byte stream. Before sending the message a unsigned 32-bit value in native
- * byte order will be sent indicating the length of the message.
- * 
- * When working with browser-extensions native messaging the standard output equals a message to the extension.
- * @param messageString     String - to send into the standard output
- */
-async function sendMessageToExtension (messageString) {
-    // encode the message to UTF-8
-    const encodedMessage = Buffer.from(messageString, 'utf8');
-    // create a buffer for the length prefix
-    const lengthPrefix = Buffer.alloc(4);
-
-    // write the message length as a 32-bit unsigned integer
-    lengthPrefix.writeUInt32LE(encodedMessage.length);
-
-    // write both to standard-output
-    process.stdout.write(lengthPrefix);
-    process.stdout.write(encodedMessage);
-}
-
-/**
  * Takes care of calling the api to download new working times. Prevents multiple downloads happeing at
  * the same time. Also emits events to let waiting callers know new working times have been downloaded.
  * Status will be printed when the debugging flag is true
