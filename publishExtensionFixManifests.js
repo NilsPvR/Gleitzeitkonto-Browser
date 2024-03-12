@@ -9,7 +9,7 @@ const { copy } = require('fs-extra');
         fs.rmSync('./compressed/extension-chromium/manifest.json', { force: true });
         fs.renameSync('./compressed/extension-chromium/manifest-chromium.json', './compressed/extension-chromium/manifest.json');
 
-        console.log('Deleted incorrect manifest files and swapped name for Chromium.');
+        console.log('Successfully adjusted manifest files and manifest file names.');
     } catch (e) {
         console.error(e);
     }
