@@ -47,7 +47,7 @@ async function manageDownloadWorkingTimes (DEBUG) {
 
         printDebug('Sending Download request to Gleitzeitkonto-API...', DEBUG);
         statusCode = await gzk.downloadWorkingTimes(DEBUG);
-        printDebug(`Request finished with Status-Code: "${statusCode}"`, DEBUG);
+        printDebug(`Downoad-Request finished with Status-Code: "${statusCode}"`, DEBUG);
 
         lastDownloadStatusCode = statusCode;
         isRunning = false;
@@ -77,7 +77,7 @@ async function waitForDownload () {
 
 // catch any errors and send them back to the background script + log them for debugging
 process.on('uncaughtException', (err) => {
-    printDebug(err);
+    printDebug(err, DEBUG);
     sendMessage({ error: err.message.toString() });
 });
 
@@ -113,26 +113,31 @@ function messageHandler (incomingMessage) {
     // act according to the received command in the message
     switch (incomingMessage?.command.toLowerCase()) {
         case 'downloadworkingtimes':
+            printDebug('Received command from extension: "downloadworkingtimes"', DEBUG)
             manageDownloadWorkingTimes(DEBUG).then((result) => {
                 sendMessage(result);
             });
             break;
 
         case 'calculatefromworkingtimes':
+            printDebug('Received command from extension: "calculatefromworkingtimes"', DEBUG)
             sendMessage(gzk.calculateFromWorkingTimes());
             break;
 
         case 'waitfordownload':
+            printDebug('Received command from extension: "waitfordownload"', DEBUG)
             waitForDownload().then((result) => {
                 sendMessage(result);
             });
             break;
 
         case 'version':
+            printDebug('Received command from extension: "version"', DEBUG)
             sendMessage({ version: version });
             break;
 
         default:
+            printDebug(`Received invalid command from extension: "${incomingMessage.command}"`, DEBUG)
             sendMessage({ error: "Ungültiger Befehl."}); // unknown command
     }
 }
