@@ -5,10 +5,11 @@
   "main": "Gleitzeitkonto-Browser.js",
   "scripts": {
     "publishProject": "npm run publishExtension && npm run publishCompanionApp",
-    "publishExtension": "node publishExtension.js && npm run combineBrowserJS && npm run compressBrowserJS && npm run sass-prod && node publishExtensionFixManifests.js && npm run zipChromium && npm run zipFirefox",
-    "publishCompanionApp": "node publishCompanionApp.js && npm run zipWebserver",
-    "combineBrowserJS": "browserify Extension/Gleitzeitkonto-Browser.js > compressed/extension/Gleitzeitkonto-Browser.js && browserify Extension/background-messaging.js > compressed/extension/background-messaging.js",
-    "compressBrowserJS": "terser compressed/extension/Gleitzeitkonto-Browser.js --compress --comments -o compressed/extension/Gleitzeitkonto-Browser.js && terser Extension/Popup/popup-script.js --compress -m --comments -o compressed/extension/Popup/popup-script.js && terser compressed/extension/background-messaging.js --compress --comments -o compressed/extension/background-messaging.js",
+    "publishExtension": "node publishExtension.js && npm run combineBrowserJS && npm run sass-prod && node publishExtensionFixManifests.js && npm run zipChromium && npm run zipFirefox",
+    "publishCompanionApp": "node publishCompanionApp.js && npm run combineCompanionAppJS && npm run zipWebserver",
+    "combineCompanionAppJS": "esbuild CompanionApp/main.js --bundle --minify --platform=node --external:puppeteer --outfile=compressed/companionApp/main.js",
+    "combineBrowserJS": "esbuild Extension/Gleitzeitkonto-Browser.js --bundle --minify --outfile=compressed/extension/Gleitzeitkonto-Browser.js && esbuild Extension/background-messaging.js --bundle --minify --outfile=compressed/extension/background-messaging.js",
+    "compressBrowserJS": "esbuild Extension/Popup/popup-script.js --minify --outfile=compressed/extension/Popup/popup-script.js",
     "zipChromium": "zip-build ./compressed/extension-chromium ./compressed/Gleitzeitkonto-Browser-ZIP --interactive --template NICHT-Herunterladen-win-x64-chromium.zip --subDir Chrome-Edge(Chromium) --override true",
     "zipFirefox": "zip-build ./compressed/extension ./compressed/Gleitzeitkonto-Browser-ZIP --interactive --template NICHT-Herunterladen-win-x64-firefox.zip --override true",
     "sass-dev": "sass --watch --update --no-source-map --style=expanded Extension/Popup/Gleitzeitkonto-Browser.scss:Extension/Popup/Gleitzeitkonto-Browser.css",
@@ -26,10 +27,9 @@
   },
   "homepage": "https://github.com/NilsPvR/Gleitzeitkonto-Browser#readme",
   "devDependencies": {
-    "browserify": "^17.0.0",
+    "esbuild": "^0.20.1",
     "fs-extra": "^11.2.0",
     "sass": "^1.65.1",
-    "terser": "^5.27.2",
     "webextension-polyfill": "^0.10.0",
     "zip-build": "^1.8.0"
   },
