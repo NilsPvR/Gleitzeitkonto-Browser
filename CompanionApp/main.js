@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const { EventEmitter } = require('events');
+const sendMessage = require('./protocol')(messageHandler); // import the protocol for sending and receiving native messages
 
 // ===== Constants and global variables =====
 // DEBUG=true starts webscraper in foreground and do logging, DEBUG=false in background
@@ -148,37 +149,31 @@ const gzk = new GleitzeitkontoAPI(
 
 
 // ===== Companion App Messaging =====
-while (true) {
-    let parsedMessage;
-    try {
-        // retrieve new message from extension via std input
-        const length = await readLengthPrefixFromExtension();
-        const message = await readMessageFromExtension(length);
-        // parse JSON message
-        parsedMessage = JSON.parse(message);
-    } catch (error) {
-        console.error('Error reading message from standard input:', error);
-    }
-
+// @param incomingMessage object
+function messageHandler (incomingMessage) {
     // act according to the received command in the message
-    switch (parsedMessage?.command) {
+    switch (incomingMessage?.command.toLowerCase()) {
         case 'downloadworkingtimes':
-            sendMessageToExtension(JSON.stringify(await manageDownloadWorkingTimes(DEBUG)));
+            manageDownloadWorkingTimes(DEBUG).then((result) => {
+                sendMessage(result);
+            });
             break;
 
         case 'calculatefromworkingtimes':
-            sendMessageToExtension(JSON.stringify(gzk.calculateFromWorkingTimes()));
+            sendMessage(gzk.calculateFromWorkingTimes());
             break;
 
         case 'waitfordownload':
-            sendMessageToExtension(await waitForDownload());
+            waitForDownload().then((result) => {
+                sendMessage(result);
+            });
             break;
 
         case 'version':
-            sendMessageToExtension(JSON.stringify({ version: version }));
+            sendMessage({ version: version });
             break;
 
         default:
-            sendMessageToExtension(""); // unknown command
+            sendMessage({ error: "Ungültiger Befehl."}); // unknown command
     }
 }
