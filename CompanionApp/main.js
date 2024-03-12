@@ -78,7 +78,7 @@ async function waitForDownload () {
 // catch any errors and send them back to the background script + log them for debugging
 process.on('uncaughtException', (err) => {
     printDebug(err, DEBUG);
-    sendMessage({ error: err.message.toString() });
+    sendMessage({ error: { message: err.message.toString() } });
 });
 
 // "%AppData%/Gleitzeitkonto-Browser" Path or similar for other plattforms

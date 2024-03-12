@@ -2,6 +2,11 @@ const browser = require('webextension-polyfill');
 
 // Constants
 const applicationName = 'gleitzeitkonto_browser_companionapp';
+const errorMsgs = {
+    errorInCompanionApp: '(intern) Fehler in der CompanionApp.',
+    companionAppNotFound: 'Keine Verbindung zur CompanionApp. Bitte erneut installieren.',
+    invalidRequest: 'Anfrage von ungültiger extension ID erhalten. Anfrage wird abgelehnt.'
+}
 
 let portFromCS; // port form content script
 
@@ -12,7 +17,8 @@ async function sendMessageToCompanionApp (message) {
     try {
         return await browser.runtime.sendNativeMessage(applicationName, message);
     } catch (err) {
-        throw err; // the error needs to be thrown to show up in the brwoser console   
+        console.error(err);
+        portFromCS.postMessage({ error: { message: errorMsgs.companionAppNotFound } });
     }
 };
 
@@ -22,16 +28,24 @@ function connectedToContentScript(port) {
 
     if (portFromCS.sender.id !== browser.runtime.id) { // sender id is not the one of this extension
         // invalid id, incoming request might be malicious
-        console.error('Anfrage von ungültiger extension ID erhalten. Anfrage wird abgelehnt.');
+        console.error(errorMsgs.invalidRequest);
         port.disconnect();
     }
 
     // will only receive messages meant to be sent to companion app
     portFromCS.onMessage.addListener((message) => {
-        console.log('backgrond received message: ' + message);
+
         sendMessageToCompanionApp(message).then((response) => { // send command as is to companion app
-            portFromCS.postMessage(response); // send the response as is back to the content script
+            // check for any erros from the companionApp
+            if (response?.error?.message) {
+                console.error('Error in the Gleitzeitkonto-Browser CompanionApp: ' + response.error.message);
+                portFromCS.postMessage({ error: { message: errorMsgs.errorInCompanionApp } });
+
+            } else if (response) { // there is actually a response
+                portFromCS.postMessage(response); // send the response as is back to the content script
+            }
         });
+
     });
 };
 
