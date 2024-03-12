@@ -5,8 +5,8 @@
  * When requiring this module a callback function for incoming messages is expected.
  * 
  * 
- * CHANGES from original: Changed var keyword to const and let; changed styling (semicolons + spacing); 
- * added comments
+ * CHANGES from original: Changed var keyword to const and let; (re)moved error handling;
+ * changed styling (semicolons + spacing); added comments
  * 
  * @param handleMessage Function(Object: incomingMessage) - A callback function which handles incoming
  * messages
@@ -65,10 +65,6 @@ module.exports = (handleMessage) => {
         const data = Buffer.concat([header, buffer]);
         process.stdout.write(data);
     }
-
-    process.on('uncaughtException', (err) => {
-        sendMessage({ error: err.toString() });
-    });
 
     return sendMessage;
 

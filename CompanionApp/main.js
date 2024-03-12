@@ -16,14 +16,18 @@ let lastDownloadStatusCode;
 // ===== Functions =====
 
 /**
- * Prints the received output to the console if the given debugging flag
+ * Prints the received output to a debug file if the given debugging flag
  * is enabled.
- * @param   output  String - to print to the console
+ * @param   output  String - to save into the debug file
  * @param   DEBUG   Boolean - prints the output if true
  */
 function printDebug (output, DEBUG) {
     if (DEBUG) {
-        console.debug(output);
+        const fd = fs.openSync('./debug.log', 'a');
+        // Save output in file with datetimestring and new line
+        fs.appendFileSync(fd, `[${new Date().toISOString()}]: ${output}\r\n`);
+
+        if (fd !== undefined) fs.closeSync(fd);
     }
 }
 
@@ -71,6 +75,12 @@ async function waitForDownload () {
 
 // ===== Gleitzeitkonto-API Setup =====
 
+// catch any errors and send them back to the background script + log them for debugging
+process.on('uncaughtException', (err) => {
+    printDebug(err);
+    sendMessage({ error: err.message.toString() });
+});
+
 // "%AppData%/Gleitzeitkonto-Browser" Path or similar for other plattforms
 const downloadPath = path.join(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + '/.local/share'),
                     'Gleitzeitkonto-Browser', 'gleitzeitkonto-api');
@@ -84,7 +94,7 @@ const gzk = new GleitzeitkontoAPI(
     'working_times.csv',
     path.join(downloadPath, 'gleitzeitconfig.json'),
     require('./url.json'),
-    DEBUG
+    false // do not print to console, since this causes issues when using native messaging
 );
 
 
