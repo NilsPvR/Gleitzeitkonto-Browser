@@ -41,13 +41,13 @@ module.exports = class GleitzeitkontoBrowser {
             overtimeLoading: 'Loading...',
             errorMsgs: {
                 keineDatenVonCompanionApp: 'Keine Daten von der CompanionApp erhalten.',
-                errorConnectingToBackend: 'Keine Verbindung zur CompanionApp möglich.',
+                errorConnectingToBackend: '(intern) Keine Verbindung zum Backend.',
                 pageloadingtimeExceeded: 'Die Seite hat zu lange geladen. Das Gleitzeitkonto kann nicht angezeigt werden.',
                 incorrectPath: 'Falscher Browser-Pfad für die API. Bitte Einstellungen im Popup anpassen.', // code 1
-                notInNetwork: 'Nicht im BTC Netz - Du musst mit LAN oder dem BTC-Office-WLAN verbunden sein', // code 2
+                notInNetwork: 'Nicht im BTC Netz - Du musst mit LAN oder dem BTC-Office-WLAN verbunden sein.', // code 2
                 tooManyCSV: 'Zu viele CSV-Dateien im Ordner der API. Bitte Dateien manuell löschen.', // code 3
-                unknownAPI: 'Unbekannter Fehler der API', // code 4
-                unknown: 'Unbekannter Fehler',
+                unknownAPI: 'Unbekannter Fehler der API.', // code 4
+                unknown: 'Unbekannter Fehler.',
                 versionOutdated: 'Bitte die Erweiterung aktualisieren!'
             }
         };
