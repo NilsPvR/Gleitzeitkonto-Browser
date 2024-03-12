@@ -5,8 +5,8 @@
  * When requiring this module a callback function for incoming messages is expected.
  * 
  * 
- * CHANGES from original: Changed var keyword to const and let; additionally to sending a message on error 
- * write to std.err aswell; changed styling (semicolons + spacing); added comments
+ * CHANGES from original: Changed var keyword to const and let; changed styling (semicolons + spacing); 
+ * added comments
  * 
  * @param handleMessage Function(Object: incomingMessage) - A callback function which handles incoming
  * messages
@@ -67,7 +67,6 @@ module.exports = (handleMessage) => {
     }
 
     process.on('uncaughtException', (err) => {
-        process.stderr.write(err.toString());
         sendMessage({ error: err.toString() });
     });
 
