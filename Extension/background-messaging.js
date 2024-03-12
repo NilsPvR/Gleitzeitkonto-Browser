@@ -18,8 +18,15 @@ async function sendMessageToCompanionApp (message) {
 
 
 function connectedToContentScript(port) {
-    // will only receive messages meant to be sent to companion app
     portFromCS = port;
+
+    if (portFromCS.sender.id !== browser.runtime.id) { // sender id is not the one of this extension
+        // invalid id, incoming request might be malicious
+        console.error('Anfrage von ungültiger extension ID erhalten. Anfrage wird abgelehnt.');
+        port.disconnect();
+    }
+
+    // will only receive messages meant to be sent to companion app
     portFromCS.onMessage.addListener((message) => {
         console.log('backgrond received message: ' + message);
         sendMessageToCompanionApp(message).then((response) => { // send command as is to companion app
