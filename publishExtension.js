@@ -9,6 +9,7 @@ const { extname } = require('path');
         };
         await copy('./Extension', './compressed/extension', { filter: filterFunc }); // copies directory with subdirectories
         fs.rmSync('./compressed/extension/url.json', { force: true }); // remove url file
+        fs.rmSync('./compressed/extension/.env', { force: true }); // remove secrets
         if (!fs.existsSync('./compressed/Gleitzeitkonto-Browser-ZIP')) fs.mkdirSync('./compressed/Gleitzeitkonto-Browser-ZIP'); // create folder
         
 
