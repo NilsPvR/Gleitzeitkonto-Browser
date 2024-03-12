@@ -56,6 +56,15 @@ module.exports = (handleMessage) => {
         }
     });
 
+    /**
+     * Send a new message via the stdoutput to the extension. The method will 
+     * convert the given message according to the native messaging standard for 
+     * extensions.
+     * 
+     * @param msg Object - any form, will be converted to a JSON String and then
+     * sent as binary data
+     * @see https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging#app_side
+     */
     function sendMessage (msg) {
         const buffer = Buffer.from(JSON.stringify(msg));
 
