@@ -1,4 +1,4 @@
-﻿<head>
+<head>
 <title>Gleitzeitkonto-Browser</title>
 <HTA:APPLICATION 
      APPLICATIONNAME = "Gleitzeitkonto-Browser"
@@ -540,12 +540,12 @@
         ' ----- Create registry entries for CompanionApp so that browsers can find the CompanionApp -----
         if (strBrowserAnswer = "1" OR strBrowserAnswer = "3") then ' Firefox
             registryCommandChrome = "reg add 'HKEY_CURRENT_USER\Software\Mozilla\NativeMessagingHosts\gleitzeitkonto_browser_companionapp' /ve /t REG_SZ /d '" + _
-                installationFolder + "\CompanionApp\manifest.json' /f"
+                companionAppFolder + "\manifest.json' /f"
 
         end if
         if (strBrowserAnswer = "2" OR strBrowserAnswer = "3") then ' Chrome
             registryCommandFirefox = "reg add 'HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\gleitzeitkonto_browser_companionapp' /ve /t REG_SZ /d '" + _
-                installationFolder + "\CompanionApp\manifest-chromium.json' /f"
+                companionAppFolder + "\manifest-chromium.json' /f"
 
         end if
 
