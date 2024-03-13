@@ -1,4 +1,4 @@
-<head>
+﻿<head>
 <title>Gleitzeitkonto-Browser</title>
 <HTA:APPLICATION 
      APPLICATIONNAME = "Gleitzeitkonto-Browser"
@@ -340,10 +340,19 @@
 
 
     sub checkNodeInstallation ()
-        ' ----------------- TODO ------------------
+        errorCodeNPM = objWShell.Run("npm -v", 0, true)
+        errorCodeNode = objWShell.Run("node -v", 0, true)
 
+        if (errorCodeNPM = "0" AND errorCodeNode = "0") then ' success
+            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Node.js ist installiert.<br>"
+        else 
+            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "<span style='color: red;'>Node.js ist nicht installiert." + _
+                "Installation wird abgebrochen.</span><br>"
+            call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
+            exit sub ' nothing to do
+        end if
 
-        loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Node.js ist installiert.<br>"
+        
         loadingBox.innerHTML = loadingBox.innerHTML + "Alte Browser-Erweiterung Versionen werden gesucht...<br>"
         call window.SetTimeout("uninstallBrowser()", 1, "VBScript") ' timeout to update screen
     end sub
@@ -550,7 +559,7 @@
         end if
 
         loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Verbindung erstellt<br>"
-        loadingBox.innerHTML = loadingBox.innerHTML + "Bereite CompanionApp dependencies vor...<br>"
+        loadingBox.innerHTML = loadingBox.innerHTML + "Installiere Node-Packages für CompanionApp...<br>"
         call window.SetTimeout("downloadProcessPrepareCompanionApp()", 1, "VBScript") ' timeout to update screen
 
     end sub
@@ -558,21 +567,19 @@
     sub downloadProcessPrepareCompanionApp ()
         ' ----- Prepare CompanionApp / install node dependencies -----
 
-        ' --------------- TODO below is only old -----------------
-
-        if (FSO.FileExists(webserverFolder + "\package.json")) then ' check to avoid unecessary errors
+        if (FSO.FileExists(companionAppFolder + "\package.json")) then ' check to avoid unecessary errors
             ' try to install npm packages
-            errorCode = objWShell.Run("cmd /c cd /d " & webserverFolder & " && " & "npm install", 0, true) ' TODO this causes a lot of lag and takes forever
+            errorCode = objWShell.Run("cmd /c cd /d " & companionAppFolder & " && " & "npm install", 0, true) ' TODO this might cause a lot of lag and take forever
             if (errorCode = "0") then ' success
-                loadingBox.innerHTML = loadingBox.innerHTML + "Node-Packages wurden installiert<br>"
+                loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Node-Packages wurden installiert<br>"
             else
-                loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Node-Packages konnten nicht installiert werden</span><br>"
+                loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "<span style='color: red;'>Node-Packages konnten nicht installiert werden!</span><br>"
             end if
         else
-            loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Node-Packages konnten nicht installiert werden</span><br>"
+            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "<span style='color: red;'>Node-Packages konnten nicht installiert werden!</span><br>"
         end if
 
-        call window.SetTimeout("installationFinishedSuccessfully()", 1, "VBScript") ' timeout to update screen
+        call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
     end sub
 
     sub installationFinishedSuccessfully ()
