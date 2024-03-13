@@ -138,7 +138,7 @@
 
     <div id="submitWrapper" style="position: relative;"><input type="submit" class="btn resetBtn installBtn" name="submitBtn" value="Installieren"></div>
     <span id="finishedBtnWrapper" style="display: none;"><input class="btn resetBtn finishedBtn" type="button" name="allDoneBtn" value="Fertig stellen"></span>
-    <input type="button" class="btn resetBtn githubLink" name="githubBtn" value="Github">
+    <input id="githubBtn" type="button" class="btn resetBtn githubLink" name="githubBtn" value="Github">
 </div>
 
 </body>
@@ -271,16 +271,15 @@
     ' Sends a webrequest to the kill subdomain of the Gleitzeitkont-Webserver. Will only send
     ' if the given param is 1 or 2, needed for backwards compatability
     ' @param    pstrWebserverAnswer string  will send the request if the string is "1" or "2"
-    sub killWebserver (pstrWebserverAnswer)
+    sub killWebserver ()
         ' ----- Kill old Webserver if existant -----
         on error resume next ' define only in sub to ignore error when Webserver not running
-        if (pstrWebserverAnswer = "1" OR pstrWebserverAnswer = "2") then
-            set objHTTP = CreateObject( "WinHttp.WinHttpRequest.5.1" )
-            call objHTTP.open("GET", "http://localhost:35221/kill", False)
-            call objHTTP.send()
 
-            set objHTTP = nothing
-        end if
+        set objHTTP = CreateObject( "WinHttp.WinHttpRequest.5.1" )
+        call objHTTP.open("GET", "http://localhost:35221/kill", False)
+        call objHTTP.send()
+
+        set objHTTP = nothing
     end sub
 
 
@@ -315,6 +314,7 @@
         submitWrapper.innerHTML = ""
         loadingBox.style.display = "block" ' make loading svg visable
         loadingBox.innerHTML = loadingBox.innerHTML + "<br>" ' add linebreak after svg
+        githubBtn.style.display = "none" ' make github button invisible since it might block log output
 
         ' create installation folder if not already present
         if not (FSO.FolderExists(installationFolder)) then
@@ -398,7 +398,7 @@
     ' necessary for backwards compatability so old webserver version will be uninstalled
     sub stopWebserver ()
         ' end webserver so no issues with overwriting files which are in use
-        call killWebserver(strWebserverAnswer)
+        call killWebserver()
 
         ' after stopping the webserver uninstall the old version
         call window.SetTimeout("uninstallWebserver()", 1, "VBScript")
@@ -487,21 +487,15 @@
     ' removes the CompanionApp folder and deletes registry entries
     sub uninstallCompanionApp ()
 
-        registryDelCmdFirefox = "reg delete 'HKEY_CURRENT_USER\Software\Mozilla\NativeMessagingHosts\gleitzeitkonto_browser_companionapp'/f"
-        registryDelCmdChrome = "reg delete 'HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\gleitzeitkonto_browser_companionapp'/f"
+        registryDelCmdFirefox = "reg delete ""HKEY_CURRENT_USER\Software\Mozilla\NativeMessagingHosts\gleitzeitkonto_browser_companionapp"" /f"
+        registryDelCmdChrome = "reg delete ""HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\gleitzeitkonto_browser_companionapp"" /f"
 
         errorCodeFirefox = objWShell.Run(registryDelCmdFirefox, 0, true)
         errorCodeChrome = objWShell.Run(registryDelCmdChrome, 0, true)
 
         if (FSO.FolderExists(companionAppFolder)) then FSO.DeleteFolder(companionAppFolder) end if
 
-        if (errorCodeFirefox = "0" AND errorCodeChrome = "0") then ' success
-            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte CompanionApp Version wurde entfernt.<br>"
-        else
-            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + _
-                "<span style='color: orange;'>Alte CompanionApp Version wurde nicht vollständig entfernt. Installation trotzdem fortgesetzt<br>"
-        end if
-
+        loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte CompanionApp Version wurde entfernt.<br>"
 
         loadingBox.innerHTML = loadingBox.innerHTML + "Download Browser-Erweiterung gestartet...<br>"
         call window.SetTimeout("downloadProcessBrowser()", 1, "VBScript") ' timeout to update screen
