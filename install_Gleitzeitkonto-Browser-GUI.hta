@@ -541,19 +541,22 @@
 
     sub downloadProcessRegistry ()
         ' ----- Create registry entries for CompanionApp so that browsers can find the CompanionApp -----
-        if (strBrowserAnswer = "1" OR strBrowserAnswer = "3") then ' Firefox
-            registryCommandChrome = "reg add ""HKEY_CURRENT_USER\Software\Mozilla\NativeMessagingHosts\gleitzeitkonto_browser_companionapp"" /ve /t REG_SZ /d """ + _
-                companionAppFolder + "\manifest.json"" /f"
+        errorCodeFirefox = 0
+        errorCodeChrome = 0
 
+        if (strBrowserAnswer = "1" OR strBrowserAnswer = "3") then ' Firefox
+            registryCommandFirefox = "reg add ""HKEY_CURRENT_USER\Software\Mozilla\NativeMessagingHosts\gleitzeitkonto_browser_companionapp"" /ve /t REG_SZ /d """ + _
+                companionAppFolder + "\manifest.json"" /f"
+            errorCodeFirefox = objWShell.Run(registryCommandFirefox, 0, true)
         end if
         if (strBrowserAnswer = "2" OR strBrowserAnswer = "3") then ' Chrome
-            registryCommandFirefox = "reg add ""HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\gleitzeitkonto_browser_companionapp"" /ve /t REG_SZ /d """ + _
+            registryCommandChrome = "reg add ""HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\gleitzeitkonto_browser_companionapp"" /ve /t REG_SZ /d """ + _
                 companionAppFolder + "\manifest-chromium.json"" /f"
-
+            errorCodeFirefox = objWShell.Run(registryCommandChrome, 0, true)
         end if
 
         loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Verbindung erstellt<br>"
-        loadingBox.innerHTML = loadingBox.innerHTML + "Installiere Node-Packages für CompanionApp...<br>"
+        loadingBox.innerHTML = loadingBox.innerHTML + "Installiere Node-Packages für CompanionApp, bitte warten...<br>"
         call window.SetTimeout("downloadProcessPrepareCompanionApp()", 1, "VBScript") ' timeout to update screen
 
     end sub
@@ -563,7 +566,7 @@
 
         if (FSO.FileExists(companionAppFolder + "\package.json")) then ' check to avoid unecessary errors
             ' try to install npm packages
-            errorCode = objWShell.Run("cmd /c cd /d " & companionAppFolder & " && " & "npm install", 0, true) ' TODO this might cause a lot of lag and take forever
+            errorCode = objWShell.Run("cmd /c cd /d " & companionAppFolder & " && " & "npm install", 0, true) ' TODO this takes a little while
             if (errorCode = "0") then ' success
                 loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Node-Packages wurden installiert<br>"
             else
