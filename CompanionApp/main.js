@@ -13,6 +13,8 @@ let isRunning = false;
 const isRunningEmitter = new EventEmitter(); // allows async/await for isRunning
 let lastDownloadStatusCode;
 
+let unsuccessfulDownloadAttempts = 0; // tracks how often an unsuccessful download happened
+
 // ===== Functions =====
 
 /**
@@ -40,20 +42,38 @@ function printDebug (output, DEBUG) {
  */
 async function manageDownloadWorkingTimes (DEBUG) {
 
-    // start webscraper if its not running already
-    if (!isRunning) {
+    // start webscraper if it's not running already, but if this is a reattempt call ignore running flag
+    if (!isRunning || unsuccessfulDownloadAttempts > 0) {
         isRunning = true;
         isRunningEmitter.emit('running');
 
         printDebug('Sending Download request to Gleitzeitkonto-API...', DEBUG);
-        statusCode = await gzk.downloadWorkingTimes(DEBUG);
-        printDebug(`Downoad-Request finished with Status-Code: "${statusCode}"`, DEBUG);
+        try {
+            const statusCode = await gzk.downloadWorkingTimes(DEBUG);
 
-        lastDownloadStatusCode = statusCode;
-        isRunning = false;
-        isRunningEmitter.emit('stoppedRunning');
+            printDebug(`Downoad-Request finished with Status-Code: "${statusCode}"`, DEBUG);
 
-        return String(statusCode);
+            unsuccessfulDownloadAttempts = 0; // reset unsuccessful attempts
+            lastDownloadStatusCode = statusCode;
+            isRunning = false;
+            isRunningEmitter.emit('stoppedRunning');
+
+            return String(statusCode);
+        } catch (err) {
+            // when using vpn sometimes the download crashes, try again if attempts not exceeded
+            if (unsuccessfulDownloadAttempts < 4) {
+                unsuccessfulDownloadAttempts++;
+                printDebug(`Download Request failed #${unsuccessfulDownloadAttempts} times. Trying again.`, DEBUG);
+                return await manageDownloadWorkingTimes(DEBUG);
+            } else {
+                printDebug(`Download Request failed #${unsuccessfulDownloadAttempts} times. Cancelling.`, DEBUG);
+                unsuccessfulDownloadAttempts = 0; // reset unsuccessful attempts
+                lastDownloadStatusCode = "4";
+                isRunning = false;
+                isRunningEmitter.emit('stoppedRunning');
+                return lastDownloadStatusCode;
+            }
+        }
     } else {
         return '-1'; // statusCode for download is still running
     }
