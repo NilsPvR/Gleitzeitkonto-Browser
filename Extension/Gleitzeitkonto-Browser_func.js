@@ -401,8 +401,8 @@ module.exports = class GleitzeitkontoBrowser {
     async checkVersionOutdated () {
         const localBrowserVersion = browser.runtime.getManifest().version;
 
-        let localWebserverVersion = await this.sendMsgToBackgroundS(this.givenStrings.versionCommand); // get version obj
-        if (localWebserverVersion?.version) localWebserverVersion = localWebserverVersion.version; // get version string out of object
+        let localCompanionAppVersion = await this.sendMsgToBackgroundS(this.givenStrings.versionCommand); // get version obj
+        if (localCompanionAppVersion?.version) localCompanionAppVersion = localCompanionAppVersion.version; // get version string out of object
 
         let onlineVersion;
         try {
@@ -415,13 +415,13 @@ module.exports = class GleitzeitkontoBrowser {
         if (onlineVersion?.tag_name) onlineVersion = onlineVersion.tag_name.toLowerCase().replace('v', ''); // get only the number string
 
         // one of the versions is not available
-        if (typeof onlineVersion != 'string' || !localBrowserVersion  || typeof localWebserverVersion != 'string') return false;
+        if (typeof onlineVersion != 'string' || !localBrowserVersion  || typeof localCompanionAppVersion != 'string') return false;
 
         // compare strings to compare version numbers
         const resultBrowser = localBrowserVersion.localeCompare(onlineVersion, undefined, { numeric: true, sensitivity: 'base' });
-        const resultWebserver = localWebserverVersion.localeCompare(onlineVersion, undefined, { numeric: true, sensitivity: 'base' });
+        const resultCompanionApp = localCompanionAppVersion.localeCompare(onlineVersion, undefined, { numeric: true, sensitivity: 'base' });
 
-        if (resultBrowser == -1 || resultWebserver == -1) { // version is outdated
+        if (resultBrowser == -1 || resultCompanionApp == -1) { // version is outdated
             return true;
         }
         

@@ -6,7 +6,7 @@
   "scripts": {
     "publishProject": "npm run publishExtension && npm run publishCompanionApp",
     "publishExtension": "node publishExtension.js && npm run combineBrowserJS && npm run sass-prod && node publishExtensionFixManifests.js && npm run zipChromium && npm run zipFirefox",
-    "publishCompanionApp": "node publishCompanionApp.js && npm run combineCompanionAppJS && npm run zipWebserver",
+    "publishCompanionApp": "node publishCompanionApp.js && npm run combineCompanionAppJS && npm run zipCompanionApp",
     "combineCompanionAppJS": "esbuild CompanionApp/main.js --bundle --minify --platform=node --external:puppeteer --outfile=compressed/companionApp/main.js",
     "combineBrowserJS": "esbuild Extension/Gleitzeitkonto-Browser.js --bundle --minify --outfile=compressed/extension/Gleitzeitkonto-Browser.js && esbuild Extension/background-messaging.js --bundle --minify --outfile=compressed/extension/background-messaging.js",
     "compressBrowserJS": "esbuild Extension/Popup/popup-script.js --minify --outfile=compressed/extension/Popup/popup-script.js",
@@ -14,7 +14,7 @@
     "zipFirefox": "zip-build ./compressed/extension ./compressed/Gleitzeitkonto-Browser-ZIP --interactive --template NICHT-Herunterladen-win-x64-firefox.zip --override true",
     "sass-dev": "sass --watch --update --no-source-map --style=expanded Extension/Popup/Gleitzeitkonto-Browser.scss:Extension/Popup/Gleitzeitkonto-Browser.css",
     "sass-prod": "sass --no-source-map --style=compressed Extension/Popup/Gleitzeitkonto-Browser.scss:compressed/extension/Popup/Gleitzeitkonto-Browser.css",
-    "zipWebserver": "zip-build ./compressed/companionApp ./compressed/Gleitzeitkonto-Browser-ZIP --interactive --template NICHT-Herunterladen-win-x64-companionApp.zip --subDir CompanionApp --override true"
+    "zipCompanionApp": "zip-build ./compressed/companionApp ./compressed/Gleitzeitkonto-Browser-ZIP --interactive --template NICHT-Herunterladen-win-x64-companionApp.zip --subDir CompanionApp --override true"
   },
   "repository": {
     "type": "git",
