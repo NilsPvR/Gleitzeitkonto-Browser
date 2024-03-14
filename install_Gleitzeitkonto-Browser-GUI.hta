@@ -1,4 +1,4 @@
-<head>
+﻿<head>
 <title>Gleitzeitkonto-Browser</title>
 <HTA:APPLICATION 
      APPLICATIONNAME = "Gleitzeitkonto-Browser"
@@ -30,7 +30,7 @@
         background-color: #484e5b;
         border-radius: 5px;
         padding-top: 4px !important;
-        color: #00aab4;
+        color: white;
     }
     .btn:hover {
         background-color: #6a7285;
@@ -39,7 +39,7 @@
 
     .customSelect {
         background-color: #484e5b;
-        color: #00aab4;
+        color: white;
         border: none;
     }
 
@@ -78,6 +78,9 @@
         font-style: inherit;
         font-weight: inherit;
     }
+    .installNodeBtn {
+        margin-top: 5px;
+    }
     .errorField {
         margin-left: 10px;
         color: red;
@@ -113,7 +116,6 @@
     <h3><b>Gleitzeitkonto-Browser</b></h3>
     <p id="infoText">
         <i>Installation für Gleitzeitkonto-Browser mit CompanionApp gestartet ...</i><br>
-        <i><span style="color: orange">Bitte sicherstellen, dass Node.js installiert ist!</span></i><br>
         <br>
         Bitte wähle für welchen Browser die Erweiterung & CompanionApp installiert werden soll:
     </p>
@@ -137,6 +139,7 @@
     </table>
 
     <div id="submitWrapper" style="position: relative;"><input type="submit" class="btn resetBtn installBtn" name="submitBtn" value="Installieren"></div>
+    <span id="installNodeBtnWrapper" style="display: none;"><input class="btn resetBtn installNodeBtn" type="button" name="installNodeBtn" value="Node.js installieren"></span>
     <span id="finishedBtnWrapper" style="display: none;"><input class="btn resetBtn finishedBtn" type="button" name="allDoneBtn" value="Fertig stellen"></span>
     <input id="githubBtn" type="button" class="btn resetBtn githubLink" name="githubBtn" value="Github">
 </div>
@@ -350,7 +353,9 @@
             loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Node.js ist installiert.<br>"
         else 
             loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "<span style='color: red;'>Node.js ist nicht installiert." + _
-                "Installation wird abgebrochen.</span><br>"
+                " Bitte Node.js installieren! Installation wird abgebrochen.</span><br>"
+            installNodeBtnWrapper.style.display = "block" ' make the 'finished' button visable
+
             call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
             exit sub ' nothing to do
         end if
@@ -634,6 +639,12 @@
     ' ----- Open Installation Folder Button clicked
     sub openInstallationFolder_onClick ()
         CreateObject("Shell.Application").Explore(installationFolder) 'open a explorer window
+    end sub
+
+    ' ----- Install Node.js button clicked -----
+    sub installNodeBtn_onClick ()
+        set objWShell = CreateObject("WScript.Shell")
+        objWShell.Run("https://nodejs.org"), 0 ' open website
     end sub
 
 </script>
