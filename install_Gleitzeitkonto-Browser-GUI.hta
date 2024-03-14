@@ -511,7 +511,13 @@
 
         if (FSO.FolderExists(companionAppFolder)) then FSO.DeleteFolder(companionAppFolder) end if
 
-        loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte CompanionApp Version wurde entfernt.<br>"
+        if (errorCodeFirefox = "0" AND errorCodeChrome = "0") then ' success
+            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte CompanionApp Version wurde entfernt.<br>"
+        else
+            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "<span style='color: orange;'>Alte CompanionApp konnte nicht vollständig entfernt werden." + _
+                " Installation wird trotzdem fortgesetzt.</span><br>"
+        end if
+        
 
         loadingBox.innerHTML = loadingBox.innerHTML + "Download Browser-Erweiterung gestartet...<br>"
         call window.SetTimeout("downloadProcessBrowser()", 1, "VBScript") ' timeout to update screen
@@ -571,7 +577,15 @@
             errorCodeFirefox = objWShell.Run(registryCommandChrome, 0, true)
         end if
 
-        loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Verbindung erstellt<br>"
+        if (errorCodeFirefox = "0" AND errorCodeChrome = "0") then ' success 
+            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Verbindung erstellt<br>"
+        else
+            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "<span style='color: red;'>Verbindung konnte nicht erstellt werden." + _
+                " Installation wird abgebrochen.</span><br>"
+            call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
+            exit sub ' no more to install
+        end if
+        
         loadingBox.innerHTML = loadingBox.innerHTML + "Installiere Node-Packages für CompanionApp, bitte warten...<br>"
         call window.SetTimeout("downloadProcessPrepareCompanionApp()", 1, "VBScript") ' timeout to update screen
 
