@@ -165,6 +165,7 @@
     ' Extract zip contents for Chromium-Extension (if selected)
 
     ' Create registry entries for CompanionApp
+    ' Install node dependencies for CompanionApp
 
     ' Inform user about successful installation
     
@@ -186,7 +187,7 @@
     boxTitle = "Gleitzeitkonto-Browser"
     dim scriptStopped ' used if a subroutine wants to stop the script but not the whole hta
     scriptStopped = false
-    dim strBrowserAnswer, strWebserverAnswer, deleteAttempts ' set global since params are not getting parsed with setTimeout
+    dim strBrowserAnswer, deleteAttempts ' set global since params are not getting parsed with setTimeout
     deleteAttempts = 0 ' initialize for later use during uninstallation
 
     sub window_onLoad
@@ -205,7 +206,13 @@
     ' -------- Helper subs for download/install --------
     ' --------------------------------------------------
 
-    ' Calling methods have to check for the scriptStopped variable as a measure of error handling.
+    ' Downloads a file from the given downloadURL writes the content to the fileDir and then
+    ' tries to unzip the downloaded file into the destination. The downloaded file will be deleted
+    ' afterwards.
+    ' Calling methods have to check for the scriptStopped variable after calling this sub as a measure of error handling.
+    ' @param downloadURUL   string  URL to download from
+    ' @param fileDir        string path to a file location to save the downloaded file (with file name and extension)
+    ' @param destination    string path for the contents of the downloaded zip file to be placed
     sub downloadUnzipAndDelete (downloadURL, fileDir, destination)
         call download(downloadURL, fileDir)
         if (scriptStopped) then exit sub end if
@@ -214,7 +221,7 @@
     end sub
 
     ' Downloads a file from the given downloadURL and writes the content into the given fileDir.
-    ' Calling methods have to check for the scriptStopped variable as a measure of error handling.
+    ' Calling methods have to check for the scriptStopped variable after calling this sub as a measure of error handling.
     ' @param url        string  URL to download from
     ' @parma fileDir    string  path to a file location to save the downloaded file (with file name and extension)
     sub download (url, fileDir)
@@ -273,6 +280,7 @@
 
     ' Sends a webrequest to the kill subdomain of the Gleitzeitkont-Webserver. Will only send
     ' if the given param is 1 or 2, needed for backwards compatability
+    ' necessary for backwards compatability so old webserver version will be uninstalled
     ' @param    pstrWebserverAnswer string  will send the request if the string is "1" or "2"
     sub killWebserver ()
         ' ----- Kill old Webserver if existant -----
@@ -441,7 +449,7 @@
         strings(7) = installationFolder + "\version.txt"
         
         if (deleteAttempts < maxDeleteAttempts) then ' if the amount of attempts has not been exceeded
-            on error resume next ' ignore errors in case files can't be delted
+            on error resume next ' ignore errors in case files can't be deleted
 
             ' loop over the array to delete files
             for i = LBound(strings) to UBound(strings)
@@ -473,14 +481,14 @@
 
         ' Check if deletion got cancelled or was successful
         if (everythingDeleted = true) then ' deletion successful, continue with installation
-            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte Hintergrund-Prozess Version wurde entfernt.<br>"
+            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte Hintergrund-Prozess Version ist entfernt.<br>"
 
-            loadingBox.innerHTML = loadingBox.innerHTML + "Download Hintergrund-Prozess gestartet, bitte warten ...<br>"
+            ' do not print anymore since previous statement included both actions
             call window.SetTimeout("uninstallCompanionApp()", 1, "VBScript") ' timeout to update screen
 
         elseif (deleteAttempts < maxDeleteAttempts) then '  more attempts available, try again
             if (deleteAttempts = 1) then
-                loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte Webserver-Version wird beendet...<br>"
+                loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte Hintergrund-Prozess Version wird beendet...<br>"
             end if
             call window.SetTimeout("uninstallWebserver()", deleteAttemptTimout, "VBScript") ' call uninstallWebserver again after specified timeout
 
