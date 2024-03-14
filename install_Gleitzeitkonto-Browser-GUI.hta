@@ -1,4 +1,4 @@
-﻿<head>
+<head>
 <title>Gleitzeitkonto-Browser</title>
 <HTA:APPLICATION 
      APPLICATIONNAME = "Gleitzeitkonto-Browser"
@@ -340,8 +340,11 @@
 
 
     sub checkNodeInstallation ()
+
+        on error resume next ' ignore errors when node is not installed
         errorCodeNPM = objWShell.Run("npm -v", 0, true)
         errorCodeNode = objWShell.Run("node -v", 0, true)
+        on error goto 0
 
         if (errorCodeNPM = "0" AND errorCodeNode = "0") then ' success
             loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Node.js ist installiert.<br>"
