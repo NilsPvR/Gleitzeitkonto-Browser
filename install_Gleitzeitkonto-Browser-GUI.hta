@@ -1,4 +1,4 @@
-﻿<head>
+<head>
 <title>Gleitzeitkonto-Browser</title>
 <HTA:APPLICATION 
      APPLICATIONNAME = "Gleitzeitkonto-Browser"
@@ -606,7 +606,7 @@
             loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "<span style='color: red;'>Node-Packages konnten nicht installiert werden!</span><br>"
         end if
 
-        call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
+        call window.SetTimeout("installationFinishedSuccessfully()", 1, "VBScript") ' timeout to update screen
     end sub
 
     sub installationFinishedSuccessfully ()
