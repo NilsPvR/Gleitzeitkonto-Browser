@@ -10,6 +10,7 @@ const fs = require('fs');
         fs.copyFileSync('./CompanionApp/main.js', './compressed/companionApp/main.js');
         fs.copyFileSync('./CompanionApp/manifest.json', './compressed/companionApp/manifest.json');
         fs.copyFileSync('./CompanionApp/manifest-chromium.json', './compressed/companionApp/manifest-chromium.json');
+        fs.copyFileSync('./CompanionApp/startCompanionApp.bat', './compressed/companionApp/startCompanionApp.bat');
         // only copy the dependencies into the new package to avoid duplicate npm scripts for developers
         fs.writeFileSync('./compressed/companionApp/package.json', 
             '{ "dependencies": ' +
