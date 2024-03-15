@@ -515,9 +515,10 @@
         if (NOT (errorCodeFirefox = "0" AND errorCodeChrome = "0")) then ' something went wrong
             loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "<span style='color: orange;'>Alte CompanionApp konnte nicht vollständig entfernt werden." + _
                 " Installation wird trotzdem fortgesetzt.</span><br>"
+        else 
+            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte CompanionApp Version wurde entfernt.<br>"
         end if
         
-        loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte CompanionApp Version wurde entfernt.<br>"
         loadingBox.innerHTML = loadingBox.innerHTML + "Download Browser-Erweiterung gestartet...<br>"
         call window.SetTimeout("downloadProcessBrowser()", 1, "VBScript") ' timeout to update screen
     end sub
