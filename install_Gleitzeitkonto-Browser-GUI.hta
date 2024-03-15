@@ -421,7 +421,8 @@
     ' necessary for backwards compatability so old webserver version will be uninstalled
     sub uninstallWebserver ()
         dim maxDeleteAttempts, deleteAttemptTimout, everythingDeleted
-        everythingDeleted = false ' initialize on false
+        everythingDeleted = false ' initialize on false in case attempts of deleting have already been exceeded
+        oldVersionExisted = false ' allow to log that old version got deleted only if something actually got deleted
         maxDeleteAttempts = 200
         deleteAttemptTimout = 100 ' ms
 
@@ -454,15 +455,27 @@
 
             ' loop over the array to delete files
             for i = LBound(strings) to UBound(strings)
-                if (FSO.FileExists(strings(i))) then FSO.DeleteFile(strings(i)) end if
+                if (FSO.FileExists(strings(i))) then 
+                    oldVersionExisted = true
+                    FSO.DeleteFile(strings(i))
+                end if
             next
 
             ' Delete folders
-            if (FSO.FolderExists(webserverFolder)) then FSO.DeleteFolder(webserverFolder) end if
+            if (FSO.FolderExists(webserverFolder)) then 
+                oldVersionExisted = true
+                FSO.DeleteFolder(webserverFolder) 
+            end if
             nodeModulesPath = installationFolder + "\node_modules"
-            if (FSO.FolderExists(nodeModulesPath)) then FSO.DeleteFolder(nodeModulesPath) end if
+            if (FSO.FolderExists(nodeModulesPath)) then 
+                oldVersionExisted = true
+                FSO.DeleteFolder(nodeModulesPath)
+            end if
             oldWebserverAPIPath = installationFolder + "\gleitzeitkonto-api"
-            if (FSO.FolderExists(oldWebserverAPIPath)) then FSO.DeleteFolder(oldWebserverAPIPath) end if
+            if (FSO.FolderExists(oldWebserverAPIPath)) then
+                oldVersionExisted = true
+                FSO.DeleteFolder(oldWebserverAPIPath)
+            end if
 
             on error goto 0 ' enable errors again
 
@@ -481,10 +494,10 @@
 
 
         ' Check if deletion got cancelled or was successful
-        if (everythingDeleted = true) then ' deletion successful, continue with installation
-            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte Hintergrund-Prozess Version ist entfernt.<br>"
+        if (everythingDeleted = true) then ' deletion successful or nothing was there to delete, continue with installation
+            if (oldVersionExisted) then loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte Hintergrund-Prozess Version wurde entfernt.<br>" end if
 
-            ' do not print anymore since previous statement included both actions
+            ' do not print something for next step since previous statement included both actions
             call window.SetTimeout("uninstallCompanionApp()", 1, "VBScript") ' timeout to update screen
 
         elseif (deleteAttempts < maxDeleteAttempts) then '  more attempts available, try again
