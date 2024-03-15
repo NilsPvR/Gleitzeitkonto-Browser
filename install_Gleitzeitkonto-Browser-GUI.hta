@@ -507,15 +507,16 @@
         registryDelCmdFirefox = "reg delete ""HKEY_CURRENT_USER\Software\Mozilla\NativeMessagingHosts\gleitzeitkonto_browser_companionapp"" /f"
         registryDelCmdChrome = "reg delete ""HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\gleitzeitkonto_browser_companionapp"" /f"
 
-        errorCodeFirefox = objWShell.Run(registryDelCmdFirefox, 0, true)
-        errorCodeChrome = objWShell.Run(registryDelCmdChrome, 0, true)
+        call objWShell.Run(registryDelCmdFirefox, 0, true)
+        call objWShell.Run(registryDelCmdChrome, 0, true)
 
-        if (FSO.FolderExists(companionAppFolder)) then FSO.DeleteFolder(companionAppFolder) end if
+        oldVersionExisted = false
+        if (FSO.FolderExists(companionAppFolder)) then 
+            oldVersionExisted = true
+            FSO.DeleteFolder(companionAppFolder) 
+        end if
 
-        if (NOT (errorCodeFirefox = "0" AND errorCodeChrome = "0")) then ' something went wrong
-            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "<span style='color: orange;'>Alte CompanionApp konnte nicht vollständig entfernt werden." + _
-                " Installation wird trotzdem fortgesetzt.</span><br>"
-        else 
+        if (oldVersionExisted) then ' old version got deleted
             loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte CompanionApp Version wurde entfernt.<br>"
         end if
         
