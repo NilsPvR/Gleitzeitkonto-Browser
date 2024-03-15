@@ -436,7 +436,7 @@
 
 
         ' In previous versions the webserver was not installed in a seperate dir -> check for loose files
-        dim strings(7) ' array with 8 strings
+        dim strings(8) ' array with 9 strings
         strings(0) = installationFolder + "\Gleitzeitkonto-Webserver.exe"
         strings(1) = installationFolder + "\icon.ico"
         strings(2) = installationFolder + "\main.js"
@@ -445,6 +445,9 @@
         strings(5) = installationFolder + "\start-Gleitzeitkonto-Webserver.vbs"
         strings(6) = installationFolder + "\url.json"
         strings(7) = installationFolder + "\version.txt"
+        ' delete shortcut file for autostartup
+        appDataFolder = objWShell.ExpandEnvironmentStrings("%appdata%")
+        strings(8) = appDataFolder + "\Microsoft\Windows\Start Menu\Programs\Startup\Start Gleitzeitkonto-Webserver.lnk"
         
         if (deleteAttempts < maxDeleteAttempts) then ' if the amount of attempts has not been exceeded
             on error resume next ' ignore errors in case files can't be deleted
