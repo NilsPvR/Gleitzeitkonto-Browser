@@ -517,11 +517,33 @@
     ' removes the CompanionApp folder and deletes registry entries
     sub uninstallCompanionApp ()
 
-        registryDelCmdFirefox = "reg delete ""HKEY_CURRENT_USER\Software\Mozilla\NativeMessagingHosts\gleitzeitkonto_browser_companionapp"" /f"
-        registryDelCmdChrome = "reg delete ""HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\gleitzeitkonto_browser_companionapp"" /f"
+        ' prepare all commands
+        registryKeyFirefox = " ""HKEY_CURRENT_USER\Software\Mozilla\NativeMessagingHosts\gleitzeitkonto_browser_companionapp"" "
+        registryKeyChrome = " ""HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\gleitzeitkonto_browser_companionapp"" "
+        registryQueryCmdFirefox = "reg query" + registryKeyFirefox
+        registryQueryCmdChrome = "reg query" + registryKeyChrome
+        registryDelCmdFirefox = "reg delete" + registryKeyFirefox + "/f"
+        registryDelCmdChrome = "reg delete" + registryKeyChrome + "/f"
+        firefoxDelErrorCode = "0"
+        chromeDelErrorCode = "0"
+        
 
-        call objWShell.Run(registryDelCmdFirefox, 0, true)
-        call objWShell.Run(registryDelCmdChrome, 0, true)
+        firefoxQueryErrorCode = objWShell.Run(registryQueryCmdFirefox, 0, true)
+        if (firefoxQueryErrorCode = "0") then ' the key actually exists
+            firefoxDelErrorCode = objWShell.Run(registryDelCmdFirefox, 0, true)
+        end if
+
+        chromeQueryErrorCode = objWShell.Run(registryQueryCmdChrome, 0, true)
+        if (chromeQueryErrorCode = "0") then ' the key actually exist
+            chromeDelErrorCode = objWShell.Run(registryDelCmdChrome, 0, true)
+        end if
+
+        if (firefoxDelErrorCode = "0" AND chromeDelErrorCode = "0") then
+            loadingBox.innerHTML = loadingBox.innerHTML + "<span>Alte Verbindung zwischen Browser und CompanionApp entfernt.</span><br>"
+        else
+            loadingBox.innerHTML = loadingBox.innerHTML + _ 
+                "<span style='color: orange;'>Verbindung zwischen Browser und CompanionApp konnte nicht entfernt werden.</span><br>"
+        end if
 
         oldVersionExisted = false
         if (FSO.FolderExists(companionAppFolder)) then 
