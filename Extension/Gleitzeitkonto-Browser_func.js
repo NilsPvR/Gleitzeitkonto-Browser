@@ -16,8 +16,6 @@ module.exports = class GleitzeitkontoBrowser {
                 blue: "#00aab4",
                 grey: "#222222",
             },
-
-            loacalServerURL: 'http://localhost:35221',
             maxPageloadingLoops: 120, // 2 minutes
         };
 
@@ -42,16 +40,13 @@ module.exports = class GleitzeitkontoBrowser {
             prefixError: 'Fehler: ',
             overtimeLoading: 'Loading...',
             errorMsgs: {
-                serverNichtGestartet: 'Der Lokale-Server wurde nicht gestartet!',
-                keineDatenVomServer: 'Keine Daten vom Lokalen-Server geladen',
+                keineDatenVonCompanionApp: 'Keine Daten von der CompanionApp erhalten.',
                 pageloadingtimeExceeded: 'Die Seite hat zu lange geladen. Das Gleitzeitkonto kann nicht angezeigt werden.',
-                stillRunning: 'Erste Abfrage des Gleitzeitkonto\'s lädt noch', // code -1
                 incorrectPath: 'Falscher Browser-Pfad für die API. Bitte Einstellungen im Popup anpassen.', // code 1
-                notInNetwork: 'Nicht im BTC Netz - Du musst mit LAN oder dem BTC-Office-WLAN verbunden sein', // code 2
+                notInNetwork: 'Nicht im BTC Netz - Du musst mit LAN oder dem BTC-Office-WLAN verbunden sein.', // code 2
                 tooManyCSV: 'Zu viele CSV-Dateien im Ordner der API. Bitte Dateien manuell löschen.', // code 3
-                unknownAPI: 'Unbekannter Fehler der API', // code 4
-                unknown: 'Unbekannter Fehler',
-                unknownFetching: 'Unbekannter Fehler beim laden der Daten',
+                unknownAPI: 'Unbekannter Fehler der API.', // code 4
+                unknown: 'Unbekannter Fehler.',
                 versionOutdated: 'Bitte die Erweiterung aktualisieren!'
             }
         };
@@ -62,22 +57,24 @@ module.exports = class GleitzeitkontoBrowser {
             headerID: 'shell-header',
             headerEndID: 'shell-header-hdr-end',
             searchBarID: 'searchFieldInShell-input',
-            errorMsgs: {
-                networkError: 'NetworkError when attempting to fetch resource.',
-                failedError: 'Failed to fetch',
-            },
-            downloadURL: '/downloadWorkingTimes',
-            calcaulteURL: '/calculateFromWorkingTimes',
-            waitForDownlodURL: '/waitfordownload',
-            versionURL: '/version',
+            downloadCommand: 'downloadWorkingTimes',
+            calcaulteCommand: 'calculateFromWorkingTimes',
+            waitForDownlodCommand: 'waitfordownload',
+            versionCommand: 'version',
             githubAPIURL: 'https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest',
         };
+
+        this.portToBackground = null;
     }
 
     /* ==========================================================================================
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Functions <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
-    // Boolean value weather or not the user is on "Meine Zeiterfassung" page
+    /**
+     * Checks if the user is on the "Meine Zeiterfassung" page. This is possible
+     * by checking the hash or the url (the part after #)
+     * @returns     Boolean - true if the user in on "Meine Zeiterfassung" page
+     */
     checkCorrectMenuIsOpen () {
         if (window.location.hash.startsWith(this.givenStrings.gleitzeitHash)) {
             return true;
@@ -85,8 +82,11 @@ module.exports = class GleitzeitkontoBrowser {
         return false;
     };
 
-    // Resolves the promise only once the user is on "Meine Zeiterfassung" page
-    // This is done by checking the Hash of the URL (the bit after #)
+    /**
+     * Waits until the user opens the "Meine Zeiterfassung" page. The promise will
+     * resolve with no data once the site is opened. 
+     * @returns     Promise<> - resolves once the "Meine Zeiterfassung" page is opened
+    */
     async continuousMenucheck () {
         if (this.checkCorrectMenuIsOpen()) {
             return true;
@@ -104,37 +104,68 @@ module.exports = class GleitzeitkontoBrowser {
         });
     };
 
-    async fetchServer (path) {
-        try {
-            const url = this.config.loacalServerURL + path;
-            const data = await (await fetch(url)).json();
-            return data;
-        }
-        catch (e) {
-            if (e.message == this.givenStrings.errorMsgs.networkError || e.message == this.givenStrings.errorMsgs.failedError) {
-                console.log(e);
-                return {error: { message: this.constStrings.errorMsgs.serverNichtGestartet}};
+    /**
+     * Sends a message to the background script which will normally be forwarded to the CompanionApp.
+     * The response from the background script will be returned. Depending on the command this can 
+     * be an object or a string with different content.
+     * @param command   String - the command to send to the background script, one of ['downloadworkingtimes', 
+     * 'calculatefromworkingtimes', 'waitfordownload', 'version']
+     * @returns     Promise<Object | String> - resolves to a object or string with the response for the command
+     */
+    async sendMsgToBackgroundS (command) {
+        return new Promise((resolve) => {
+            if (!this.portToBackground) {
+                this.portToBackground = browser.runtime.connect(); // buid connection if not already established
+                
+                this.portToBackground.onDisconnect.addListener(() => {
+                    // delete when connnection gets disconnected
+                    this.portToBackground = null;
+                });
             }
-            else {
-                console.error(e);
-                return {error: { message: this.constStrings.errorMsgs.keineDatenVomServer}};
-            }
-        }
-        
+
+
+            // connection has been established
+            this.portToBackground.onMessage.addListener((response) => {
+
+                // check if the response is a response for this request
+                if (response?.command === command.toLowerCase()) {
+                    // resolve as reformated response including any errors or with the reponsecontent at top level
+                    response?.error ? resolve(response) : resolve(response.response);
+                }
+
+            });
+            this.portToBackground.postMessage({ command: command });
+        });
     };
 
+    /**
+     * Format the given kontoData object to a string which can be displayed. The object is expected to have either kontoData
+     * or an error message however if neither of those is available a custom error string will be returned.
+     * @param kontoData     Object - holding the kontostring or an error message, expected to have a form of:
+     * { kontoString: "string"} or { error: { message: "errorMessage" } }
+     * @returns     String - the formatted string derived from the given kontoData object
+     */
     formatDisplayText (kontoData) {
         if (kontoData?.error?.message) return this.constStrings.prefixError + kontoData.error.message; // Error occured
-        if (!kontoData || !kontoData.kontoString) return this.constStrings.prefixError + this.constStrings.errorMsgs.keineDatenVomServer; // No Data
+        if (!kontoData || !kontoData.kontoString) return this.constStrings.prefixError + this.constStrings.errorMsgs.keineDatenVonCompanionApp; // No Data
         else return this.constStrings.prefixOvertime + kontoData.kontoString;
     };
 
+    /**
+     * Contacts the CompanionApp via the background script to download the latest working times and calculate
+     * the resulting kontoData. A kontoData object will be returned containing the working times data or an error with 
+     * messsage and status code.
+     * @returns Promise<Obejct> - Resolves to object containing informationen about the Gleitzeitkonto in the form of: 
+     * { kontoString: "1h 15min", kontoInMin: "75", lastDate: "DD.MM.YYYY"} or if something went wrong
+     * { error: { message: "errorMessage", statusCode?: INT } }
+     * StatusCodes are  1 - 4 and based on gleitzeitkonto-api.downloadWorkingTimes()
+     */
     async getDownloadKontoData () {
-        let response = await this.fetchServer(this.givenStrings.downloadURL);
+        let response = await this.sendMsgToBackgroundS(this.givenStrings.downloadCommand);
         let kontoData = {};
 
         // -- Check StatusCode of Download --
-        if (response == -1) response = await this.fetchServer(this.givenStrings.waitForDownlodURL); // other request still downloading
+        if (response == -1) response = await this.sendMsgToBackgroundS(this.givenStrings.waitForDownlodCommand); // other request still downloading
 
         if (response == 1) kontoData.error = { message: this.constStrings.errorMsgs.incorrectPath, statusCode: 1 }
         else if (response == 2) kontoData.error = { message: this.constStrings.errorMsgs.notInNetwork, statusCode: 2 }
@@ -142,9 +173,9 @@ module.exports = class GleitzeitkontoBrowser {
         else if (response == 4) kontoData.error = { message: this.constStrings.errorMsgs.unknownAPI, statusCode: 4 }
         else if (response == 0) { // success
             // since download only returns statusCode calculate afterwards
-            kontoData = await this.fetchServer(this.givenStrings.calcaulteURL);
+            kontoData = await this.sendMsgToBackgroundS(this.givenStrings.calcaulteCommand);
         }
-        else if (response?.error?.message) kontoData = response // fetchServer gave an error
+        else if (response?.error?.message) kontoData = response // sendMsgToBackgroundS gave an error
 
         
         return kontoData;
@@ -159,6 +190,7 @@ module.exports = class GleitzeitkontoBrowser {
      * @param tagName       String - The name of the HTML-Tag, e.g: <div> -> 'div'
      * @param attributes    Object - key: attribute name, value: value of the attribute
      * @param content       HTMLElement | String - The nodes or strings to be placed inside of the element
+     * @returns     HTMLElement | String - the composed HTMLElement with given attributes and content
      */
     createRichElement (tagName, attributes, ...content) {
         let element = document.createElement(tagName);
@@ -232,6 +264,8 @@ module.exports = class GleitzeitkontoBrowser {
             },
             ...HTMLElements, // spread syntax to expand array
         ));
+        // readd reload event listener
+        document.getElementById(this.constStrings.refreshIconID).addEventListener('click', () => { this.reloadGleitzeitKonto() });
     };
 
     // moves the old floating display to an inserted display, the styling will also be adjusted accordingly 
@@ -359,7 +393,7 @@ module.exports = class GleitzeitkontoBrowser {
     // called from the reload btn, recalculates the Gleitzeitkontos
     reloadGleitzeitKonto () {
         this.startLoading(); // start loading immediately
-        const promiseCalcKontoData = this.fetchServer(this.givenStrings.calcaulteURL);
+        const promiseCalcKontoData = this.sendMsgToBackgroundS(this.givenStrings.calcaulteCommand);
         const promiseDownloadKontoData = this.getDownloadKontoData();
 
         this.updateDisplay(promiseCalcKontoData, true);
@@ -370,8 +404,8 @@ module.exports = class GleitzeitkontoBrowser {
     async checkVersionOutdated () {
         const localBrowserVersion = browser.runtime.getManifest().version;
 
-        let localWebserverVersion = await this.fetchServer(this.givenStrings.versionURL); // get version obj
-        if (localWebserverVersion?.version) localWebserverVersion = localWebserverVersion.version; // get version string out of object
+        let localCompanionAppVersion = await this.sendMsgToBackgroundS(this.givenStrings.versionCommand); // get version obj
+        if (localCompanionAppVersion?.version) localCompanionAppVersion = localCompanionAppVersion.version; // get version string out of object
 
         let onlineVersion;
         try {
@@ -384,13 +418,13 @@ module.exports = class GleitzeitkontoBrowser {
         if (onlineVersion?.tag_name) onlineVersion = onlineVersion.tag_name.toLowerCase().replace('v', ''); // get only the number string
 
         // one of the versions is not available
-        if (typeof onlineVersion != 'string' || !localBrowserVersion  || typeof localWebserverVersion != 'string') return false;
+        if (typeof onlineVersion != 'string' || !localBrowserVersion  || typeof localCompanionAppVersion != 'string') return false;
 
         // compare strings to compare version numbers
         const resultBrowser = localBrowserVersion.localeCompare(onlineVersion, undefined, { numeric: true, sensitivity: 'base' });
-        const resultWebserver = localWebserverVersion.localeCompare(onlineVersion, undefined, { numeric: true, sensitivity: 'base' });
+        const resultCompanionApp = localCompanionAppVersion.localeCompare(onlineVersion, undefined, { numeric: true, sensitivity: 'base' });
 
-        if (resultBrowser == -1 || resultWebserver == -1) { // version is outdated
+        if (resultBrowser == -1 || resultCompanionApp == -1) { // version is outdated
             return true;
         }
         

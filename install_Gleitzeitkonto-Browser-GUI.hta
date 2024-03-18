@@ -30,7 +30,7 @@
         background-color: #484e5b;
         border-radius: 5px;
         padding-top: 4px !important;
-        color: #00aab4;
+        color: white;
     }
     .btn:hover {
         background-color: #6a7285;
@@ -39,7 +39,7 @@
 
     .customSelect {
         background-color: #484e5b;
-        color: #00aab4;
+        color: white;
         border: none;
     }
 
@@ -78,6 +78,9 @@
         font-style: inherit;
         font-weight: inherit;
     }
+    .installNodeBtn {
+        margin-top: 5px;
+    }
     .errorField {
         margin-left: 10px;
         color: red;
@@ -112,9 +115,9 @@
 <div id="mainFrame">
     <h3><b>Gleitzeitkonto-Browser</b></h3>
     <p id="infoText">
-        <i>Installation für Gleitzeitkonto-Browser gerstartet ...</i><br>
+        <i>Installation für Gleitzeitkonto-Browser mit CompanionApp gestartet ...</i><br>
         <br>
-        Bitte wähle für welchen Browser die Erweiterung installiert werden soll und welche Version des Hintergrund-Prozesses installiert werden soll:
+        Bitte wähle für welchen Browser die Erweiterung & CompanionApp installiert werden soll:
     </p>
     <p class="errorField" id="errorField"></p>
     <div id="loadingBox" style="display: none;">
@@ -127,30 +130,18 @@
                 <select class="customSelect" required="true" name="browser" style="width: 100%;">
                     <option value="" disabled=true selected=true>-- auswählen --</option>
                     <option value="1">Firefox</option>
-                    <option value="2">Chrome/Edge (Chromium)</option>
-                    <option value="3">Mehrere Browser</option>
-                    <option value="4">NICHT installieren</option>
+                    <option value="2">Chrome (Chromium)</option>
+                    <option value="3">Beide Browser</option>
                 </select>
             </td>
             <td><input type="button" class="btn resetBtn helpBtn" name="browserHelpBtn" value="?"></td>
         </tr>
-        <tr>
-            <td><label><b>Hintergrund-Prozess:</b></label></td>
-            <td>
-                <select class="customSelect" required="true" name="webserver">
-                    <option value="" disabled=true selected=true>-- auswählen --</option>
-                    <option value="1">Hintergrund-Package (Empfohlen)</option>
-                    <option value="2">Hintergrund-Node.js-Skript</option>
-                    <option value="3">NICHT installieren</option>
-                </select>
-            </td>
-            <td><input type="button" class="btn resetBtn helpBtn" name="webserverHelpBtn" value="?"></td>
-        </tr>
     </table>
 
     <div id="submitWrapper" style="position: relative;"><input type="submit" class="btn resetBtn installBtn" name="submitBtn" value="Installieren"></div>
+    <span id="installNodeBtnWrapper" style="display: none;"><input class="btn resetBtn installNodeBtn" type="button" name="installNodeBtn" value="Node.js installieren"></span>
     <span id="finishedBtnWrapper" style="display: none;"><input class="btn resetBtn finishedBtn" type="button" name="allDoneBtn" value="Fertig stellen"></span>
-    <input type="button" class="btn resetBtn githubLink" name="githubBtn" value="Github">
+    <input id="githubBtn" type="button" class="btn resetBtn githubLink" name="githubBtn" value="Github">
 </div>
 
 </body>
@@ -161,42 +152,42 @@
     ' This takes care of the installation for Gleitzeitkonto-Browser and does summed up the following
 
     ' Await user input for which Browser they are installing:
-        ' option 1: Firefox, option 2: Chrome, Edge (Chromium), option 3: multiple, option 4: none
-    ' Await user input which webserver they are installing:
-        ' option 1: packed, option 2: unpacked, option 3: none
+        ' option 1: Firefox, option 2: Chrome (Chromium), option 3: both
 
-    ' Download zip files from Github to %Local AppData%/Programs/Gleitzeitkonto-Browser
-    '   see chromiumURL, firefoxURL, packedWebserverURL, unpackedWebserverULR
+    ' Check if Node.js and npm are installed
+        ' if not cancel installation
 
-    ' Extract zip contents for Webserver (if selected)
+    ' Uninstall any old versions
+    ' Download zip files from Github to %LocalAppData%/Programs/Gleitzeitkonto-Browser
+    '   see chromiumURL, firefoxURL, companionAppURL
+
+    ' Extract zip contents for CompanionApp
     ' Extract zip contents for Chromium-Extension (if selected)
-    ' When unpacked webserver is selected link to extended instructions
 
-    ' Create Shortcut for startWebserver.vbs in %AppData%\Microsoft\Windows\Start Menu\Programs\Startup\
-    ' Start Webserver
+    ' Create registry entries for CompanionApp
+    ' Install node dependencies for CompanionApp
+
     ' Inform user about successful installation
     
 
     ' ----- initialize path and url variables -----
     chromiumURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/NICHT-Herunterladen-win-x64-chromium.zip"
     firefoxURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/NICHT-Herunterladen-win-x64-firefox.xpi"
-    packedWebserverURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/NICHT-Herunterladen-win-x64-webserver.zip"
-    unpackedWebserverURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/NICHT-Herunterladen-win-x64-webserver-script.zip"
+    companionAppURL = "https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/NICHT-Herunterladen-win-x64-companionApp.zip"
 
     ' set shell obj
     set objWShell = CreateObject("WScript.Shell")
     set FSO = CreateObject("Scripting.FileSystemObject")
 
-    userprofile = objWShell.ExpandEnvironmentStrings("%userprofile%")
-    localPrograms = userprofile + "\AppData\Local\Programs"
-    installationFolder = localPrograms + "\Gleitzeitkonto-Browser"
-    webserverFolder = installationFolder + "\Webserver"
-    appDataFolder = objWShell.ExpandEnvironmentStrings("%appdata%")
+    localAppData = objWShell.ExpandEnvironmentStrings("%localappdata%")
+    installationFolder = localAppData + "\Programs\Gleitzeitkonto-Browser"
+    webserverFolder = installationFolder + "\Webserver" ' necessary for backwards compatability
+    companionAppFolder = installationFolder + "\CompanionApp"
 
     boxTitle = "Gleitzeitkonto-Browser"
-    dim scriptStopped ' used if a soubroutine wants to stop the script but not the whole hta
+    dim scriptStopped ' used if a subroutine wants to stop the script but not the whole hta
     scriptStopped = false
-    dim strBrowserAnswer, strWebserverAnswer, deleteAttempts ' set global since params are not getting parsed with setTimeout
+    dim strBrowserAnswer, deleteAttempts ' set global since params are not getting parsed with setTimeout
     deleteAttempts = 0 ' initialize for later use during uninstallation
 
     sub window_onLoad
@@ -212,8 +203,16 @@
     end sub
 
     ' ----- Subs Download, Unzip and Killwebserver -----
+    ' -------- Helper subs for download/install --------
+    ' --------------------------------------------------
 
-    ' Calling methods have to check for the scriptStopped variable as a measure of error handling.
+    ' Downloads a file from the given downloadURL writes the content to the fileDir and then
+    ' tries to unzip the downloaded file into the destination. The downloaded file will be deleted
+    ' afterwards.
+    ' Calling methods have to check for the scriptStopped variable after calling this sub as a measure of error handling.
+    ' @param downloadURUL   string  URL to download from
+    ' @param fileDir        string path to a file location to save the downloaded file (with file name and extension)
+    ' @param destination    string path for the contents of the downloaded zip file to be placed
     sub downloadUnzipAndDelete (downloadURL, fileDir, destination)
         call download(downloadURL, fileDir)
         if (scriptStopped) then exit sub end if
@@ -222,7 +221,7 @@
     end sub
 
     ' Downloads a file from the given downloadURL and writes the content into the given fileDir.
-    ' Calling methods have to check for the scriptStopped variable as a measure of error handling.
+    ' Calling methods have to check for the scriptStopped variable after calling this sub as a measure of error handling.
     ' @param url        string  URL to download from
     ' @parma fileDir    string  path to a file location to save the downloaded file (with file name and extension)
     sub download (url, fileDir)
@@ -280,31 +279,29 @@
     end sub
 
     ' Sends a webrequest to the kill subdomain of the Gleitzeitkont-Webserver. Will only send
-    ' if the given param is 1 or 2
+    ' if the given param is 1 or 2, needed for backwards compatability
+    ' necessary for backwards compatability so old webserver version will be uninstalled
     ' @param    pstrWebserverAnswer string  will send the request if the string is "1" or "2"
-    sub killWebserver (pstrWebserverAnswer)
+    sub killWebserver ()
         ' ----- Kill old Webserver if existant -----
         on error resume next ' define only in sub to ignore error when Webserver not running
-        if (pstrWebserverAnswer = "1" OR pstrWebserverAnswer = "2") then
-            set objHTTP = CreateObject( "WinHttp.WinHttpRequest.5.1" )
-            call objHTTP.open("GET", "http://localhost:35221/kill", False)
-            call objHTTP.send()
 
-            set objHTTP = nothing
-        end if
+        set objHTTP = CreateObject( "WinHttp.WinHttpRequest.5.1" )
+        call objHTTP.open("GET", "http://localhost:35221/kill", False)
+        call objHTTP.send()
+
+        set objHTTP = nothing
     end sub
 
-    ' =====>> Events <<=====
+
+    ' ----- Download and Installation process subs -----
+    ' --------------------------------------------------
 
     ' ----- Install Button clicked -----
     sub submitBtn_onClick ()
         ' get answer for browser
         browserElements = Window.browser.SelectedIndex
         strBrowserAnswer = Window.browser.Options(browserElements).Value
-
-        ' get answer for webserver
-        webserverElements = Window.webserver.SelectedIndex
-        strWebserverAnswer = Window.webserver.Options(webserverElements).Value
 
         ' validate Browser answer
         if (strBrowserAnswer = "") then
@@ -313,22 +310,6 @@
         elseif not (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3" OR strBrowserAnswer = "4") then
             ' unsanitizes user input in innerHTML, could be manipulated with HTML edits but won't lead to any security issues
             errorField.innerHTML = "<i>'" + strBrowserAnswer + "' ist eine ungültige Eingabe für den Browser.</i>"
-            exit sub
-        end if
-
-
-        ' validate webserver answer
-        if (strWebserverAnswer = "") then
-            errorField.innerHTML = "<i>Bitte eine Option für den Hintergrund-Prozess auswählen</i>"
-            exit sub
-        elseif not (strWebserverAnswer = "1" OR strWebserverAnswer = "2" OR strWebserverAnswer = "3") then
-            ' unsanitizes user input in innerHTML, could be manipulated with HTML edits but won't lead to any security issues
-            errorField.innerHTML = "<i>'" + strWebserverAnswer + "' ist eine ungültige Eingabe für den Hintergrund-Prozess.</i>"
-            exit sub
-        end if
-
-        if (strBrowserAnswer = "4" and strWebserverAnswer = "3") then' nothing to install
-            errorField.innerHTML = "<i>Es wurden keine Komponenten zum Installieren ausgewählt.</i>"
             exit sub
         end if
 
@@ -344,6 +325,7 @@
         submitWrapper.innerHTML = ""
         loadingBox.style.display = "block" ' make loading svg visable
         loadingBox.innerHTML = loadingBox.innerHTML + "<br>" ' add linebreak after svg
+        githubBtn.style.display = "none" ' make github button invisible since it might block log output
 
         ' create installation folder if not already present
         if not (FSO.FolderExists(installationFolder)) then
@@ -353,16 +335,10 @@
 
 
         if (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3") then
-            loadingBox.innerHTML = loadingBox.innerHTML + "Alte Browser-Erweiterung Versionen werden gesucht...<br>"
+            loadingBox.innerHTML = loadingBox.innerHTML + "Überprüfe Node.js Installation...<br>"
 
             ' calls a chain of subs to allow screen updates everytime
-            call window.SetTimeout("uninstallBrowser()", 1, "VBScript") ' timeout to update screen
-
-        elseif (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then
-            loadingBox.innerHTML = loadingBox.innerHTML + "Alte Hintergrund-Prozess Versionen werden gesucht...<br>"
-
-            ' calls a chain of subs to allow screen updates everytime
-            call window.SetTimeout("stopWebserver()", 1, "VBScript") ' timeout to update screen
+            call window.SetTimeout("checkNodeInstallation()", 1, "VBScript") ' timeout to update screen
 
         else
             loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Unerwarteter Fehler." + _
@@ -371,15 +347,36 @@
             exit sub ' nothing to do
         end if
 
-
     end sub
 
+
+    sub checkNodeInstallation ()
+
+        on error resume next ' ignore errors when node is not installed
+        errorCodeNPM = objWShell.Run("npm -v", 0, true)
+        errorCodeNode = objWShell.Run("node -v", 0, true)
+        on error goto 0
+
+        if (NOT (errorCodeNPM = "0" AND errorCodeNode = "0")) then ' node is not installed
+            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "<span style='color: red;'>Node.js ist nicht installiert." + _
+                " Bitte Node.js installieren! Installation wird abgebrochen.</span><br>"
+            installNodeBtnWrapper.style.display = "block" ' make the 'install node' button visable
+
+            call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
+            exit sub ' nothing to install anymore
+        end if
+
+        loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Node.js ist installiert.<br>"
+        loadingBox.innerHTML = loadingBox.innerHTML + "Alte Browser-Erweiterung Versionen werden gesucht...<br>"
+        call window.SetTimeout("uninstallBrowser()", 1, "VBScript") ' timeout to update screen
+    end sub
+
+
     ' delete the old versions of the browsers which are getting installed now
-    ' do not delete anything else since a user might install browser and webserver separately 
     sub uninstallBrowser ()
         if not (FSO.FolderExists(installationFolder)) then
             loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Unerwarteter Fehler." + _
-                " Der Installationsordner der alten Webserverversion ist nicht mehr vorhanden. Installation wird abgebrochen.</span><br>"
+                " Der Installationsordner der alten Browser-Erweiterung ist nicht mehr vorhanden. Installation wird abgebrochen.</span><br>"
 
             call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
             exit sub ' nothing to uninstall
@@ -407,30 +404,25 @@
             end if            
         end if
 
-        if (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3") then ' double check
-            loadingBox.innerHTML = loadingBox.innerHTML + "Download Browser-Erweiterung gestartet ...<br>"
-            call window.SetTimeout("downloadProcessBrowser()", 1, "VBScript") ' timeout to update screen
 
-        else
-            loadingBox.innerHTML = loadingBox.innerHTML + "Alte Hintergrund-Prozess Versionen werden gesucht...<br>"
-            call window.SetTimeout("stopWebserver()", 1, "VBScript") ' timeout to update screen
-        end if
-
-
+        loadingBox.innerHTML = loadingBox.innerHTML + "Alte CompanionApp (ehemalig Hintergrund-Prozess) Versionen werden gesucht...<br>"
+        call window.SetTimeout("stopWebserver()", 1, "VBScript") ' timeout to update screen
     end sub
 
+    ' necessary for backwards compatability so old webserver version will be uninstalled
     sub stopWebserver ()
         ' end webserver so no issues with overwriting files which are in use
-        call killWebserver(strWebserverAnswer)
+        call killWebserver()
 
         ' after stopping the webserver uninstall the old version
         call window.SetTimeout("uninstallWebserver()", 1, "VBScript")
     end sub
 
-
+    ' necessary for backwards compatability so old webserver version will be uninstalled
     sub uninstallWebserver ()
         dim maxDeleteAttempts, deleteAttemptTimout, everythingDeleted
-        everythingDeleted = false ' initialize on false
+        everythingDeleted = false ' initialize on false in case attempts of deleting have already been exceeded
+        oldVersionExisted = false ' allow to log that old version got deleted only if something actually got deleted
         maxDeleteAttempts = 200
         deleteAttemptTimout = 100 ' ms
 
@@ -443,232 +435,201 @@
             exit sub ' can't install anything
         end if
 
-        if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then
-            ' In previous versions the webserver was not installed in a seperate dir -> check for loose files
-            dim strings(7) ' array with 8 strings
-            strings(0) = installationFolder + "\Gleitzeitkonto-Webserver.exe"
-            strings(1) = installationFolder + "\icon.ico"
-            strings(2) = installationFolder + "\main.js"
-            strings(3) = installationFolder + "\package.json"
-            strings(4) = installationFolder + "\package-lock.json"
-            strings(5) = installationFolder + "\start-Gleitzeitkonto-Webserver.vbs"
-            strings(6) = installationFolder + "\url.json"
-            strings(7) = installationFolder + "\version.txt"
-            
-            if (deleteAttempts < maxDeleteAttempts) then ' if the amount of attempts has not been exceeded
-                on error resume next ' ignore errors in case files can't be delted
 
-                ' loop over the array to delete files
-                for i = LBound(strings) to UBound(strings)
-                    if (FSO.FileExists(strings(i))) then FSO.DeleteFile(strings(i)) end if
-                next
+        ' In previous versions the webserver was not installed in a seperate dir -> check for loose files
+        dim strings(8) ' array with 9 strings
+        strings(0) = installationFolder + "\Gleitzeitkonto-Webserver.exe"
+        strings(1) = installationFolder + "\icon.ico"
+        strings(2) = installationFolder + "\main.js"
+        strings(3) = installationFolder + "\package.json"
+        strings(4) = installationFolder + "\package-lock.json"
+        strings(5) = installationFolder + "\start-Gleitzeitkonto-Webserver.vbs"
+        strings(6) = installationFolder + "\url.json"
+        strings(7) = installationFolder + "\version.txt"
+        ' delete shortcut file for autostartup
+        appDataFolder = objWShell.ExpandEnvironmentStrings("%appdata%")
+        strings(8) = appDataFolder + "\Microsoft\Windows\Start Menu\Programs\Startup\Start Gleitzeitkonto-Webserver.lnk"
+        
+        if (deleteAttempts < maxDeleteAttempts) then ' if the amount of attempts has not been exceeded
+            on error resume next ' ignore errors in case files can't be deleted
 
-                ' Delete folders
-                if (FSO.FolderExists(webserverFolder)) then FSO.DeleteFolder(webserverFolder) end if
-                nodeModulesPath = installationFolder + "\node_modules"
-                if (FSO.FolderExists(nodeModulesPath)) then FSO.DeleteFolder(nodeModulesPath) end if
-                oldWebserverAPIPath = installationFolder + "\gleitzeitkonto-api"
-                if (FSO.FolderExists(oldWebserverAPIPath)) then FSO.DeleteFolder(oldWebserverAPIPath) end if
-
-                on error goto 0 ' enable errors again
-
-
-                ' Check if all files/folders got deleted
-                everythingDeleted = true
-                for i = LBound(strings) to UBound(strings)
-                    if (FSO.FileExists(strings(i))) then everythingDeleted = false end if
-                next
-                if (FSO.FolderExists(webserverFolder)) then everythingDeleted = false end if
-                if (FSO.FolderExists(nodeModulesPath)) then everythingDeleted = false end if
-                if (FSO.FolderExists(oldWebserverAPIPath)) then everythingDeleted = false end if
-
-                deleteAttempts = deleteAttempts + 1
-            end if
-
-
-            ' Check if deletion got cancelled or was successful
-            if (everythingDeleted = true) then ' deletion successful, continue with installation
-                loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte Hintergrund-Prozess Version wurde entfernt.<br>"
-
-                loadingBox.innerHTML = loadingBox.innerHTML + "Download Hintergrund-Prozess gestartet, bitte warten ...<br>"
-                call window.SetTimeout("downloadProcessWebserver()", 1, "VBScript") ' timeout to update screen
-
-            elseif (deleteAttempts < maxDeleteAttempts) then '  more attempts available, try again
-                if (deleteAttempts = 1) then
-                    loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte Webserver-Version wird beendet...<br>"
+            ' loop over the array to delete files
+            for i = LBound(strings) to UBound(strings)
+                if (FSO.FileExists(strings(i))) then 
+                    oldVersionExisted = true
+                    FSO.DeleteFile(strings(i))
                 end if
-                call window.SetTimeout("uninstallWebserver()", deleteAttemptTimout, "VBScript") ' call uninstallWebserver again after specified timeout
+            next
 
-            else ' failed to uninstall
-                loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + _
-                    "<span style='color: red;'>Alte Hintergrund-Prozess Version konnte nicht entfernt werden. Installation wird abgebrochen.</span><br>"
-                call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timout to update screen
+            ' Delete folders
+            if (FSO.FolderExists(webserverFolder)) then 
+                oldVersionExisted = true
+                FSO.DeleteFolder(webserverFolder) 
+            end if
+            nodeModulesPath = installationFolder + "\node_modules"
+            if (FSO.FolderExists(nodeModulesPath)) then 
+                oldVersionExisted = true
+                FSO.DeleteFolder(nodeModulesPath)
+            end if
+            oldWebserverAPIPath = installationFolder + "\gleitzeitkonto-api"
+            if (FSO.FolderExists(oldWebserverAPIPath)) then
+                oldVersionExisted = true
+                FSO.DeleteFolder(oldWebserverAPIPath)
             end if
 
+            on error goto 0 ' enable errors again
+
+
+            ' Check if all files/folders got deleted
+            everythingDeleted = true
+            for i = LBound(strings) to UBound(strings)
+                if (FSO.FileExists(strings(i))) then everythingDeleted = false end if
+            next
+            if (FSO.FolderExists(webserverFolder)) then everythingDeleted = false end if
+            if (FSO.FolderExists(nodeModulesPath)) then everythingDeleted = false end if
+            if (FSO.FolderExists(oldWebserverAPIPath)) then everythingDeleted = false end if
+
+            deleteAttempts = deleteAttempts + 1
         end if
 
+
+        ' Check if deletion got cancelled or was successful
+        if (everythingDeleted = true) then ' deletion successful or nothing was there to delete, continue with installation
+            if (oldVersionExisted) then loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte Hintergrund-Prozess Version wurde entfernt.<br>" end if
+
+            ' do not print something for next step since previous statement included both actions
+            call window.SetTimeout("uninstallCompanionApp()", 1, "VBScript") ' timeout to update screen
+
+        elseif (deleteAttempts < maxDeleteAttempts) then '  more attempts available, try again
+            if (deleteAttempts = 1) then
+                loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte Hintergrund-Prozess Version wird beendet...<br>"
+            end if
+            call window.SetTimeout("uninstallWebserver()", deleteAttemptTimout, "VBScript") ' call uninstallWebserver again after specified timeout
+
+        else ' failed to uninstall
+            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + _
+                "<span style='color: red;'>Alte Hintergrund-Prozess Version konnte nicht entfernt werden. Installation wird abgebrochen.</span><br>"
+            call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timout to update screen
+        end if
+
+    end sub
+
+    ' removes the CompanionApp folder and deletes registry entries
+    sub uninstallCompanionApp ()
+
+        registryDelCmdFirefox = "reg delete ""HKEY_CURRENT_USER\Software\Mozilla\NativeMessagingHosts\gleitzeitkonto_browser_companionapp"" /f"
+        registryDelCmdChrome = "reg delete ""HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\gleitzeitkonto_browser_companionapp"" /f"
+
+        call objWShell.Run(registryDelCmdFirefox, 0, true)
+        call objWShell.Run(registryDelCmdChrome, 0, true)
+
+        oldVersionExisted = false
+        if (FSO.FolderExists(companionAppFolder)) then 
+            oldVersionExisted = true
+            FSO.DeleteFolder(companionAppFolder) 
+        end if
+
+        if (oldVersionExisted) then ' old version got deleted
+            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Alte CompanionApp Version wurde entfernt.<br>"
+        end if
         
+        loadingBox.innerHTML = loadingBox.innerHTML + "Download Browser-Erweiterung gestartet...<br>"
+        call window.SetTimeout("downloadProcessBrowser()", 1, "VBScript") ' timeout to update screen
     end sub
 
 
     sub downloadProcessBrowser ()
         ' ----- Download Browser Extension -----
-        if (strBrowserAnswer = "1") then ' Firefox
-            fileDir =  installationFolder + "\" + Split(firefoxURL, "/")(8)
-            call download(firefoxURL, fileDir) ' do not unzip for firefox
-            if (scriptStopped) then exit sub end if
-
-            firefoxInstallPath = installationFolder + "\Gleitzeitkonto-Browser-Firefox.xpi"
-            call FSO.MoveFile(fileDir, firefoxInstallPath) ' rename download file
-
-        elseif (strBrowserAnswer = "2") then ' Chromium
-            fileDir = installationFolder + "\" + Split(chromiumURL, "/")(8)
-            call downloadUnzipAndDelete(chromiumURL, fileDir, installationFolder)
-            if (scriptStopped) then exit sub end if
-
-            
-        elseif (strBrowserAnswer = "3") then ' Firefox + Chromium
+        if (strBrowserAnswer = "1" OR strBrowserAnswer = "3") then ' Firefox
             fileDir = installationFolder + "\" + Split(firefoxURL, "/")(8)
             call download(firefoxURL, fileDir) ' do not unzip for firefox
             if (scriptStopped) then exit sub end if
 
             firefoxInstallPath = installationFolder + "\Gleitzeitkonto-Browser-Firefox.xpi"
             call FSO.MoveFile(fileDir, firefoxInstallPath) ' rename download file
-
+        end if
+        if (strBrowserAnswer = "2" OR strBrowserAnswer = "3") then ' Chromium
             fileDir = installationFolder + "\" + Split(chromiumURL, "/")(8)
             call downloadUnzipAndDelete(chromiumURL, fileDir, installationFolder)
             if (scriptStopped) then exit sub end if
         end if
 
         loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Download Browser-Erweiterung beendet<br>"
-        if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then ' when webserver is getting installed
-            loadingBox.innerHTML = loadingBox.innerHTML + "Alte Hintergrund-Prozess Versionen werden gesucht...<br>"
-            call window.SetTimeout("stopWebserver()", 1, "VBScript") ' timeout to update screen
 
-        else
-            call window.SetTimeout("installationFinishedSuccessfully()", 1, "VBScript") ' timeout to update screen
-        end if
+        loadingBox.innerHTML = loadingBox.innerHTML + "Download CompanionApp gestartet...<br>"
+        call window.SetTimeout("downloadProcessCompanionApp()", 1, "VBScript") ' timeout to update screen
 
     end sub
 
-    sub downloadProcessWebserver ()
+    ' download und unzip CompanionApp files, create registry entries
+    sub downloadProcessCompanionApp ()
 
-        ' ----- Download Webserver -----
-        if (strWebserverAnswer = "1") then
-            filedir = installationFolder + "\" + Split(packedWebserverURL, "/")(8)
-            call downloadUnzipAndDelete(packedWebserverURL, fileDir, installationFolder)
-            if (scriptStopped) then exit sub end if
+        ' ----- Download CompanionApp -----
+        filedir = installationFolder + "\" + Split(companionAppURL, "/")(8)
+        call downloadUnzipAndDelete(companionAppURL, fileDir, installationFolder)
+        if (scriptStopped) then exit sub end if
 
-        elseif strWebserverAnswer = "2" then
-            filedir = installationFolder + "\" + Split(unpackedWebserverURL, "/")(8)
-            call downloadUnzipAndDelete(unpackedWebserverURL, fileDir, installationFolder)
-            if (scriptStopped) then exit sub end if
+        loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Download CompanionApp beendet<br>"
+        loadingBox.innerHTML = loadingBox.innerHTML + "Erstelle Verbindung zwischen Browser & CompanionApp...<br>"
 
-        end if
-
-        loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Download Hintergrund-Prozess beendet<br>"
-        loadingBox.innerHTML = loadingBox.innerHTML + "Erstelle Verknüpfung für automatischen start ...<br>"
-
-        call window.SetTimeout("downloadProcessShortcut()", 1, "VBScript") ' timeout to update screen
+        call window.SetTimeout("downloadProcessRegistry()", 1, "VBScript") ' timeout to update screen
     end sub
 
-    sub downloadProcessShortcut ()
-        ' ----- Create Shortcut for Webserver Startup -----
-        if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then ' when webserver is getting installed
+    sub downloadProcessRegistry ()
+        ' ----- Create registry entries for CompanionApp so that browsers can find the CompanionApp -----
+        errorCodeFirefox = 0
+        errorCodeChrome = 0
 
-            strProgramTitle = "Start Gleitzeitkonto-Webserver"
-            strProgram = webserverFolder + "\start-Gleitzeitkonto-Webserver.vbs"
-            strTarget = appDataFolder + "\Microsoft\Windows\Start Menu\Programs\Startup\"
-            strIcon = webserverFolder + "\icon.ico"
-
-            set objShortcut = objWShell.CreateShortcut(strTarget + "\" + strProgramTitle + ".lnk")
-            objShortcut.TargetPath = strProgram
-            objShortcut.Description = strProgramTitle
-            objShortcut.WorkingDirectory = webserverFolder
-            objShortcut.IconLocation = strIcon
-            objShortcut.Save
-
-            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Verknüpfung erstellt<br>"
+        if (strBrowserAnswer = "1" OR strBrowserAnswer = "3") then ' Firefox
+            registryCommandFirefox = "reg add ""HKEY_CURRENT_USER\Software\Mozilla\NativeMessagingHosts\gleitzeitkonto_browser_companionapp"" /ve /t REG_SZ /d """ + _
+                companionAppFolder + "\manifest.json"" /f"
+            errorCodeFirefox = objWShell.Run(registryCommandFirefox, 0, true)
+        end if
+        if (strBrowserAnswer = "2" OR strBrowserAnswer = "3") then ' Chrome
+            registryCommandChrome = "reg add ""HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\gleitzeitkonto_browser_companionapp"" /ve /t REG_SZ /d """ + _
+                companionAppFolder + "\manifest-chromium.json"" /f"
+            errorCodeFirefox = objWShell.Run(registryCommandChrome, 0, true)
         end if
 
-
-        if (strWebserverAnswer = "1" OR strWebserverAnswer = "2") then ' when a webserver version is selected
-            call window.SetTimeout("downloadProcessStartWebserver()", 1, "VBScript") ' timeout to update screen
-
-        else
-            call window.SetTimeout("installationFinishedSuccessfully()", 1, "VBScript") ' timeout to update screen
+        if (NOT (errorCodeFirefox = "0" AND errorCodeChrome = "0")) then ' something went wrong 
+            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "<span style='color: red;'>Verbindung konnte nicht erstellt werden." + _
+                " Installation wird abgebrochen.</span><br>"
+            call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
+            exit sub ' no more to install
         end if
+        
+        loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Verbindung erstellt<br>"
+        loadingBox.innerHTML = loadingBox.innerHTML + "Installiere Node-Packages für CompanionApp, bitte warten...<br>"
+        call window.SetTimeout("downloadProcessPrepareCompanionApp()", 1, "VBScript") ' timeout to update screen
 
     end sub
 
-    sub downloadProcessStartWebserver ()
-        ' ----- Start or prepare webserver -----
-        on error resume next ' define only in sub to ignore error when exe file can't be opened (virus scan in progress)
+    sub downloadProcessPrepareCompanionApp ()
+        ' ----- Prepare CompanionApp / install node dependencies -----
 
-        if (strWebserverAnswer = "1") then ' when packed version is selected
-
-            webserverExePath = webserverFolder + "\Gleitzeitkonto-Webserver.exe"
-            if (FSO.FileExists(webserverExePath)) then ' check to avoid unecessary errors
-                ' -- Start the webserver in the background --
-                set objWMIService = GetObject("winmgmts:\\.\root\cimv2")
-                set objProcess = objWMIService.Get("Win32_Process")
-                set objStartup = objWMIService.Get("Win32_ProcessStartup")
-
-                set objConfig = objStartup.SpawnInstance_ ' config will make process without a window 
-                objConfig.CreateFlags = 8 ' CREATE_NO_WINDOW
-                errorCode = objProcess.Create(webserverExePath, null, objConfig, 35221)
-
-                ' clean up
-                set objWMIService = nothing
-                set objProcess = nothing
-                set objStartup = nothing
-                set objConfig = nothing
-
-                if (errorCode = "0") then ' success
-                    loadingBox.innerHTML = loadingBox.innerHTML + "Hintergrund-Prozess wurde gestartet<br>"
-                else
-                    loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Hintergrund-Prozess konnte nicht gestartet werden</span><br>"
-                end if
+        if (FSO.FileExists(companionAppFolder + "\package.json")) then ' check to avoid unecessary errors
+            ' try to install npm packages
+            errorCode = objWShell.Run("cmd /c cd /d " & companionAppFolder & " && " & "npm install", 0, true) ' this takes a little while
+            if (errorCode = "0") then ' success
+                loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "Node-Packages wurden installiert<br>"
             else
-                loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Hintergrund-Prozess konnte nicht gestartet werden</span><br>"
+                loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "<span style='color: red;'>Node-Packages konnten nicht installiert werden!" + _
+                    " Installation wird abgebrochen.</span><br>"
+                call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
+                exit sub ' no more to install
             end if
-
+        else
+            loadingBox.innerHTML = loadingBox.innerHTML + ChrW(&H2001) + "<span style='color: red;'>Node-Packages konnten nicht installiert werden!" + _
+                " Installation wird abgebrochen.</span><br>"
+            call window.SetTimeout("installationProcessEnd()", 1, "VBScript") ' timeout to update screen
+            exit sub ' no more to install
         end if
 
-        if (strWebserverAnswer = "2") then ' unpacked version selected
-
-            if (FSO.FileExists(webserverFolder + "\package.json")) then ' check to avoid unecessary errors
-                ' try to install npm packages
-                errorCode = objWShell.Run("cmd /c cd /d " & webserverFolder & " && " & "npm install", 0, true) ' TODO this causes a lot of lag and takes forever
-                if (errorCode = "0") then ' success
-                    loadingBox.innerHTML = loadingBox.innerHTML + "Node-Packages wurden installiert<br>"
-                else
-                    loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Node-Packages konnten nicht installiert werden</span><br>"
-                end if
-            else
-                loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: red;'>Node-Packages konnten nicht installiert werden</span><br>"
-            end if
-
-        end if
-
-        on error goto 0 ' enable errors again
         call window.SetTimeout("installationFinishedSuccessfully()", 1, "VBScript") ' timeout to update screen
     end sub
 
     sub installationFinishedSuccessfully ()
         ' ----- Installation finished -----
-
-        ' show additional instructions for unpacked/script webserver
-        if (strWebserverAnswer = "2") then
-            openLinkAnswer = MsgBox("!!!!" + Chr(13) + "Beachte die Installations Hinweise unter 'Nodes.js-Skript Webserver':  https://github.com/NilsPvR/Gleitzeitkonto-Browser#nodejs-skript-webserver" + _
-            " um Gleitzeitkonto-Browser final einzurichten." + Chr(13) + "!!!!" + Chr(13) + _
-            Chr(13) + "Website öffnen?", 4, boxTitle)
-
-
-            if (openLinkAnswer = "6") then ' yes clicked
-                objWShell.Run("https://github.com/NilsPvR/Gleitzeitkonto-Browser#nodejs-skript-webserver"), 0 ' open website
-            end if
-        end if
 
         loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: green;'>Installation erfolgreich abgeschlossen</span><br>"
 
@@ -691,20 +652,18 @@
     end sub
 
 
-    ' ----- Help Button for Browser clicked -----
-    sub browserHelpBtn_onClick ()
-        MsgBox "'Gleitzeitkonto-Browser' ist eine Erweiterung für den Browser. Bitte wähle für welchen Browser die Erweiterung installiert werden soll.", 0, boxTitle
+    ' ----- Remove all variables -----
+    sub cleanUp ()
+        set objWShell = nothing
+        set FSO = nothing
     end sub
 
+    ' --------- Other Button clicks events -------------
+    ' --------------------------------------------------
 
-    ' ----- Help Button for Webserver clicked -----
-    sub webserverHelpBtn_onClick ()
-        MsgBox "Gleitzeitkonto-Browser benötigt einen Hintergrund-Prozess zum Funktionieren (Infos auf Github)." + Chr(13) + _
-            Chr(13) + _
-            "Es wird 'Hintergrund-Package' empfohlen, da es die einfachste Installation bietet. " + _
-            "Für das 'Node.js Skript' muss Node und npm installiert sein." + Chr(13) + _
-            "Bitte den Hintergrund-Prozess nur abwählen, " + _
-            "wenn dieser bereits installiert ist und nicht geupdated werden soll.", 0, boxTitle
+    ' ----- Help Button for Browser clicked -----
+    sub browserHelpBtn_onClick ()
+        MsgBox "'Gleitzeitkonto-Browser' ist eine Erweiterung für den Browser mit CompanionApp. Bitte wähle für welchen Browser die Installation vorgenommen werden soll.", 0, boxTitle
     end sub
 
     ' ----- Github Link clicked -----
@@ -723,10 +682,10 @@
         CreateObject("Shell.Application").Explore(installationFolder) 'open a explorer window
     end sub
 
-    ' ----- Remove all variables -----
-    sub cleanUp ()
-        set objWShell = nothing
-        set FSO = nothing
+    ' ----- Install Node.js button clicked -----
+    sub installNodeBtn_onClick ()
+        set objWShell = CreateObject("WScript.Shell")
+        objWShell.Run("https://nodejs.org"), 0 ' open website
     end sub
 
 </script>

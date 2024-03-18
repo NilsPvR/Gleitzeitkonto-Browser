@@ -19,7 +19,7 @@ const time = new GleitzeitkontoBrowser();
     }
 
 
-    const promiseCalcKontoData = time.fetchServer(time.givenStrings.calcaulteURL);
+    const promiseCalcKontoData = time.sendMsgToBackgroundS(time.givenStrings.calcaulteCommand);
     const promiseDownloadKontoData = time.getDownloadKontoData(); // preload display to save time
     const versionOutdated = time.checkVersionOutdated(); // preload version
 

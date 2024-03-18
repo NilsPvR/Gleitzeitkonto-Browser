@@ -1,8 +1,13 @@
+# Node files and folders
 /node_modules
 package-lock.json
+
+# Project building folder
 /compressed
 
-/Webserver/url.json
+
+# Secrets
+/CompanionApp/url.json
 /Extension/url.json
 
 # environment variables
