@@ -56,6 +56,12 @@ Gleitzeitkonto-Browser kann auch manuell installiert werden, falls eine automati
 5. Fertig! 🥳 *(Probleme? Erstelle ein [Issue](https://github.com/NilsPvR/Gleitzeitkonto-Browser/issues))*
 <br><br>
 
+# Deinstallation
+Zum Deinstallieren von Gleitzeitkonto-Browser und der CompanionApp können folgende Schritte befolgt werden:
+1. Das [Deinstallations-Skript](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/uninstall_Gleitzeitkonto-Browser-GUI.hta) herunterladen und ausführen.<br>
+2. Die Erweiterung aus dem Browser entfernen ([Firefox](https://support.mozilla.org/de/kb/addons-deaktivieren-oder-deinstallieren), [Chrome](https://support.google.com/chrome_webstore/answer/2664769?hl=de))
+3. (optional) Node.js deinstallieren
+
 # Funktionsweise
 
 Die Gleitzeitkonto-API ermöglicht das berechnen des Gleitzeitkontos. Die API verwendet hierfür [Node.js](https://nodejs.org/). Eine Browser-Erweiterung, bzw. einfach ein JavaScript-Skript im Browser, hat jedoch keinen Zugriff auf lokale Dateien auf dem Computer und kann auch keine [Node.js](https://nodejs.org/)-Skripte laufen lassen. Aus diesem Grund ist es nicht möglich, direkt auf die API zuzugreifen. Zur Funktionsweise der API kann die [README](https://github.com/julius-boettger/gleitzeitkonto-api#readme) des Repos gelesen werden.<br>
