@@ -264,6 +264,8 @@ module.exports = class GleitzeitkontoBrowser {
             },
             ...HTMLElements, // spread syntax to expand array
         ));
+        // readd reload event listener
+        document.getElementById(this.constStrings.refreshIconID).addEventListener('click', () => { this.reloadGleitzeitKonto() });
     };
 
     // moves the old floating display to an inserted display, the styling will also be adjusted accordingly 
