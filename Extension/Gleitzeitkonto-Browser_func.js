@@ -128,8 +128,9 @@ module.exports = class GleitzeitkontoBrowser {
             this.portToBackground.onMessage.addListener((response) => {
 
                 // check if the response is a response for this request
-                if (response?.command === command.toLowerCase()) { 
-                    resolve(response.response); // resolve the promise once a response has been received
+                if (response?.command === command.toLowerCase()) {
+                    // resolve as reformated response including any errors or with the reponsecontent at top level
+                    response?.error ? resolve(response) : resolve(response.response);
                 }
 
             });

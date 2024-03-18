@@ -18,7 +18,9 @@ async function sendMessageToCompanionApp (message) {
         return await browser.runtime.sendNativeMessage(applicationName, message);
     } catch (err) {
         console.error(err);
-        portFromCS.postMessage({ error: { message: errorMsgs.companionAppNotFound } });
+
+        const command = message?.command.toLowerCase();
+        portFromCS.postMessage({ command: command, error: { message: errorMsgs.companionAppNotFound } });
     }
 };
 
@@ -39,7 +41,9 @@ function connectedToContentScript(port) {
             // check for any erros from the companionApp
             if (response?.error?.message) {
                 console.error('Error in the Gleitzeitkonto-Browser CompanionApp: ' + response.error.message);
-                portFromCS.postMessage({ error: { message: errorMsgs.errorInCompanionApp } });
+
+                const command = message?.command.toLowerCase();
+                portFromCS.postMessage({ command: message, error: { message: errorMsgs.errorInCompanionApp } });
 
             } else if (response) { // there is actually a response
                 portFromCS.postMessage(response); // send the response as is back to the content script
