@@ -43,7 +43,7 @@ function connectedToContentScript(port) {
                 console.error('Error in the Gleitzeitkonto-Browser CompanionApp: ' + response.error.message);
 
                 const command = message?.command.toLowerCase();
-                portFromCS.postMessage({ command: message, error: { message: errorMsgs.errorInCompanionApp } });
+                portFromCS.postMessage({ command: command, error: { message: errorMsgs.errorInCompanionApp } });
 
             } else if (response) { // there is actually a response
                 portFromCS.postMessage(response); // send the response as is back to the content script
