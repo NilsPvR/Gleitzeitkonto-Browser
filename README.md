@@ -12,9 +12,14 @@ Alternativ: [Gleitzeitkonto-Desktop](https://github.com/julius-boettger/gleitzei
 
 # Installation (Windows)
 Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur experimentell.
-1. **Node.js** mit npm installieren: https://nodejs.org
-2. <b>CompanionApp installieren <i>(automatisch)</i></b><br>
-   **[Installations-Skript](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/install_Gleitzeitkonto-Browser-GUI.hta)** herunterladen und ausführen.
+1. **[Node.js](https://nodejs.org)** mit npm installieren
+2. **[Installations-Skript](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/install_Gleitzeitkonto-Browser-GUI.hta)** herunterladen
+3. **Downloads** Ordner öffnen -> **Rechtsklick** auf die Datei (Installations-Skript) -> **Eigenschaften**<br>
+<img src="Assets/install-open-properties.png" alt="Screenshot zum öffnen der Eigenschaften"><br>
+4. Unter Sicherheit: Häkchen bei "**Zulassen**" setzen -> OK<br>
+<img src="Assets/installation-allow-external.png" alt="Screenshot zum Zulassen des Installations-Scripts."><br>
+5. Skript ausführen (Doppelklick)
+
 
 <details><summary><b>❓ Es kommt eine Fehlermeldung</b></summary>
     <details><summary><b>Fehler:</b> "Die Sicherheitseinstellungen des Computers..."</summary>
@@ -23,8 +28,10 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
         <br><br>
         <ol>
             <li>Installations-Programm schließen</li>
-            <li>Rechtsklick auf die Datei (Installations-Skript) -> Eigenschaften</li>
-            <li>Unter Sicherheit: Häkchen bei "Zulassen" setzen -> OK<br>
+            <li><b>Rechtsklick</b> auf die Datei (Installations-Skript) -> <b>Eigenschaften</b><br>
+                <img src="Assets/install-open-properties.png" alt="Screenshot zum öffnen der Eigenschaften">
+            </li>
+            <li>Unter Sicherheit: Häkchen bei "<b>Zulassen</b>" setzen -> OK<br>
                 <img src="Assets/installation-allow-external.png" alt="Screenshot zum Zulassen des Installations-Scripts.">
             </li>
             <li>Installation erneut starten</li>
@@ -34,15 +41,15 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 </details>
 <br><br>
 
-3. **Erweiterung hinzufügen**<br>
+6. **Erweiterung hinzufügen**<br>
 Die Erweiterung muss im entsprechenden Browser installiert werden: [Firefox](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Firefox-Installation) oder [Chrome](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Chrome-Installation)<br>
 ❗ Edge wird leider nicht als Browser unterstützt.
-1. Fertig! 🥳 *(Probleme? Erstelle ein [Issue](https://github.com/NilsPvR/Gleitzeitkonto-Browser/issues))*
+7. Fertig! 🥳 *(Probleme? Erstelle ein [Issue](https://github.com/NilsPvR/Gleitzeitkonto-Browser/issues))*
 
 
 ## Manuell installation (alternativ)
 Gleitzeitkonto-Browser kann auch manuell installiert werden, falls eine automatische Installation (siehe Schritte oben) nicht gewünscht ist.<br>
-1. Node.js mit npm installieren: https://nodejs.org
+1. [Node.js](https://nodejs.org) mit npm installieren
 2. Die Dateien, die unter [releases](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases) nicht heruntergeladen werden sollen müssen hierfür heruntergeladen werden. Für die CompanionApp "NICHT-Herunterladen-win-x64-companionApp.zip" herunterladen. Die Dateien in ein gewünschtes Verzeichnis extrahieren.
 3. Es muss ein Registry Eintrag hinzugefügt werden, damit der Browser die CompanionApp findet *(Pfad entsprechend anpassen)*:<br>
     <details><summary>Firefox</summary>
