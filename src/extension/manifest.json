@@ -8,12 +8,12 @@
     "homepage_url": "https://github.com/NilsPvR/Gleitzeitkonto-Browser",
   
     "icons": {
-      "48": "Assets/gleitzeitkonto-icon48.png",
-      "64": "Assets/gleitzeitkonto-icon64.png",
-      "96": "Assets/gleitzeitkonto-icon96.png",
-      "128": "Assets/gleitzeitkonto-icon128.png",
-      "256": "Assets/gleitzeitkonto-icon256.png",
-      "512": "Assets/gleitzeitkonto-icon512.png"
+      "48": "assets/gleitzeitkonto-icon48.png",
+      "64": "assets/gleitzeitkonto-icon64.png",
+      "96": "assets/gleitzeitkonto-icon96.png",
+      "128": "assets/gleitzeitkonto-icon128.png",
+      "256": "assets/gleitzeitkonto-icon256.png",
+      "512": "assets/gleitzeitkonto-icon512.png"
     },
 
     "browser_specific_settings": {
@@ -29,13 +29,13 @@
     "content_scripts": [
       {
         "matches": ["*://*.ondemand.com/*", "*://bgp.btcsap.btc-ag.com/*"],
-        "js": ["Gleitzeitkonto-Browser.js"]
+        "js": ["gleitzeitkonto-browser.js"]
 
       }
     ],
 
     "web_accessible_resources": [
-      "Assets/refresh-light.svg", "Assets/refresh-dark.svg", "Gleitzeitkonto-Browser.css"
+      "assets/refresh-light.svg", "assets/refresh-dark.svg", "gleitzeitkonto-browser.css"
     ],
 
     "permissions": [
@@ -44,15 +44,15 @@
 
     "browser_action": {
       "default_icon": {
-        "48": "Assets/gleitzeitkonto-icon48.png",
-        "64": "Assets/gleitzeitkonto-icon64.png",
-        "96": "Assets/gleitzeitkonto-icon96.png",
-        "128": "Assets/gleitzeitkonto-icon128.png",
-        "256": "Assets/gleitzeitkonto-icon256.png",
-        "512": "Assets/gleitzeitkonto-icon512.png"
+        "48": "assets/gleitzeitkonto-icon48.png",
+        "64": "assets/gleitzeitkonto-icon64.png",
+        "96": "assets/gleitzeitkonto-icon96.png",
+        "128": "assets/gleitzeitkonto-icon128.png",
+        "256": "assets/gleitzeitkonto-icon256.png",
+        "512": "assets/gleitzeitkonto-icon512.png"
       },
       "default_title": "Gleitzeitkonto-Browser",
-      "default_popup": "Popup/Gleitzeitkonto-Browser.html",
+      "default_popup": "popup/gleitzeitkonto-browser.html",
       "browser_style": true
     }
   

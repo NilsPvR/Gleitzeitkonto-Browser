@@ -461,8 +461,8 @@ module.exports = class GleitzeitkontoBrowser {
     // returns the URL for the refresh icon based on the current lightingMode
     getRefreshIconURL () {
         if (this.getLightingMode() == 'gleitzeitkonto-light')
-            return browser.runtime.getURL('./Assets/refresh-light.svg');
+            return browser.runtime.getURL('./assets/refresh-light.svg');
         else
-            return browser.runtime.getURL('./Assets/refresh-dark.svg');
+            return browser.runtime.getURL('./assets/refresh-dark.svg');
     }
 };

@@ -7,10 +7,10 @@ const { extname } = require('path');
         const filterFunc = (src, dest) => {
             return extname(src) != '.js' && extname(src) != '.scss' && extname(src) != '.env'; // exclude js and scss files since these will be created by other npm scripts
         };
-        await copy('./Extension', './compressed/extension', { filter: filterFunc }); // copies directory with subdirectories
+        await copy('./src/extension', './compressed/extension', { filter: filterFunc }); // copies directory with subdirectories
         fs.rmSync('./compressed/extension/url.json', { force: true }); // remove url file
         fs.rmSync('./compressed/extension/.env', { force: true }); // remove secrets
-        if (!fs.existsSync('./compressed/Gleitzeitkonto-Browser-ZIP')) fs.mkdirSync('./compressed/Gleitzeitkonto-Browser-ZIP'); // create folder
+        if (!fs.existsSync('./compressed/gleitzeitkonto-browser-zip')) fs.mkdirSync('./compressed/gleitzeitkonto-browser-zip'); // create folder
         
 
         console.log('Copied Extension folder succesfully!');

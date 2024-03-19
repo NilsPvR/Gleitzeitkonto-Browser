@@ -1,5 +1,5 @@
 const browser = require('webextension-polyfill');
-const GleitzeitkontoBrowser = require('./Gleitzeitkonto-Browser_func'); // load script
+const GleitzeitkontoBrowser = require('./gleitzeitkonto-browser-func'); // load script
 const time = new GleitzeitkontoBrowser();
 
 (async () => {
@@ -14,7 +14,7 @@ const time = new GleitzeitkontoBrowser();
         link.rel = 'stylesheet';
         link.type = 'text/css';
         link.media = 'all';
-        link.href = browser.runtime.getURL('./Gleitzeitkonto-Browser.css');
+        link.href = browser.runtime.getURL('./gleitzeitkonto-browser.css');
         document.head.appendChild(link);
     }
 
