@@ -140,6 +140,7 @@
 
     <div id="submitWrapper" style="position: relative;"><input type="submit" class="btn resetBtn installBtn" name="submitBtn" value="Installieren"></div>
     <span id="installNodeBtnWrapper" style="display: none;"><input class="btn resetBtn installNodeBtn" type="button" name="installNodeBtn" value="Node.js installieren"></span>
+    <span id="openFolderBtnWrapper" style="display: none;"><input class="btn resetBtn openFolderBtn" type="button" name="openInstallationFolder" value="Ordner öffnen"></span>
     <span id="finishedBtnWrapper" style="display: none;"><input class="btn resetBtn finishedBtn" type="button" name="allDoneBtn" value="Fertig stellen"></span>
     <input id="githubBtn" type="button" class="btn resetBtn githubLink" name="githubBtn" value="Github">
 </div>
@@ -658,7 +659,7 @@
 
         if (strBrowserAnswer = "1" OR strBrowserAnswer = "2" OR strBrowserAnswer = "3") then 'a browser got selected
             loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: orange;'>Richte die Browser-Erweiterung in deinem Browser ein, um Gleitzeitkonto-Browser verwenden zu können</span><br>"
-            loadingBox.innerHTML = loadingBox.innerHTML + "<input class='btn resetBtn openFolderBtn' type='button' name='openInstallationFolder' value='Ordner öffnen'>"
+            openFolderBtnWrapper.style.display = "block" ' make the btn to open the installation folder visable
 
             objWShell.Run("https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Gleitzeitkonto%E2%80%90Browser-im-Browser-einrichten"), 0 ' tutorial site
         end if
