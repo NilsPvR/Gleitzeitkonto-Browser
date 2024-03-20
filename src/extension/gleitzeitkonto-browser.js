@@ -26,27 +26,25 @@ const time = new GleitzeitkontoBrowser();
     // Only load the rest of the script once the page for 'Zeiterfassung' ist opened
     await time.continuousMenucheck();
 
-    // Double check; if a different menu is opened no floating display will be added
-    if (time.checkCorrectMenuIsOpen()) {
-        if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    if (document.readyState === 'interactive' || document.readyState === 'complete') {
+        time.addFloatingDisplay(time.constStrings.prefixOvertime + time.constStrings.overtimeLoading, true);
+    }
+    else if (config.siteVersion == 'external') {
+        window.addEventListener('DOMContentLoaded', () => {
             time.addFloatingDisplay(time.constStrings.prefixOvertime + time.constStrings.overtimeLoading, true);
-        }
-        else if (config.siteVersion == 'external') {
-            window.addEventListener('DOMContentLoaded', () => {
-                time.addFloatingDisplay(time.constStrings.prefixOvertime + time.constStrings.overtimeLoading, true);
-            });
-        }
-        // Load event fires too early so no point using that
+        });
+    }
+    // Load event fires too early so no point using that
 
-        // register button click for reload
-        document.getElementById(time.constStrings.buttonID).addEventListener('click', () => { time.reloadGleitzeitKonto() });
+    // register button click for reload
+    document.getElementById(time.constStrings.buttonID).addEventListener('click', () => { time.reloadGleitzeitKonto() });
 
-        // don't await 'promiseDisplayText' even tho we want to change this as soon as the promiseDisplayText is fullfilled,
-        // but if the page loads before the promise resolves then the display should be movedToInserted asap
-        // -> let this happen asynchronously
-        time.updateDisplay(promiseCalcKontoData, true);
-        time.updateDisplay(promiseDownloadKontoData, false);
-    };
+    // don't await 'promiseDisplayText' even tho we want to change this as soon as the promiseDisplayText is fullfilled,
+    // but if the page loads before the promise resolves then the display should be movedToInserted asap
+    // -> let this happen asynchronously
+    time.updateDisplay(promiseCalcKontoData, true);
+    time.updateDisplay(promiseDownloadKontoData, false);
+
 
 
     let loops = 0; // track how often findHeaderBar ran
