@@ -21,7 +21,7 @@ const time = new GleitzeitkontoBrowser();
 
     const promiseCalcKontoData = time.sendMsgToBackgroundS(time.givenStrings.calcaulteCommand);
     const promiseDownloadKontoData = time.getDownloadKontoData(); // preload display to save time
-    const versionOutdated = time.checkVersionOutdated(); // preload version
+    const versionOutdatedIndex = time.checkVersionOutdated(); // preload version
 
     // Only load the rest of the script once the page for 'Zeiterfassung' ist opened
     await time.continuousMenucheck();
@@ -67,11 +67,12 @@ const time = new GleitzeitkontoBrowser();
                 time.moveFloatingToInsertedDisplay(headerBar, document.getElementById(time.constStrings.floatingDisplayID)); // make sure DisplayText loaded
             }
             
-            time.updateDisplayOnURLChange(headerBar, await promiseDownloadKontoData, false, await versionOutdated);
+            time.updateDisplayOnURLChange(headerBar, await promiseDownloadKontoData, false, await versionOutdatedIndex);
 
             await promiseCalcKontoData; // wait until the display has been added
-            if (await versionOutdated) { // version is outdated
-                time.updateDisplayText(time.constStrings.prefixError + time.constStrings.errorMsgs.versionOutdated);
+            if (await versionOutdatedIndex != 0) { // version is outdated
+                if (await versionOutdatedIndex == 1) time.updateDisplayText(time.constStrings.prefixError + time.constStrings.errorMsgs.extensionOutdated);
+                else if (await versionOutdatedIndex == 2) time.updateDisplayText(time.constStrings.prefixError + time.constStrings.errorMsgs.companionAppOutdated);
 
                 const refreshButton = document.getElementById(time.constStrings.buttonID);
                 if (refreshButton) refreshButton.disabled = true; // disable button

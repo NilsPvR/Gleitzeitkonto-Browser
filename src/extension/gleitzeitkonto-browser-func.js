@@ -47,7 +47,8 @@ module.exports = class GleitzeitkontoBrowser {
                 tooManyCSV: 'Zu viele CSV-Dateien im Ordner der API. Bitte Dateien manuell löschen.', // code 3
                 unknownAPI: 'Unbekannter Fehler der API.', // code 4
                 unknown: 'Unbekannter Fehler.',
-                versionOutdated: 'Bitte die Erweiterung aktualisieren!'
+                extensionOutdated: 'Bitte die Erweiterung aktualisieren!',
+                companionAppOutdated: 'Bitte die CompanionApp aktualisieren!'
             }
         };
 
@@ -352,9 +353,12 @@ module.exports = class GleitzeitkontoBrowser {
 
     // Update the display continuously for as long as the script is loaded
     // It is asumed that the page has already loaded completely
-    updateDisplayOnURLChange (pHeaderBar, pKontoData, loading, versionOutdated) {
+    updateDisplayOnURLChange (pHeaderBar, pKontoData, loading, versionOutdatedIndex) {
         let displayText = this.formatDisplayText(pKontoData);
-        if (versionOutdated) displayText = this.constStrings.prefixError + this.constStrings.errorMsgs.versionOutdated;
+        if (versionOutdatedIndex != 0) {
+            if (versionOutdatedIndex == 1) displayText = this.constStrings.prefixError + this.constStrings.errorMsgs.extensionOutdated;
+            else if (versionOutdatedIndex == 2) displayText = this.constStrings.prefixError + this.constStrings.errorMsgs.companionAppOutdated;
+        } 
 
         window.addEventListener('hashchange', () => {
 
@@ -401,6 +405,10 @@ module.exports = class GleitzeitkontoBrowser {
     };
 
 
+    // returns promise - int <0, 1, 2>
+    // 0 version not outdated or couldn't check
+    // 1 browser extension outdated
+    // 2 companionapp outdated
     async checkVersionOutdated () {
         const localBrowserVersion = browser.runtime.getManifest().version;
 
@@ -413,22 +421,24 @@ module.exports = class GleitzeitkontoBrowser {
             onlineVersion = await onlineVersion.json();
         } catch (e) {
             console.log(e);
-            return false; // don't compare versions since online version not available
+            return 0; // don't compare versions since online version not available
         }
         if (onlineVersion?.tag_name) onlineVersion = onlineVersion.tag_name.toLowerCase().replace('v', ''); // get only the number string
 
         // one of the versions is not available
-        if (typeof onlineVersion != 'string' || !localBrowserVersion  || typeof localCompanionAppVersion != 'string') return false;
+        if (typeof onlineVersion != 'string' || !localBrowserVersion  || typeof localCompanionAppVersion != 'string') return 0;
 
         // compare strings to compare version numbers
         const resultBrowser = localBrowserVersion.localeCompare(onlineVersion, undefined, { numeric: true, sensitivity: 'base' });
         const resultCompanionApp = localCompanionAppVersion.localeCompare(onlineVersion, undefined, { numeric: true, sensitivity: 'base' });
 
-        if (resultBrowser == -1 || resultCompanionApp == -1) { // version is outdated
-            return true;
+        if (resultBrowser == -1 ) { // browser extension version is outdated
+            return 1;
+        } else if (resultCompanionApp == -1) { // companionapp version is outdated
+            return 2;
         }
         
-        return false;
+        return 0;
     };
 
 
