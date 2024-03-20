@@ -392,23 +392,6 @@ module.exports = class GleitzeitkontoBrowser {
         document.getElementById(this.constStrings.refreshIconID).addEventListener('click', () => { this.reloadGleitzeitKonto() });
     };
 
-    // moves the old floating display to an inserted display, the styling will also be adjusted accordingly 
-    // pDisplayText is optional
-    moveFloatingToInsertedDisplay (pHeaderBar, pOldNode, pDisplayText) {
-        pOldNode.id = this.constStrings.insertedDisplayID;
-        pHeaderBar.prepend(pOldNode); // moves the Node
-
-        const newDisplay = this.getInsertedDisplay(); // get the newly added display
-
-        document.getElementById(this.constStrings.buttonID).style.alignSelf = 'center';
-        // update the refresh icon
-        document.getElementById(this.constStrings.refreshIconID).src = this.getRefreshIconURL()
-
-        newDisplay.className = `inserted-display ${this.config.siteVersion} ${this.getLightingMode()}`;
-        if (pDisplayText) this.updateDisplayText(pDisplayText);
-       
-    };
-
     getInsertedDisplay () {
         return document.getElementById(this.constStrings.insertedDisplayID);
     };

@@ -55,11 +55,6 @@ const time = new GleitzeitkontoBrowser();
     try {
         const headerBar = await time.waitForPageLoad();
 
-        // Only add display when user is still on Zeiterfassung page
-        if (time.checkCorrectMenuIsOpen()) {
-            time.moveFloatingToInsertedDisplay(headerBar, document.getElementById(time.constStrings.floatingDisplayID));
-        }
-        
         time.updateInsertedDisplayOnChange(headerBar, promiseCalcKontoData, promiseDownloadKontoData, promiseOutdatedIndex);
 
     } catch (e) {
