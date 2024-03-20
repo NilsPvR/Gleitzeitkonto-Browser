@@ -50,19 +50,17 @@ const time = new GleitzeitkontoBrowser();
     let loops = 0; // track how often findHeaderBar ran
 
     // loop to check once the page has actually loaded
-    // -> this is determined by checking if the headerbar of the page and the icons in the headerbar are available
+    // -> this is determined by checking if the headerbar of the page is available
     const waitForPageLoad = setInterval(async () => {
         loops++;
-        const searchBar = document.getElementById(time.givenStrings.searchBarID); // search bar is one of last elements to load
         const headerBar = document.getElementById(time.givenStrings.headerEndID); // the conatiner in which to place the inserted display
 
-
-        if (searchBar && headerBar) {
+        if (headerBar) {
             clearInterval(waitForPageLoad);
 
             // Only add display when user is still on Zeiterfassung page
             if (time.checkCorrectMenuIsOpen()) {
-                time.moveFloatingToInsertedDisplay(headerBar, document.getElementById(time.constStrings.floatingDisplayID)); // make sure DisplayText loaded
+                time.moveFloatingToInsertedDisplay(headerBar, document.getElementById(time.constStrings.floatingDisplayID));
             }
             
             time.updateDisplayOnURLChange(headerBar, await promiseDownloadKontoData, false, await versionOutdatedIndex);
