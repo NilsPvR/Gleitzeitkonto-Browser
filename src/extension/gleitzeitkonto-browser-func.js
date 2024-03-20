@@ -105,6 +105,31 @@ module.exports = class GleitzeitkontoBrowser {
         });
     };
 
+
+    // promise resolves with headerbar html object when page 'fully' loaded
+    // promise rejects with error message when page couldn't load after timeout
+    async waitForPageLoad () {
+        return new Promise((resolve, reject) => {
+            let loops = 0; // track how often checkPageLoaded ran
+
+            // loop to check once the page has actually loaded
+            // -> this is determined by checking if the headerbar of the page is available
+            const checkPageLoaded = setInterval(async () => {
+                loops++;
+                const headerBar = document.getElementById(this.givenStrings.headerEndID); // the conatiner in which to place the inserted display
+    
+                if (headerBar) {
+                    clearInterval(checkPageLoaded);
+                    resolve(headerBar);
+                }
+                else if (loops > this.config.maxPageloadingLoops) { // page loaded too long
+                    clearInterval(checkPageLoaded);
+                    reject(this.constStrings.errorMsgs.pageloadingtimeExceeded);
+                }
+            }, 1000); // will be limited to min. 1000 when tab not focused
+        })
+    };
+
     /**
      * Sends a message to the background script which will normally be forwarded to the CompanionApp.
      * The response from the background script will be returned. Depending on the command this can 

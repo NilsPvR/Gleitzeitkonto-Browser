@@ -46,39 +46,28 @@ const time = new GleitzeitkontoBrowser();
     time.updateDisplay(promiseDownloadKontoData, false);
 
 
+    try {
+        const headerBar = await time.waitForPageLoad();
 
-    let loops = 0; // track how often findHeaderBar ran
-
-    // loop to check once the page has actually loaded
-    // -> this is determined by checking if the headerbar of the page is available
-    const waitForPageLoad = setInterval(async () => {
-        loops++;
-        const headerBar = document.getElementById(time.givenStrings.headerEndID); // the conatiner in which to place the inserted display
-
-        if (headerBar) {
-            clearInterval(waitForPageLoad);
-
-            // Only add display when user is still on Zeiterfassung page
-            if (time.checkCorrectMenuIsOpen()) {
-                time.moveFloatingToInsertedDisplay(headerBar, document.getElementById(time.constStrings.floatingDisplayID));
-            }
-            
-            time.updateDisplayOnURLChange(headerBar, await promiseDownloadKontoData, false, await versionOutdatedIndex);
-
-            await promiseCalcKontoData; // wait until the display has been added
-            if (await versionOutdatedIndex != 0) { // version is outdated
-                if (await versionOutdatedIndex == 1) time.updateDisplayText(time.constStrings.prefixError + time.constStrings.errorMsgs.extensionOutdated);
-                else if (await versionOutdatedIndex == 2) time.updateDisplayText(time.constStrings.prefixError + time.constStrings.errorMsgs.companionAppOutdated);
-
-                const refreshButton = document.getElementById(time.constStrings.buttonID);
-                if (refreshButton) refreshButton.disabled = true; // disable button
-            }
-
+        // Only add display when user is still on Zeiterfassung page
+        if (time.checkCorrectMenuIsOpen()) {
+            time.moveFloatingToInsertedDisplay(headerBar, document.getElementById(time.constStrings.floatingDisplayID));
         }
-        else if (loops > time.config.maxPageloadingLoops) { // page loaded too long or html got changed
-            clearInterval(waitForPageLoad);
-            time.removeFloatingDisplay(); // TODO show error in popup
-            console.error(time.constStrings.errorMsgs.pageloadingtimeExceeded);
+        
+        time.updateDisplayOnURLChange(headerBar, await promiseDownloadKontoData, false, await versionOutdatedIndex);
+
+        await promiseCalcKontoData; // wait until the display has been added
+        if (await versionOutdatedIndex != 0) { // version is outdated
+            if (await versionOutdatedIndex == 1) time.updateDisplayText(time.constStrings.prefixError + time.constStrings.errorMsgs.extensionOutdated);
+            else if (await versionOutdatedIndex == 2) time.updateDisplayText(time.constStrings.prefixError + time.constStrings.errorMsgs.companionAppOutdated);
+
+            const refreshButton = document.getElementById(time.constStrings.buttonID);
+            if (refreshButton) refreshButton.disabled = true; // disable button
         }
-    }, 1000); // will be limited to min. 1000 when tab not focused
+
+    } catch (e) {
+        time.removeFloatingDisplay(); // TODO show error in popup
+        console.error(e)
+    }
+       
 })();
