@@ -18,8 +18,10 @@ const time = new GleitzeitkontoBrowser();
         document.head.appendChild(link);
     }
 
-
+    time.globalFlags.calculateFromCachedFinished = false;
     const promiseCalcKontoData = time.sendMsgToBackgroundS(time.givenStrings.calcaulteCommand);
+    promiseCalcKontoData.then(() => time.globalFlags.calculateFromCachedFinished = true);
+
     const promiseDownloadKontoData = time.getDownloadKontoData(); // preload display to save time
     const versionOutdatedIndex = time.checkVersionOutdated(); // preload version
 
@@ -42,6 +44,7 @@ const time = new GleitzeitkontoBrowser();
     // don't await 'promiseDisplayText' even tho we want to change this as soon as the promiseDisplayText is fullfilled,
     // but if the page loads before the promise resolves then the display should be movedToInserted asap
     // -> let this happen asynchronously
+    
     time.updateDisplay(promiseCalcKontoData, true);
     time.updateDisplay(promiseDownloadKontoData, false);
 
@@ -54,9 +57,9 @@ const time = new GleitzeitkontoBrowser();
             time.moveFloatingToInsertedDisplay(headerBar, document.getElementById(time.constStrings.floatingDisplayID));
         }
         
-        time.updateDisplayOnURLChange(headerBar, await promiseDownloadKontoData, false, await versionOutdatedIndex);
+        time.updateInsertedDisplayOnChange(headerBar, promiseCalcKontoData, promiseDownloadKontoData, versionOutdatedIndex);
 
-        await promiseCalcKontoData; // wait until the display has been added
+        await promiseCalcKontoData; // wait until the text has been added
         if (await versionOutdatedIndex != 0) { // version is outdated
             if (await versionOutdatedIndex == 1) time.updateDisplayText(time.constStrings.prefixError + time.constStrings.errorMsgs.extensionOutdated);
             else if (await versionOutdatedIndex == 2) time.updateDisplayText(time.constStrings.prefixError + time.constStrings.errorMsgs.companionAppOutdated);
@@ -67,7 +70,7 @@ const time = new GleitzeitkontoBrowser();
 
     } catch (e) {
         time.removeFloatingDisplay(); // TODO show error in popup
-        console.error(e)
+        console.error(e);
     }
        
 })();

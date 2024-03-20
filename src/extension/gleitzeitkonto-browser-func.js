@@ -66,6 +66,12 @@ module.exports = class GleitzeitkontoBrowser {
         };
 
         this.portToBackground = null;
+
+        this.globalFlags = {
+            calculateFromCachedFinished: false,
+            downloadFinished: false,
+            versionCheckFinished: false
+        }
     }
 
     /* ==========================================================================================
@@ -187,6 +193,8 @@ module.exports = class GleitzeitkontoBrowser {
      * StatusCodes are  1 - 4 and based on gleitzeitkonto-api.downloadWorkingTimes()
      */
     async getDownloadKontoData () {
+        this.globalFlags.downloadFinished = false;
+
         let response = await this.sendMsgToBackgroundS(this.givenStrings.downloadCommand);
         let kontoData = {};
 
@@ -203,7 +211,7 @@ module.exports = class GleitzeitkontoBrowser {
         }
         else if (response?.error?.message) kontoData = response // sendMsgToBackgroundS gave an error
 
-        
+        this.globalFlags.downloadFinished = true;
         return kontoData;
     };
 
@@ -376,40 +384,56 @@ module.exports = class GleitzeitkontoBrowser {
     // ---------- End Changes on Displays ----------
     // ---------------------------------------------
 
+    // using the global flags the function detemines the latest data which can be shown in the display
+    // returns { text: string, laoding: boolean }
+    async getLatestDisplayFormat (promiseCalcKontoData, promiseDownloadKontoData, promiseOutdatedIndex) {
+        if (this.globalFlags.versionCheckFinished && await promiseOutdatedIndex != 0) { // version outdated has highest priority
+            if (await promiseOutdatedIndex == 1) {
+                return { text: this.constStrings.prefixError + this.constStrings.errorMsgs.extensionOutdated, loading: false }
+            }
+            else if (await promiseOutdatedIndex == 2) {
+                return { text: this.constStrings.prefixError + this.constStrings.errorMsgs.companionAppOutdated, loading: false };
+            }
+        }
+        else if (this.globalFlags.downloadFinished) { // download availability has higher priority than calculate
+            return  { text: this.formatDisplayText(await promiseDownloadKontoData), loading: false };
+        }
+        else if (this.globalFlags.calculateFromCachedFinished) {
+            return { text: this.formatDisplayText(await promiseCalcKontoData), loading: true };
+        }
+        else { // no data to show
+            return { text: this.constStrings.prefixOvertime + this.constStrings.overtimeLoading, loading: true };
+        }
+    };
+
+
     // Update the display continuously for as long as the script is loaded
     // It is asumed that the page has already loaded completely
-    updateDisplayOnURLChange (pHeaderBar, pKontoData, loading, versionOutdatedIndex) {
-        let displayText = this.formatDisplayText(pKontoData);
-        if (versionOutdatedIndex != 0) {
-            if (versionOutdatedIndex == 1) displayText = this.constStrings.prefixError + this.constStrings.errorMsgs.extensionOutdated;
-            else if (versionOutdatedIndex == 2) displayText = this.constStrings.prefixError + this.constStrings.errorMsgs.companionAppOutdated;
-        } 
+    async updateInsertedDisplayOnChange (pHeaderBar, promiseCalcKontoData, promiseDownloadKontoData, promiseOutdatedIndex) {
 
-        window.addEventListener('hashchange', () => {
-
+        const placeOrRemoveInsertedDisplay = async () => {
             // When correct page is open and the display doesn't already exist
             if (this.checkCorrectMenuIsOpen() && !this.getInsertedDisplay()) {
-                this.addInsertedDisplay(pHeaderBar, displayText, loading);
+                const latestDisplayFormat = await this.getLatestDisplayFormat(promiseCalcKontoData, promiseDownloadKontoData, promiseOutdatedIndex);
+                this.addInsertedDisplay(pHeaderBar, latestDisplayFormat.text, latestDisplayFormat.loading);
             }
             else if (!this.checkCorrectMenuIsOpen()) {
                 // This will also be removed by Fiori but keep remove just in case this behaviour gets changed
                 this.removeInsertedDisplay();
             }
+        }
+
+        window.addEventListener('hashchange', async () => {
+            await placeOrRemoveInsertedDisplay();
         });
 
-        // Check if the HeaderBar is being manipulated -> display getting removed by Fiori
-        // Without this additonal check the display will be added and then fiori resets the headerBar
-        const observer = new MutationObserver(() => {
-            // When correct page is open and the display doesn't already exist
-            if (this.checkCorrectMenuIsOpen() && !this.getInsertedDisplay()) {
-                this.addInsertedDisplay(pHeaderBar, displayText, loading);
-            }
+        // Check if the HeaderBar is being manipulated -> Fiori does sometimes remove the inserted display
+        const observer = new MutationObserver(async () => {
+            await placeOrRemoveInsertedDisplay();
         });
 
         // add the display to make sure the observer can actually observe something and the display isn't already removed
-        if (this.checkCorrectMenuIsOpen() && !this.getInsertedDisplay()) {
-            this.addInsertedDisplay(pHeaderBar, displayText, loading);
-        }
+        await placeOrRemoveInsertedDisplay();
 
         observer.observe(pHeaderBar, { 
             // config
@@ -422,7 +446,9 @@ module.exports = class GleitzeitkontoBrowser {
     // called from the reload btn, recalculates the Gleitzeitkontos
     reloadGleitzeitKonto () {
         this.startLoading(); // start loading immediately
+        this.globalFlags.calculateFromCachedFinished = false;
         const promiseCalcKontoData = this.sendMsgToBackgroundS(this.givenStrings.calcaulteCommand);
+        promiseCalcKontoData.then(() => this.globalFlags.calculateFromCachedFinished = true);
         const promiseDownloadKontoData = this.getDownloadKontoData();
 
         this.updateDisplay(promiseCalcKontoData, true);
@@ -435,6 +461,7 @@ module.exports = class GleitzeitkontoBrowser {
     // 1 browser extension outdated
     // 2 companionapp outdated
     async checkVersionOutdated () {
+        this.globalFlags.versionCheckFinished = false;
         const localBrowserVersion = browser.runtime.getManifest().version;
 
         let localCompanionAppVersion = await this.sendMsgToBackgroundS(this.givenStrings.versionCommand); // get version obj
@@ -446,6 +473,7 @@ module.exports = class GleitzeitkontoBrowser {
             onlineVersion = await onlineVersion.json();
         } catch (e) {
             console.log(e);
+            this.globalFlags.versionCheckFinished = true;
             return 0; // don't compare versions since online version not available
         }
         if (onlineVersion?.tag_name) onlineVersion = onlineVersion.tag_name.toLowerCase().replace('v', ''); // get only the number string
@@ -458,11 +486,14 @@ module.exports = class GleitzeitkontoBrowser {
         const resultCompanionApp = localCompanionAppVersion.localeCompare(onlineVersion, undefined, { numeric: true, sensitivity: 'base' });
 
         if (resultBrowser == -1 ) { // browser extension version is outdated
+            this.globalFlags.versionCheckFinished = true;
             return 1;
         } else if (resultCompanionApp == -1) { // companionapp version is outdated
+            this.globalFlags.versionCheckFinished = true;
             return 2;
         }
         
+        this.globalFlags.versionCheckFinished = true;
         return 0;
     };
 
@@ -470,7 +501,7 @@ module.exports = class GleitzeitkontoBrowser {
     // weather the user has set their page to light or dark mode
     getLightingMode () {
         const header = document.getElementById(this.givenStrings.headerID);
-        if (!header) return 'gleitzeitkonto-light' // default to lightmode if header not available
+        if (!header) return 'gleitzeitkonto-light'; // default to lightmode if header not available
 
         // the rgb value of the header, is normally either white or dark grey/black
         const rgbColor = window.getComputedStyle(header, null)
