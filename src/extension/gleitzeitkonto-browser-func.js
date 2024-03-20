@@ -334,15 +334,14 @@ module.exports = class GleitzeitkontoBrowser {
                 return { text: this.constStrings.prefixError + this.constStrings.errorMsgs.companionAppOutdated, loading: false };
             }
         }
-        else if (this.globalFlags.downloadFinished) { // download availability has higher priority than calculate
+        if (this.globalFlags.downloadFinished) { // download availability has higher priority than calculate
             return  { text: this.formatDisplayText(await promiseDownloadKontoData), loading: false };
         }
-        else if (this.globalFlags.calculateFromCachedFinished) {
+        if (this.globalFlags.calculateFromCachedFinished) {
             return { text: this.formatDisplayText(await promiseCalcKontoData), loading: true };
         }
-        else { // no data to show
-            return { text: this.constStrings.prefixOvertime + this.constStrings.overtimeLoading, loading: true };
-        }
+         // no data to show
+        return { text: this.constStrings.prefixOvertime + this.constStrings.overtimeLoading, loading: true };
     };
 
 
