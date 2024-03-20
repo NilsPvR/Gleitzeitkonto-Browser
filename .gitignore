@@ -7,8 +7,9 @@ package-lock.json
 
 
 # Secrets
-/CompanionApp/url.json
-/Extension/url.json
+src/companionapp/url.json
+src/extension/url.json
+url.json
 
 # environment variables
 .env

@@ -5,7 +5,7 @@ Alternativ: [Gleitzeitkonto-Desktop](https://github.com/julius-boettger/gleitzei
 <br><br>
 *Das Gleitzeitkonto im Fiori-Launchpad:*
 <br>
-![Gleitzeitkonto im Fiori-Launchpad](./Assets/GleitzeitkontoFioriLaunchpad.png)
+![Gleitzeitkonto im Fiori-Launchpad](./assets/gleitzeitkonto-fiorilaunchpad.png)
 
 > ### 🚨 Disclaimer
 > Dies ist **keine offizielle Software** und auch nicht in irgendeiner Form mit Fiori oder SAP verbunden! Es gibt **keine Gewährleistung** für die Richtigkeit der Überstunden!
@@ -15,24 +15,24 @@ Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur exper
 1. **[Node.js](https://nodejs.org)** mit npm installieren
 2. **[Installations-Skript](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/install_Gleitzeitkonto-Browser-GUI.hta)** herunterladen
 3. **Downloads** Ordner öffnen -> **Rechtsklick** auf die Datei (Installations-Skript) -> **Eigenschaften**<br>
-<img src="Assets/install-open-properties.png" alt="Screenshot zum öffnen der Eigenschaften"><br>
+<img src="assets/install-open-properties.png" alt="Screenshot zum öffnen der Eigenschaften"><br>
 4. Unter Sicherheit: Häkchen bei "**Zulassen**" setzen -> OK<br>
-<img src="Assets/installation-allow-external.png" alt="Screenshot zum Zulassen des Installations-Scripts."><br>
+<img src="assets/installation-allow-external.png" alt="Screenshot zum Zulassen des Installations-Scripts."><br>
 5. Skript ausführen (Doppelklick)
 
 
 <details><summary><b>❓ Es kommt eine Fehlermeldung</b></summary>
     <details><summary><b>Fehler:</b> "Die Sicherheitseinstellungen des Computers..."</summary>
         <i>Die Fehlermeldung sieht folgendermaßen aus:</i><br>
-        <img src="Assets/installation-script-error.png" alt="Fehlermeldung für Sicherheitseinstellungen des Computers." style="width: 50%;">
+        <img src="assets/installation-script-error.png" alt="Fehlermeldung für Sicherheitseinstellungen des Computers." style="width: 50%;">
         <br><br>
         <ol>
             <li>Installations-Programm schließen</li>
             <li><b>Rechtsklick</b> auf die Datei (Installations-Skript) -> <b>Eigenschaften</b><br>
-                <img src="Assets/install-open-properties.png" alt="Screenshot zum öffnen der Eigenschaften">
+                <img src="assets/install-open-properties.png" alt="Screenshot zum öffnen der Eigenschaften">
             </li>
             <li>Unter Sicherheit: Häkchen bei "<b>Zulassen</b>" setzen -> OK<br>
-                <img src="Assets/installation-allow-external.png" alt="Screenshot zum Zulassen des Installations-Scripts.">
+                <img src="assets/installation-allow-external.png" alt="Screenshot zum Zulassen des Installations-Scripts.">
             </li>
             <li>Installation erneut starten</li>
         </ol>
