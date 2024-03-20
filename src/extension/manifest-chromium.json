@@ -2,7 +2,7 @@
 
     "manifest_version": 2,
     "name": "Gleitzeitkonto-Browser",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4hy+36EvE7cUs91+Yy7D2HLPLVUWBFt5QFPIQez+2dTgWZR7xirfuztmlFReaK2TsDNZXdd3zsk3+U62bk/ZYbzpO1K7NUYyMOiUPLbED9pg6ce8sK4DP0KKGtQ7RCYORyW+eQqFYrEGNnaUJrsmpFhzFNi9nX2rKDPOihA7rjbgvU2dxHwSEuJbW2A4jp+mL7Wb1M7NrdRUtXr+HiEbwLQB+uL80CoFODItqH1FNk/+7ZJyCj0Pm7tnvRTjIdArpg0x9+jAmvkEdBEuNS0TWbLs5P1PtH/IGG07r+1sLA5hNOam6OOIA8KX4/9I8v0bBHgqRE1n+8c66SQON8A/ewIDAQAB",
   
     "description": "Browser Erweiterung für Chromium und Firefox, welche erlaubt die Überstunden bzw. ein Gleitzeitkonto direkt in der Fiori-Zeiterfassung oder in der Erweiterung einzusehen.",
