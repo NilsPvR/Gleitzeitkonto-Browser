@@ -72,8 +72,8 @@
         }
     }
     .loadingIcon {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
         position: relative;
         left: 50%;
         margin: -30px 0 0 -30px;
@@ -86,6 +86,10 @@
         animation-iteration-count: infinite;
         animation-timing-function: cubic-bezier(0.2, 0.6, 0.8, 0.4);
     }
+    .loadingBox {
+        overflow-y: auto;
+        height: 150px;
+    }
 </style>
 
 <div id="mainFrame">
@@ -94,8 +98,10 @@
         <i>Deinstallaton von Gleitzeitkonto-Browser und CompanionApp gestartet ...</i><br>
         <br>
     </p>
-    <div id="loadingBox" style="display: none;">
+    <div id="loadingBoxWrapper" style="display: none;">
         <svg id="loadingSvg" class="loadingIcon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="163.839" height="163.839" viewBox="0,0,256,256"><defs><linearGradient x1="59.51" y1="2348.17" x2="4275.66" y2="2348.17" gradientUnits="userSpaceOnUse" id="color-1"><stop offset="0" stop-color="#00aab4"></stop><stop offset="1" stop-color="#222222"></stop></linearGradient></defs><g fill="url(#color-1)" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(0.05905,0.05905)"><path d="M1279,2858c274,348 670,567 1111,567c826,0 1496,-768 1496,-1716c0,-473 -167,-901 -437,-1212c11,-10 21,-19 31,-29c197,167 392,375 555,601c154,300 242,642 242,1005c0,1189 -938,2154 -2096,2154c-1052,0 -1922,-796 -2073,-1833c-47,-326 13,-700 464,-700c584,0 335,690 708,1164z"></path></g></g></svg>
+        <br>
+        <div id="loadingBox" class="loadingBox"></div>
     </div>
     <table id="installTable">
         <tr>
@@ -139,7 +145,7 @@
 
     sub window_onLoad
         htaWidth = 600
-        htaHeight = 330
+        htaHeight = 350
         call window.resizeTo(htaWidth, htaHeight) ' set the widht and height of the hta
         ' calcualte the window position to center it
         posX = CInt( ( window.screen.width  - htaWidth  ) / 2 )
@@ -152,6 +158,18 @@
 
     ' ---------- Uninstallation process subs -----------
     ' --------------------------------------------------
+    
+    ' Add logging output to the bottom of the log div
+    ' Makes sure that the output is scrolled to the bottom
+    sub logOutput (output, color)
+        if (typeName(color) = "String") then
+            loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: " + color + ";'>" + output + "</span><br>"
+        else 
+            loadingBox.innerHTML = loadingBox.innerHTML + "<span>" + output + "</span><br>"
+        end if
+
+        loadingBox.scrollTop = loadingBox.scrollHeight
+    end sub
 
 
     ' ----- Uninstall Button clicked -----
@@ -168,8 +186,7 @@
         infoText.innerHTML = "" ' remove old html
         installTable.innerHTML = ""
         submitWrapper.innerHTML = ""
-        loadingBox.style.display = "block" ' make loading svg visable
-        loadingBox.innerHTML = loadingBox.innerHTML + "<br>" ' add linebreak after svg
+        loadingBoxWrapper.style.display = "block" ' make loading svg visable
         githubBtn.style.display = "none" ' make github button invisible since it might block log output
 
 
@@ -184,11 +201,10 @@
             call FSO.DeleteFolder(settingsFolder, true)
 
             if (err.number <> 0) then ' error occured when trying to delte folder
-                loadingBox.innerHTML = loadingBox.innerHTML + _
-                    "<span style='color: red;'>Einstellungsordner konnte nicht gelöscht werden.</span><br>"
+                call logOutput("Einstellungsordner konnte nicht gelöscht werden.", "red")
                 err.clear()
             else
-                loadingBox.innerHTML = loadingBox.innerHTML + "<span>Einstellungsordner wurde gelöscht.</span><br>"
+                call logOutput("Einstellungsordner wurde gelöscht.", false)
             end if
             on error goto 0
 
@@ -205,11 +221,10 @@
             call FSO.DeleteFolder(installationFolder, true) 
 
             if (err.number <> 0) then ' error occured when trying to delte folder
-                loadingBox.innerHTML = loadingBox.innerHTML + _
-                    "<span style='color: red;'>Installationsordner konnte nicht gelöscht werden.</span><br>"
+                call logOutput("Installationsordner konnte nicht gelöscht werden.", "red")
                 err.clear()
             else
-                loadingBox.innerHTML = loadingBox.innerHTML + "<span>Installationsordner wurde gelöscht.</span><br>"
+                call logOutput("Installationsordner wurde gelöscht.", false)
             end if
             on error goto 0
 
@@ -228,10 +243,9 @@
 
             firefoxDelteErrorCode = objWShell.Run("reg delete" + registryKeyFirefox + "/f", 0, true)
             if (firefoxDelteErrorCode = "0") then
-                loadingBox.innerHTML = loadingBox.innerHTML + "<span>Verbindung zwischen Firefox und CompanionApp entfernt.</span><br>"
+                call logOutput("Verbindung zwischen Firefox und CompanionApp entfernt.", false)
             else
-                loadingBox.innerHTML = loadingBox.innerHTML + _ 
-                    "<span style='color: red;'>Verbindung zwischen Firefox und CompanionApp konnte nicht entfernt werden.</span><br>"
+                call logOutput("Verbindung zwischen Firefox und CompanionApp konnte nicht entfernt werden.", "red")
             end if
 
         end if
@@ -242,10 +256,9 @@
 
             chromeDelteErrorCode = objWShell.Run("reg delete" + registryKeyChrome + "/f", 0, true)
             if (chromeDelteErrorCode = "0" ) then
-                loadingBox.innerHTML = loadingBox.innerHTML + "<span>Verbindung zwischen Chrome und CompanionApp entfernt.</span><br>"
+                call logOutput("Verbindung zwischen Chrome und CompanionApp entfernt.", false)
             else
-                loadingBox.innerHTML = loadingBox.innerHTML + _ 
-                    "<span style='color: red;'>Verbindung zwischen Chrome und CompanionApp konnte nicht entfernt werden.</span><br>"
+                call logOutput("Verbindung zwischen Chrome und CompanionApp konnte nicht entfernt werden.", "red")
             end if
 
         end if
@@ -255,10 +268,10 @@
 
 
     sub uninstallationProcessEnd ()
-        loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: green;'>Deinstallation abgeschlossen!</span><br>"
+        call logOutput("Deinstallation abgeschlossen!", "green")
 
-        loadingBox.innerHTML = loadingBox.innerHTML + "<span>Entferne manuell die Erweiterung in deinem Browser.</span><br>"
-        loadingBox.innerHTML = loadingBox.innerHTML + "<span>Deinstalliere Node.js falls du es nicht mehr benötigst.</span><br>"
+        call logOutput("Entferne manuell die Erweiterung in deinem Browser.", false)
+        call logOutput("Deinstalliere Node.js falls du es nicht mehr benötigst.", false)
 
         finishedBtnWrapper.style.display = "block" ' make the 'finished' button visable
         loadingSvg.style.animationPlayState = "paused"

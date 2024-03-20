@@ -6,7 +6,7 @@ const sendMessage = require('./protocol')(messageHandler); // import the protoco
 // ===== Constants and global variables =====
 // DEBUG=true starts webscraper in foreground and do logging, DEBUG=false in background
 const DEBUG = false;
-const version = '2.0.0'; // used to check if the companionApp is outdated
+const version = '2.0.1'; // used to check if the companionApp is outdated
 
 // the following three variables prevent running multiple downloadCommands of API at the same time
 let isRunning = false;
