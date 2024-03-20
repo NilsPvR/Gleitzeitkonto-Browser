@@ -85,6 +85,11 @@
         margin-left: 10px;
         color: red;
     }
+    .nodeIsInstalledBtn {
+        color: grey;
+        margin-left: 190px;
+        margin-bottom: 50px;
+    }
 
     @keyframes refreshRotate {
         from {
@@ -139,7 +144,10 @@
     </table>
 
     <div id="submitWrapper" style="position: relative;"><input type="submit" class="btn resetBtn installBtn" name="submitBtn" value="Installieren"></div>
-    <span id="installNodeBtnWrapper" style="display: none;"><input class="btn resetBtn installNodeBtn" type="button" name="installNodeBtn" value="Node.js installieren"></span>
+    <span id="installNodeBtnWrapper" style="display: none;">
+        <input class="btn resetBtn installNodeBtn" type="button" name="installNodeBtn" value="Node.js installieren">
+        <input class="btn resetBtn nodeIsInstalledBtn" type="button" name="nodeIsInstalled" value="Node.js ist bereits installiert">
+    </span>
     <span id="openFolderBtnWrapper" style="display: none;"><input class="btn resetBtn openFolderBtn" type="button" name="openInstallationFolder" value="Ordner öffnen"></span>
     <span id="finishedBtnWrapper" style="display: none;"><input class="btn resetBtn finishedBtn" type="button" name="allDoneBtn" value="Fertig stellen"></span>
     <input id="githubBtn" type="button" class="btn resetBtn githubLink" name="githubBtn" value="Github">
@@ -157,6 +165,7 @@
 
     ' Check if Node.js and npm are installed
         ' if not cancel installation
+        ' if users forces that Node.js is installed -> continue with installation
 
     ' Uninstall any old versions
     ' Download zip files from Github to %LocalAppData%/Programs/Gleitzeitkonto-Browser
@@ -709,6 +718,25 @@
     sub installNodeBtn_onClick ()
         set objWShell = CreateObject("WScript.Shell")
         objWShell.Run("https://nodejs.org"), 0 ' open website
+    end sub
+
+    ' ----- Node is alredy installed button clicked -----
+    sub nodeIsInstalled_onClick ()
+        ' show box with yes and no buttons
+        nodeJsInstalledAnswer = MsgBox("Ohne Node.js funktioniert die CompanionApp nicht! Ist Node.js wirklich installiert?", 4, boxTitle)  
+
+        if (nodeJsInstalledAnswer = "6") then ' continue when accepted, otherwise do nothing
+            ' set everything back up to continue with installation 
+            set objWShell = CreateObject("WScript.Shell")
+            set FSO = CreateObject("Scripting.FileSystemObject")
+            finishedBtnWrapper.style.display = "none"
+            installNodeBtnWrapper.style.display = "none"
+            loadingSvg.style.animationPlayState = "running"
+
+            loadingBox.innerHTML = loadingBox.innerHTML + "<span style='color: orange;'>Node.js Überprüfung übersprungen.</span><br>"
+            loadingBox.innerHTML = loadingBox.innerHTML + "Alte Browser-Erweiterung Versionen werden gesucht...<br>"
+            call window.SetTimeout("uninstallBrowser()", 1, "VBScript") ' timeout to update screen
+        end if 
     end sub
 
 </script>
