@@ -57,7 +57,6 @@ module.exports = class GleitzeitkontoBrowser {
             gleitzeitHash: '#btccatstime-create',
             headerID: 'shell-header',
             headerEndID: 'shell-header-hdr-end',
-            searchBarID: 'searchFieldInShell-input',
             downloadCommand: 'downloadWorkingTimes',
             calcaulteCommand: 'calculateFromWorkingTimes',
             waitForDownlodCommand: 'waitfordownload',
