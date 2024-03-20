@@ -358,13 +358,12 @@ module.exports = class GleitzeitkontoBrowser {
     };
 
 
-    // updates the loading state once the KontoData has loaded and updates display with kontoData
-    async updateDisplay (possiblePromiseKontoData, loading) {
-        const kontoData = await possiblePromiseKontoData; // wait until the promise is resolved
-
-        if (kontoData) {
-            this.updateDisplayText(this.formatDisplayText(kontoData));
-            if (loading) this.startLoading();
+    // updates the loading state once and updates display with the displayFormat object
+    // { text: string, loading: boolean }
+    updateDisplay (displayFormat) {
+        if (displayFormat.text) {
+            this.updateDisplayText(displayFormat.text);
+            if (displayFormat.loading) this.startLoading();
             else this.stopLoading();
         }
     };
@@ -386,6 +385,7 @@ module.exports = class GleitzeitkontoBrowser {
 
     // using the global flags the function detemines the latest data which can be shown in the display
     // returns { text: string, laoding: boolean }
+    // promiseOutdatedIndex is optional
     async getLatestDisplayFormat (promiseCalcKontoData, promiseDownloadKontoData, promiseOutdatedIndex) {
         if (this.globalFlags.versionCheckFinished && await promiseOutdatedIndex != 0) { // version outdated has highest priority
             if (await promiseOutdatedIndex == 1) {
@@ -446,13 +446,16 @@ module.exports = class GleitzeitkontoBrowser {
     // called from the reload btn, recalculates the Gleitzeitkontos
     reloadGleitzeitKonto () {
         this.startLoading(); // start loading immediately
+
+        // == Start new requests ==
         this.globalFlags.calculateFromCachedFinished = false;
         const promiseCalcKontoData = this.sendMsgToBackgroundS(this.givenStrings.calcaulteCommand);
         promiseCalcKontoData.then(() => this.globalFlags.calculateFromCachedFinished = true);
         const promiseDownloadKontoData = this.getDownloadKontoData();
 
-        this.updateDisplay(promiseCalcKontoData, true);
-        this.updateDisplay(promiseDownloadKontoData, false);
+        // == Register actions for promises resolving ==
+        promiseCalcKontoData.then(async () => this.updateDisplay(await this.getLatestDisplayFormat(promiseCalcKontoData, promiseDownloadKontoData)));
+        promiseDownloadKontoData.then(async () => this.updateDisplay(await this.getLatestDisplayFormat(promiseCalcKontoData, promiseDownloadKontoData)));
     };
 
 

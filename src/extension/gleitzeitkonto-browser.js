@@ -18,16 +18,21 @@ const time = new GleitzeitkontoBrowser();
         document.head.appendChild(link);
     }
 
+
+    // ===== start sending all requests =====
     time.globalFlags.calculateFromCachedFinished = false;
     const promiseCalcKontoData = time.sendMsgToBackgroundS(time.givenStrings.calcaulteCommand);
     promiseCalcKontoData.then(() => time.globalFlags.calculateFromCachedFinished = true);
 
     const promiseDownloadKontoData = time.getDownloadKontoData(); // preload display to save time
-    const versionOutdatedIndex = time.checkVersionOutdated(); // preload version
+    const promiseOutdatedIndex = time.checkVersionOutdated(); // preload version
 
-    // Only load the rest of the script once the page for 'Zeiterfassung' ist opened
+
+    // ===== Wait for correct page to be opened =====
     await time.continuousMenucheck();
 
+
+    // ===== Add floating display =====
     if (document.readyState === 'interactive' || document.readyState === 'complete') {
         time.addFloatingDisplay(time.constStrings.prefixOvertime + time.constStrings.overtimeLoading, true);
     }
@@ -36,17 +41,15 @@ const time = new GleitzeitkontoBrowser();
             time.addFloatingDisplay(time.constStrings.prefixOvertime + time.constStrings.overtimeLoading, true);
         });
     }
-    // Load event fires too early so no point using that
-
     // register button click for reload
     document.getElementById(time.constStrings.buttonID).addEventListener('click', () => { time.reloadGleitzeitKonto() });
 
-    // don't await 'promiseDisplayText' even tho we want to change this as soon as the promiseDisplayText is fullfilled,
-    // but if the page loads before the promise resolves then the display should be movedToInserted asap
-    // -> let this happen asynchronously
-    
-    time.updateDisplay(promiseCalcKontoData, true);
-    time.updateDisplay(promiseDownloadKontoData, false);
+
+    // ===== Register actions for promises resolving =====
+    // update the display as soon as new data is available
+    promiseCalcKontoData.then(async () => time.updateDisplay(await time.getLatestDisplayFormat(promiseCalcKontoData, promiseDownloadKontoData, promiseOutdatedIndex)));
+    promiseDownloadKontoData.then(async () => time.updateDisplay(await time.getLatestDisplayFormat(promiseCalcKontoData, promiseDownloadKontoData, promiseOutdatedIndex)));
+    promiseOutdatedIndex.then(async () => time.updateDisplay(await time.getLatestDisplayFormat(promiseCalcKontoData, promiseDownloadKontoData, promiseOutdatedIndex)));
 
 
     try {
@@ -57,16 +60,7 @@ const time = new GleitzeitkontoBrowser();
             time.moveFloatingToInsertedDisplay(headerBar, document.getElementById(time.constStrings.floatingDisplayID));
         }
         
-        time.updateInsertedDisplayOnChange(headerBar, promiseCalcKontoData, promiseDownloadKontoData, versionOutdatedIndex);
-
-        await promiseCalcKontoData; // wait until the text has been added
-        if (await versionOutdatedIndex != 0) { // version is outdated
-            if (await versionOutdatedIndex == 1) time.updateDisplayText(time.constStrings.prefixError + time.constStrings.errorMsgs.extensionOutdated);
-            else if (await versionOutdatedIndex == 2) time.updateDisplayText(time.constStrings.prefixError + time.constStrings.errorMsgs.companionAppOutdated);
-
-            const refreshButton = document.getElementById(time.constStrings.buttonID);
-            if (refreshButton) refreshButton.disabled = true; // disable button
-        }
+        time.updateInsertedDisplayOnChange(headerBar, promiseCalcKontoData, promiseDownloadKontoData, promiseOutdatedIndex);
 
     } catch (e) {
         time.removeFloatingDisplay(); // TODO show error in popup
