@@ -351,7 +351,7 @@ module.exports = class GleitzeitkontoBrowser {
     
     addFloatingDisplay (pDisplayText, loading) {
         const HTMLElements = this.getInnerHTMLElements(pDisplayText, loading, false);
-        const canvas = document.getElementById('canvas'); // main page element is the (almost) only one loaded when DOM is loaded
+        const canvas = document.getElementById('shellLayout') ?? document.getElementById('canvas'); // main page element is the (almost) only one loaded when DOM is loaded
 
         canvas.insertAdjacentElement('beforebegin',
             this.createRichElement('div', {
