@@ -495,7 +495,8 @@ module.exports = class GleitzeitkontoBrowser {
 
     // weather the user has set their page to light or dark mode
     getLightingMode () {
-        const header = document.getElementById(this.givenStrings.headerID);
+        const header = document.getElementById(this.givenStrings.headerID)
+            ?? document.getElementsByTagName('body')[0];
         if (!header) return 'gleitzeitkonto-light'; // default to lightmode if header not available
 
         // the rgb value of the header, is normally either white or dark grey/black
