@@ -27,10 +27,10 @@
   },
   "homepage": "https://github.com/NilsPvR/Gleitzeitkonto-Browser#readme",
   "devDependencies": {
-    "esbuild": "^0.20.1",
+    "esbuild": "^0.23.0",
     "fs-extra": "^11.2.0",
-    "sass": "^1.65.1",
-    "webextension-polyfill": "^0.10.0",
+    "sass": "^1.77.8",
+    "webextension-polyfill": "^0.12.0",
     "zip-build": "^1.8.0"
   },
   "dependencies": {
