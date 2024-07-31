@@ -23,13 +23,13 @@
     },
   
     "background": {
-      "scripts": ["background-messaging.js"]
+      "scripts": ["backgroundscript/background-messaging.js"]
     },
 
     "content_scripts": [
       {
         "matches": ["https://*.ondemand.com/*", "https://bgp.btcsap.btc-ag.com/*"],
-        "js": ["gleitzeitkonto-browser.js"]
+        "js": ["contentscript/gleitzeitkonto-browser.js"]
 
       }
     ],

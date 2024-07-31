@@ -8,7 +8,7 @@ package-lock.json
 
 # Secrets
 src/companionapp/url.json
-src/extension/url.json
+src/extension/contentscript/url.json
 url.json
 
 # environment variables
