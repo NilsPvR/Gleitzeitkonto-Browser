@@ -23,7 +23,7 @@
 
     "content_scripts": [
       {
-        "matches": ["*://*.ondemand.com/*", "*://bgp.btcsap.btc-ag.com/*"],
+        "matches": ["https://*.ondemand.com/*", "https://bgp.btcsap.btc-ag.com/*"],
         "js": ["gleitzeitkonto-browser.js"]
 
       }
