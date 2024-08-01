@@ -1,5 +1,6 @@
 import globals from 'globals';
 import pluginJs from '@eslint/js';
+import eslintConfigPrettier from 'eslint-config-prettier';
 
 
 export default [
@@ -20,4 +21,5 @@ export default [
     ignores: ['compressed/', 'src/companionapp/gleitzeitkonto-api']
   },
   pluginJs.configs.recommended,
+  eslintConfigPrettier
 ];
