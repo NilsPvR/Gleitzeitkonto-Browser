@@ -1,2 +1,2 @@
-Gleitzeitkonto-Browser CompanionApp v2.0.2
+Gleitzeitkonto-Browser CompanionApp v3.0.0
 https://github.com/NilsPvR/Gleitzeitkonto-Browser
