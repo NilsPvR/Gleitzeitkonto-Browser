@@ -10,7 +10,7 @@ Alternativ: [Gleitzeitkonto-Desktop](https://github.com/julius-boettger/gleitzei
 > ### 🚨 Disclaimer
 > Dies ist **keine offizielle Software** und auch nicht in irgendeiner Form mit Fiori oder SAP verbunden! Es gibt **keine Gewährleistung** für die Richtigkeit der Überstunden!
 
-# Installation (Windows)
+# Installation / Update (Windows)
 Bisher wurde alles nur auf Windows getestet! Andere Systeme sind daher nur experimentell.
 1. **[Node.js](https://nodejs.org)** mit npm installieren
 2. **[Installations-Skript](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases/latest/download/install_Gleitzeitkonto-Browser-GUI.hta)** herunterladen
@@ -47,7 +47,7 @@ Die Erweiterung muss im entsprechenden Browser installiert werden: [Firefox](htt
 7. Fertig! 🥳 *(Probleme? Erstelle ein [Issue](https://github.com/NilsPvR/Gleitzeitkonto-Browser/issues))*
 
 
-## Manuell installation (alternativ)
+## Manuelle installation / update (alternativ)
 Gleitzeitkonto-Browser kann auch manuell installiert werden, falls eine automatische Installation (siehe Schritte oben) nicht gewünscht ist.<br>
 1. [Node.js](https://nodejs.org) mit npm installieren
 2. Die Dateien, die unter [releases](https://github.com/NilsPvR/Gleitzeitkonto-Browser/releases) nicht heruntergeladen werden sollen müssen hierfür heruntergeladen werden. Für die CompanionApp "NICHT-Herunterladen-win-x64-companionApp.zip" herunterladen. Die Dateien in ein gewünschtes Verzeichnis extrahieren.
