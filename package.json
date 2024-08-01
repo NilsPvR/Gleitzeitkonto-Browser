@@ -5,6 +5,7 @@
   "main": "gleitzeitkonto-browser.js",
   "scripts": {
     "check-format": "prettier --check . && eslint",
+    "format": "prettier --write",
     "publishProject": "npm run publishExtension && npm run publishCompanionApp",
     "publishExtension": "node build/publish-extension.js && npm run combineBrowserJS && npm run sass-prod && node build/publish-extension-fix-manifests.js && npm run zipChromium && npm run zipFirefox",
     "publishCompanionApp": "node build/publish-companionapp.js && npm run combineCompanionAppJS && npm run zipCompanionApp",
