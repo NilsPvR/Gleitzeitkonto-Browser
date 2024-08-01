@@ -1,9 +1,7 @@
 {
-    "name": "gleitzeitkonto_browser_companionapp",
-    "description": "Die CompanionApp, welche das Laden des Gleitzeitkontos ermöglicht.",
-    "path": "./start-companionapp.bat",
-    "type": "stdio",
-    "allowed_origins": [
-        "chrome-extension://almkbljoennpfefdbbaceabgiighpjpc/"
-    ]
+  "name": "gleitzeitkonto_browser_companionapp",
+  "description": "Die CompanionApp, welche das Laden des Gleitzeitkontos ermöglicht.",
+  "path": "./start-companionapp.bat",
+  "type": "stdio",
+  "allowed_origins": ["chrome-extension://almkbljoennpfefdbbaceabgiighpjpc/"]
 }

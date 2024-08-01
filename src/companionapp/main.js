@@ -23,7 +23,7 @@ let unsuccessfulDownloadAttempts = 0; // tracks how often an unsuccessful downlo
  * @param   output  String - to save into the debug file
  * @param   DEBUG   Boolean - prints the output if true
  */
-function printDebug (output, DEBUG) {
+function printDebug(output, DEBUG) {
     if (DEBUG) {
         const fd = fs.openSync('./debug.log', 'a');
         // Save output in file with datetimestring and new line
@@ -40,8 +40,7 @@ function printDebug (output, DEBUG) {
  * @param DEBUG     Boolean - debugging flag, prints status of download when true
  * @returns     Promise<-1, 0, 1, 2, 3, 4> - resolves to the status code of the download
  */
-async function manageDownloadWorkingTimes (DEBUG) {
-
+async function manageDownloadWorkingTimes(DEBUG) {
     // start webscraper if it's not running already, but if this is a reattempt call ignore running flag
     if (!isRunning || unsuccessfulDownloadAttempts > 0) {
         isRunning = true;
@@ -63,12 +62,18 @@ async function manageDownloadWorkingTimes (DEBUG) {
             // when using vpn sometimes the download crashes, try again if attempts not exceeded
             if (unsuccessfulDownloadAttempts < 4) {
                 unsuccessfulDownloadAttempts++;
-                printDebug(`Download Request failed #${unsuccessfulDownloadAttempts} times. Trying again.`, DEBUG);
+                printDebug(
+                    `Download Request failed #${unsuccessfulDownloadAttempts} times. Trying again.`,
+                    DEBUG,
+                );
                 return await manageDownloadWorkingTimes(DEBUG);
             } else {
-                printDebug(`Download Request failed #${unsuccessfulDownloadAttempts} times. Cancelling.`, DEBUG);
+                printDebug(
+                    `Download Request failed #${unsuccessfulDownloadAttempts} times. Cancelling.`,
+                    DEBUG,
+                );
                 unsuccessfulDownloadAttempts = 0; // reset unsuccessful attempts
-                lastDownloadStatusCode = "4";
+                lastDownloadStatusCode = '4';
                 isRunning = false;
                 isRunningEmitter.emit('stoppedRunning');
                 return lastDownloadStatusCode;
@@ -77,7 +82,7 @@ async function manageDownloadWorkingTimes (DEBUG) {
     } else {
         return '-1'; // statusCode for download is still running
     }
-};
+}
 
 /**
  * Helper function to wait until the currently running download has finished.
@@ -85,13 +90,12 @@ async function manageDownloadWorkingTimes (DEBUG) {
  * be returned.
  * @returns     Promise<String> - resolves once the last download has finished to the statuscode of that download
  */
-async function waitForDownload () {
+async function waitForDownload() {
     if (!isRunning) return String(lastDownloadStatusCode); // no need to wait, it already finished
 
-    await new Promise(resolve => isRunningEmitter.once('stoppedRunning', resolve));
+    await new Promise((resolve) => isRunningEmitter.once('stoppedRunning', resolve));
     return String(lastDownloadStatusCode);
-};
-
+}
 
 // ===== Gleitzeitkonto-API Setup =====
 
@@ -102,8 +106,14 @@ process.on('uncaughtException', (err) => {
 });
 
 // "%AppData%/Gleitzeitkonto-Browser" Path or similar for other plattforms
-const downloadPath = path.join(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + '/.local/share'),
-                    'Gleitzeitkonto-Browser', 'gleitzeitkonto-api');
+const downloadPath = path.join(
+    process.env.APPDATA ||
+        (process.platform == 'darwin'
+            ? process.env.HOME + '/Library/Preferences'
+            : process.env.HOME + '/.local/share'),
+    'Gleitzeitkonto-Browser',
+    'gleitzeitkonto-api',
+);
 
 if (!fs.existsSync(downloadPath)) fs.mkdirSync(downloadPath, { recursive: true }); // creates folder if not existant, including parent folders
 
@@ -114,22 +124,21 @@ const gzk = new GleitzeitkontoAPI(
     'working_times.csv',
     path.join(downloadPath, 'gleitzeitconfig.json'),
     require('./url.json'),
-    false // do not print to console, since this causes issues when using native messaging
+    false, // do not print to console, since this causes issues when using native messaging
 );
-
 
 // ===== Companion App Messaging =====
 /**
- * Takes care of incoming messages from the extension. Depending on the received message 
- * gleitzeitkonto-api calls are made or variables are checked. According responses are sent back to 
+ * Takes care of incoming messages from the extension. Depending on the received message
+ * gleitzeitkonto-api calls are made or variables are checked. According responses are sent back to
  * the extension. When parsing the incoming message capitalization is ignored.
  * Accepted commands are one of: ['downloadworkingtimes', 'calculatefromworkingtimes', 'waitfordownload',
  * 'version']
- * 
+ *
  * @param incomingMessage Object - holding the received command from the extension in the form of:
  * { command: "commandName" }
  */
-function messageHandler (incomingMessage) {
+function messageHandler(incomingMessage) {
     // act according to the received command in the message
     const command = incomingMessage?.command.toLowerCase();
     printDebug(`Received command from extension: "${command}"`, DEBUG);
@@ -156,7 +165,7 @@ function messageHandler (incomingMessage) {
             break;
 
         default:
-            printDebug(`Received command is invalid."`, DEBUG);
-            sendMessage({ command: command, response: { error: "Ungültiger Befehl."} }); // unknown command
+            printDebug('Received command is invalid."', DEBUG);
+            sendMessage({ command: command, response: { error: 'Ungültiger Befehl.' } }); // unknown command
     }
 }

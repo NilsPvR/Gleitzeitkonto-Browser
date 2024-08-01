@@ -1,13 +1,52 @@
 {
+  "manifest_version": 2,
+  "name": "Gleitzeitkonto-Browser",
+  "version": "3.0.0",
 
-    "manifest_version": 2,
-    "name": "Gleitzeitkonto-Browser",
-    "version": "3.0.0",
-  
-    "description": "Browser Erweiterung für Chromium und Firefox, welche erlaubt die Überstunden bzw. ein Gleitzeitkonto direkt in der Fiori-Zeiterfassung oder in der Erweiterung einzusehen.",
-    "homepage_url": "https://github.com/NilsPvR/Gleitzeitkonto-Browser",
-  
-    "icons": {
+  "description": "Browser Erweiterung für Chromium und Firefox, welche erlaubt die Überstunden bzw. ein Gleitzeitkonto direkt in der Fiori-Zeiterfassung oder in der Erweiterung einzusehen.",
+  "homepage_url": "https://github.com/NilsPvR/Gleitzeitkonto-Browser",
+
+  "icons": {
+    "48": "assets/gleitzeitkonto-icon48.png",
+    "64": "assets/gleitzeitkonto-icon64.png",
+    "96": "assets/gleitzeitkonto-icon96.png",
+    "128": "assets/gleitzeitkonto-icon128.png",
+    "256": "assets/gleitzeitkonto-icon256.png",
+    "512": "assets/gleitzeitkonto-icon512.png"
+  },
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{43dd30a9-9e9f-4499-90f6-590bd1ac2034}"
+    }
+  },
+
+  "background": {
+    "scripts": ["backgroundscript/background-messaging.js"]
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://*.ondemand.com/*", "https://bgp.btcsap.btc-ag.com/*"],
+      "js": ["contentscript/gleitzeitkonto-browser.js"]
+    }
+  ],
+
+  "web_accessible_resources": [
+    "assets/refresh-light.svg",
+    "assets/refresh-dark.svg",
+    "gleitzeitkonto-browser.css"
+  ],
+
+  "permissions": [
+    "nativeMessaging",
+    "https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest",
+    "https://bgp.btcsap.btc-ag.com/sap/opu/odata/sap/HCM_TIMESHEET_MAN_SRV/$batch",
+    "https://*.ondemand.com/sap/opu/odata/sap/HCM_TIMESHEET_MAN_SRV/$batch"
+  ],
+
+  "browser_action": {
+    "default_icon": {
       "48": "assets/gleitzeitkonto-icon48.png",
       "64": "assets/gleitzeitkonto-icon64.png",
       "96": "assets/gleitzeitkonto-icon96.png",
@@ -15,49 +54,8 @@
       "256": "assets/gleitzeitkonto-icon256.png",
       "512": "assets/gleitzeitkonto-icon512.png"
     },
-
-    "browser_specific_settings": {
-      "gecko": {
-        "id": "{43dd30a9-9e9f-4499-90f6-590bd1ac2034}"
-      }
-    },
-  
-    "background": {
-      "scripts": ["backgroundscript/background-messaging.js"]
-    },
-
-    "content_scripts": [
-      {
-        "matches": ["https://*.ondemand.com/*", "https://bgp.btcsap.btc-ag.com/*"],
-        "js": ["contentscript/gleitzeitkonto-browser.js"]
-
-      }
-    ],
-
-    "web_accessible_resources": [
-      "assets/refresh-light.svg", "assets/refresh-dark.svg", "gleitzeitkonto-browser.css"
-    ],
-
-    "permissions": [
-      "nativeMessaging", 
-      "https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest",
-      "https://bgp.btcsap.btc-ag.com/sap/opu/odata/sap/HCM_TIMESHEET_MAN_SRV/$batch",
-      "https://*.ondemand.com/sap/opu/odata/sap/HCM_TIMESHEET_MAN_SRV/$batch"
-    ],
-
-    "browser_action": {
-      "default_icon": {
-        "48": "assets/gleitzeitkonto-icon48.png",
-        "64": "assets/gleitzeitkonto-icon64.png",
-        "96": "assets/gleitzeitkonto-icon96.png",
-        "128": "assets/gleitzeitkonto-icon128.png",
-        "256": "assets/gleitzeitkonto-icon256.png",
-        "512": "assets/gleitzeitkonto-icon512.png"
-      },
-      "default_title": "Gleitzeitkonto-Browser",
-      "default_popup": "popup/gleitzeitkonto-browser.html",
-      "browser_style": true
-    }
-  
+    "default_title": "Gleitzeitkonto-Browser",
+    "default_popup": "popup/gleitzeitkonto-browser.html",
+    "browser_style": true
   }
-  
+}

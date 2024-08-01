@@ -1,4 +1,5 @@
-:root { /* btc colors */
+:root {
+    /* btc colors */
     --primaer-dunkelblau: #003869;
     --primaer-mittelblau: #5aa6e7;
     --primaer-gelb: #fbd200;
@@ -7,7 +8,7 @@
     --sekundaer-2: #0078be;
     --sekundaer-3: #9ccaf1;
     --sekundaer-4: #cee4f8;
-  }
+}
 
 @keyframes refreshRotate {
     from {
@@ -66,7 +67,7 @@
 }
 
 .gleitzeitkonto-light {
-    color: var(--primaer-dunkelblau); 
+    color: var(--primaer-dunkelblau);
 }
 
 .gleitzeitkonto-dark {
