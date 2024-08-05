@@ -9,8 +9,8 @@
     "publishProject": "npm run publishExtension && npm run publishCompanionApp",
     "publishExtension": "node build/publish-extension.js && npm run combineBrowserJS && npm run sass-prod && node build/publish-extension-fix-manifests.js && npm run zipChromium && npm run zipFirefox",
     "publishCompanionApp": "node build/publish-companionapp.js && npm run combineCompanionAppJS && npm run zipCompanionApp",
-    "combineCompanionAppJS": "esbuild src/companionapp/main.js --bundle --minify --platform=node --external:puppeteer --outfile=compressed/companionapp/main.js",
-    "combineBrowserJS": "esbuild src/extension/contentscript/gleitzeitkonto-browser.js --bundle --minify --outfile=compressed/extension/contentscript/gleitzeitkonto-browser.js && esbuild src/extension/backgroundscript/background-messaging.js --bundle --minify --outfile=compressed/extension/backgroundscript/background-messaging.js",
+    "combineCompanionAppJS": "tsc -noEmit && esbuild src/companionapp/main.js --bundle --minify --platform=node --external:puppeteer --outfile=compressed/companionapp/main.js",
+    "combineBrowserJS": "tsc -noEmit && esbuild src/extension/contentscript/gleitzeitkonto-browser.js --bundle --minify --outfile=compressed/extension/contentscript/gleitzeitkonto-browser.js && esbuild src/extension/backgroundscript/background-messaging.js --bundle --minify --outfile=compressed/extension/backgroundscript/background-messaging.js",
     "compressBrowserJS": "esbuild src/extension/popup/popup-script.js --minify --outfile=compressed/extension/popup/popup-script.js",
     "zipChromium": "zip-build ./compressed/extension-chromium ./compressed/gleitzeitkonto-browser-zip --interactive --template NICHT-Herunterladen-win-x64-chromium.zip --subDir Chrome-Edge(Chromium) --override true",
     "zipFirefox": "zip-build ./compressed/extension ./compressed/gleitzeitkonto-browser-zip --interactive --template NICHT-Herunterladen-win-x64-firefox.zip --override true",
@@ -37,6 +37,7 @@
     "globals": "^15.8.0",
     "prettier": "3.3.3",
     "sass": "^1.77.8",
+    "typescript": "^5.5.4",
     "webextension-polyfill": "^0.12.0",
     "zip-build": "^1.8.0"
   },
