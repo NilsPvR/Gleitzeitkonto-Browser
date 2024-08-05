@@ -5,7 +5,7 @@ const Common = require('./common.js');
 module.exports = class Floating {
     // ========== floating display ==========
 
-    addFloatingDisplay(pDisplayText, loading) {
+    static addFloatingDisplay(pDisplayText, loading) {
         const HTMLElements = Common.getInnerHTMLElements(pDisplayText, loading, false);
         const canvas = document.getElementById('shellLayout') ?? document.getElementById('canvas'); // main page element is the (almost) only one loaded when DOM is loaded
 
@@ -23,12 +23,12 @@ module.exports = class Floating {
         );
     }
 
-    getFloatingDisplay() {
+    static getFloatingDisplay() {
         return document.getElementById(constStrings.floatingDisplayID);
     }
 
     // remove the display
-    removeFloatingDisplay() {
+    static removeFloatingDisplay() {
         const oldDisplay = this.getFloatingDisplay();
         if (oldDisplay) oldDisplay.remove(); // delete the old display
     }

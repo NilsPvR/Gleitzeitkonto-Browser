@@ -10,7 +10,7 @@ module.exports = class Common {
      * @param content       HTMLElement | String - The nodes or strings to be placed inside of the element
      * @returns     HTMLElement | String - the composed HTMLElement with given attributes and content
      */
-    createRichElement(tagName, attributes, ...content) {
+    static createRichElement(tagName, attributes, ...content) {
         let element = document.createElement(tagName);
         if (attributes) {
             for (const [attr, value] of Object.entries(attributes)) {
@@ -24,7 +24,7 @@ module.exports = class Common {
     }
 
     // different styling for loading and inserted bools
-    getInnerHTMLElements(pDisplayText, loading, inserted) {
+    static getInnerHTMLElements(pDisplayText, loading, inserted) {
         const refreshImage = this.createRichElement('img', {
             id: constStrings.refreshIconID,
             src: this.getRefreshIconURL(),
@@ -52,7 +52,7 @@ module.exports = class Common {
     }
 
     // weather the user has set their page to light or dark mode
-    getLightingMode() {
+    static getLightingMode() {
         const header =
             document.getElementById(givenStrings.headerID) ??
             document.getElementsByTagName('body')[0];
@@ -76,7 +76,7 @@ module.exports = class Common {
     }
 
     // returns the URL for the refresh icon based on the current lightingMode
-    getRefreshIconURL() {
+    static getRefreshIconURL() {
         if (this.getLightingMode() == 'gleitzeitkonto-light')
             return browser.runtime.getURL('./assets/refresh-light.svg');
         else return browser.runtime.getURL('./assets/refresh-dark.svg');

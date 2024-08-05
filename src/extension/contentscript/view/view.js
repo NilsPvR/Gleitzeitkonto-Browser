@@ -4,7 +4,7 @@ module.exports = class View {
     // ========= Changes on Gleitzeitkonto-Display ========
     // ====================================================
 
-    startLoading() {
+    static startLoading() {
         const currentDisplay =
             document.getElementById(constStrings.insertedDisplayID) ??
             document.getElementById(constStrings.floatingDisplayID); // get the display;
@@ -17,7 +17,7 @@ module.exports = class View {
         if (refreshButton) refreshButton.disabled = true;
     }
 
-    stopLoading() {
+    static stopLoading() {
         const currentDisplay =
             document.getElementById(constStrings.insertedDisplayID) ??
             document.getElementById(constStrings.floatingDisplayID); // get the display
@@ -32,7 +32,7 @@ module.exports = class View {
 
     // updates the loading state once and updates display with the displayFormat object
     // { text: string, loading: boolean }
-    updateDisplay(displayFormat) {
+    static updateDisplay(displayFormat) {
         if (displayFormat.text) {
             this.updateDisplayText(displayFormat.text);
             if (displayFormat.loading) this.startLoading();
@@ -40,7 +40,7 @@ module.exports = class View {
         }
     }
 
-    async updateDisplayText(possiblePromiseDisplayText) {
+    static async updateDisplayText(possiblePromiseDisplayText) {
         const displayText = await possiblePromiseDisplayText;
         const display = document.getElementsByClassName('gleitzeit-display-line');
 

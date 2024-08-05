@@ -15,7 +15,7 @@ module.exports = class Communication {
      * 'calculatefromworkingtimes', 'waitfordownload', 'version']
      * @returns     Promise<Object | String> - resolves to a object or string with the response for the command
      */
-    async sendMsgToBackgroundS(command) {
+    static async sendMsgToBackgroundS(command) {
         return new Promise((resolve) => {
             if (!this.portToBackground) {
                 this.portToBackground = browser.runtime.connect(); // buid connection if not already established
@@ -47,7 +47,7 @@ module.exports = class Communication {
      * { error: { message: "errorMessage", statusCode?: INT } }
      * StatusCodes are  1 - 4 and based on gleitzeitkonto-api.downloadWorkingTimes()
      */
-    async getDownloadKontoData() {
+    static async getDownloadKontoData() {
         globalFlags.downloadFinished = false;
 
         let response = await this.sendMsgToBackgroundS(givenStrings.downloadCommand);
@@ -80,7 +80,7 @@ module.exports = class Communication {
     // 0 version not outdated or couldn't check
     // 1 browser extension outdated
     // 2 companionapp outdated
-    async checkVersionOutdated() {
+    static async checkVersionOutdated() {
         globalFlags.versionCheckFinished = false;
         const localBrowserVersion = browser.runtime.getManifest().version;
 

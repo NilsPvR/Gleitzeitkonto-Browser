@@ -11,7 +11,7 @@ module.exports = class Communication {
      * { kontoString: "string"} or { error: { message: "errorMessage" } }
      * @returns     String - the formatted string derived from the given kontoData object
      */
-    formatDisplayText(kontoData) {
+    static formatDisplayText(kontoData) {
         if (kontoData?.error?.message)
             return constStrings.prefixError + kontoData.error.message; // Error occured
         if (!kontoData || !kontoData.kontoString)
@@ -26,7 +26,7 @@ module.exports = class Communication {
     // using the global flags the function detemines the latest data which can be shown in the display
     // returns { text: string, laoding: boolean }
     // promiseOutdatedIndex is optional
-    async getLatestDisplayFormat(
+    static async getLatestDisplayFormat(
         promiseCalcKontoData,
         promiseDownloadKontoData,
         promiseOutdatedIndex,

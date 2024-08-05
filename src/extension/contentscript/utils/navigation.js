@@ -8,7 +8,7 @@ module.exports = class Navigation {
 
     // promise resolves with headerbar html object when page 'fully' loaded
     // promise rejects with error message when page couldn't load after timeout
-    async waitForPageLoad() {
+    static async waitForPageLoad() {
         return new Promise((resolve, reject) => {
             let loops = 0; // track how often checkPageLoaded ran
 
@@ -35,7 +35,7 @@ module.exports = class Navigation {
      * by checking the hash or the url (the part after #)
      * @returns     Boolean - true if the user in on "Meine Zeiterfassung" page
      */
-    checkCorrectMenuIsOpen() {
+    static checkCorrectMenuIsOpen() {
         if (window.location.hash.startsWith(givenStrings.gleitzeitHash)) {
             return true;
         }
@@ -47,7 +47,7 @@ module.exports = class Navigation {
      * resolve with no data once the site is opened.
      * @returns     Promise<> - resolves once the "Meine Zeiterfassung" page is opened
      */
-    async continuousMenucheck() {
+    static async continuousMenucheck() {
         if (this.checkCorrectMenuIsOpen()) {
             return true;
         }

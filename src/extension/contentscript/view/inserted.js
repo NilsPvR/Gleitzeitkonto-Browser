@@ -6,7 +6,7 @@ const Common = require('./common.js');
 module.exports = class Inserted {
     // ========== inserted display ==========
 
-    addInsertedDisplay(pHeaderBar, pDisplayText, loading) {
+    static addInsertedDisplay(pHeaderBar, pDisplayText, loading) {
         this.removeFloatingDisplay();
 
         const HTMLElements = Common.getInnerHTMLElements(pDisplayText, loading, true);
@@ -28,11 +28,11 @@ module.exports = class Inserted {
         });
     }
 
-    getInsertedDisplay() {
+    static getInsertedDisplay() {
         return document.getElementById(constStrings.insertedDisplayID);
     }
 
-    removeInsertedDisplay() {
+    static removeInsertedDisplay() {
         const previousInsertedDisplay = this.getInsertedDisplay();
         if (previousInsertedDisplay) {
             previousInsertedDisplay.remove();
