@@ -1,6 +1,9 @@
 const browser = require('webextension-polyfill');
-const GleitzeitkontoBrowser = require('./gleitzeitkonto-browser-func'); // load script
-const time = new GleitzeitkontoBrowser();
+const { constStrings, givenStrings, globalFlags } = require('./utils/constants.js');
+const View = require('./utils/view.js');
+const Communication = require('./utils/communication.js')
+const Navigation = require('./utils/navigation.js');
+const Data = require('./utils/format.js');
 
 (async () => {
     'use strict';
@@ -8,10 +11,10 @@ const time = new GleitzeitkontoBrowser();
     /* ==========================================================================================
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Main Events <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
-    if (!document.getElementById(time.constStrings.cssID)) {
+    if (!document.getElementById(constStrings.cssID)) {
         // if not already added
         const link = document.createElement('link');
-        link.id = time.constStrings.cssID;
+        link.id = constStrings.cssID;
         link.rel = 'stylesheet';
         link.type = 'text/css';
         link.media = 'all';
@@ -20,33 +23,33 @@ const time = new GleitzeitkontoBrowser();
     }
 
     // ===== start sending all requests =====
-    time.globalFlags.calculateFromCachedFinished = false;
-    const promiseCalcKontoData = time.sendMsgToBackgroundS(time.givenStrings.calcaulteCommand);
-    promiseCalcKontoData.then(() => (time.globalFlags.calculateFromCachedFinished = true));
+    globalFlags.calculateFromCachedFinished = false;
+    const promiseCalcKontoData = Communication.sendMsgToBackgroundS(givenStrings.calcaulteCommand);
+    promiseCalcKontoData.then(() => (globalFlags.calculateFromCachedFinished = true));
 
-    const promiseDownloadKontoData = time.getDownloadKontoData(); // preload display to save time
-    const promiseOutdatedIndex = time.checkVersionOutdated(); // preload version
+    const promiseDownloadKontoData = Communication.getDownloadKontoData(); // preload display to save time
+    const promiseOutdatedIndex = Communication.checkVersionOutdated(); // preload version
 
     // ===== Wait for correct page to be opened =====
-    await time.continuousMenucheck();
+    await Navigation.continuousMenucheck();
 
     // ===== Add floating display =====
     if (document.readyState === 'interactive' || document.readyState === 'complete') {
-        time.addFloatingDisplay(
-            time.constStrings.prefixOvertime + time.constStrings.overtimeLoading,
+        View.addFloatingDisplay(
+            constStrings.prefixOvertime + constStrings.overtimeLoading,
             true,
         );
-    } else if (config.siteVersion == 'external') {
+    } else if (Navigation.getPageVariant() == 'external') {
         window.addEventListener('DOMContentLoaded', () => {
-            time.addFloatingDisplay(
-                time.constStrings.prefixOvertime + time.constStrings.overtimeLoading,
+            View.addFloatingDisplay(
+                constStrings.prefixOvertime + constStrings.overtimeLoading,
                 true,
             );
         });
     }
     // register button click for reload
-    document.getElementById(time.constStrings.buttonID).addEventListener('click', () => {
-        time.reloadGleitzeitKonto();
+    document.getElementById(constStrings.buttonID).addEventListener('click', () => {
+        reloadGleitzeitKonto();
     });
 
     // ===== Proof of Concept Fetching API directly =====
@@ -95,8 +98,8 @@ X-Requested-With: XMLHttpRequest
     // ===== Register actions for promises resolving =====
     // update the display as soon as new data is available
     promiseCalcKontoData.then(async () =>
-        time.updateDisplay(
-            await time.getLatestDisplayFormat(
+        View.updateDisplay(
+            await Data.getLatestDisplayFormat(
                 promiseCalcKontoData,
                 promiseDownloadKontoData,
                 promiseOutdatedIndex,
@@ -104,8 +107,8 @@ X-Requested-With: XMLHttpRequest
         ),
     );
     promiseDownloadKontoData.then(async () =>
-        time.updateDisplay(
-            await time.getLatestDisplayFormat(
+        View.updateDisplay(
+            await Data.getLatestDisplayFormat(
                 promiseCalcKontoData,
                 promiseDownloadKontoData,
                 promiseOutdatedIndex,
@@ -113,8 +116,8 @@ X-Requested-With: XMLHttpRequest
         ),
     );
     promiseOutdatedIndex.then(async () =>
-        time.updateDisplay(
-            await time.getLatestDisplayFormat(
+        View.updateDisplay(
+            await Data.getLatestDisplayFormat(
                 promiseCalcKontoData,
                 promiseDownloadKontoData,
                 promiseOutdatedIndex,
@@ -123,16 +126,90 @@ X-Requested-With: XMLHttpRequest
     );
 
     try {
-        const headerBar = await time.waitForPageLoad();
+        const headerBar = await Navigation.waitForPageLoad();
 
-        time.updateInsertedDisplayOnChange(
+        updateInsertedDisplayOnChange(
             headerBar,
             promiseCalcKontoData,
             promiseDownloadKontoData,
             promiseOutdatedIndex,
         );
     } catch (e) {
-        time.removeFloatingDisplay(); // TODO show error in popup
+        View.removeFloatingDisplay(); // TODO show error in popup
         console.error(e);
     }
 })();
+
+
+// ============ Main action taking functions =============
+// =======================================================
+
+// Update the display continuously for as long as the script is loaded
+// It is asumed that the page has already loaded completely
+async function updateInsertedDisplayOnChange(
+    pHeaderBar,
+    promiseCalcKontoData,
+    promiseDownloadKontoData,
+    promiseOutdatedIndex,
+) {
+    const placeOrRemoveInsertedDisplay = async () => {
+        // When correct page is open and the display doesn't already exist
+        if (Navigation.checkCorrectMenuIsOpen() && !View.getInsertedDisplay()) {
+            const latestDisplayFormat = await Data.getLatestDisplayFormat(
+                promiseCalcKontoData,
+                promiseDownloadKontoData,
+                promiseOutdatedIndex,
+            );
+            View.addInsertedDisplay(
+                pHeaderBar,
+                latestDisplayFormat.text,
+                latestDisplayFormat.loading,
+            );
+        } else if (!Navigation.checkCorrectMenuIsOpen()) {
+            // This will also be removed by Fiori but keep remove just in case this behaviour gets changed
+            View.removeInsertedDisplay();
+        }
+    };
+
+    window.addEventListener('hashchange', async () => {
+        await placeOrRemoveInsertedDisplay();
+    });
+
+    // Check if the HeaderBar is being manipulated -> Fiori does sometimes remove the inserted display
+    const observer = new MutationObserver(async () => {
+        await placeOrRemoveInsertedDisplay();
+    });
+
+    // add the display to make sure the observer can actually observe something and the display isn't already removed
+    await placeOrRemoveInsertedDisplay();
+
+    observer.observe(pHeaderBar, {
+        // config
+        attrtibutes: false,
+        childList: true,
+        subtree: true,
+    });
+}
+
+// called from the reload btn, recalculates the Gleitzeitkontos
+function reloadGleitzeitKonto() {
+    View.startLoading(); // start loading immediately
+
+    // == Start new requests ==
+    globalFlags.calculateFromCachedFinished = false;
+    const promiseCalcKontoData = Communication.sendMsgToBackgroundS(givenStrings.calcaulteCommand);
+    promiseCalcKontoData.then(() => (globalFlags.calculateFromCachedFinished = true));
+    const promiseDownloadKontoData = Communication.getDownloadKontoData();
+
+    // == Register actions for promises resolving ==
+    promiseCalcKontoData.then(async () =>
+        View.updateDisplay(
+            await Data.getLatestDisplayFormat(promiseCalcKontoData, promiseDownloadKontoData),
+        ),
+    );
+    promiseDownloadKontoData.then(async () =>
+        View.updateDisplay(
+            await Data.getLatestDisplayFormat(promiseCalcKontoData, promiseDownloadKontoData),
+        ),
+    );
+}
