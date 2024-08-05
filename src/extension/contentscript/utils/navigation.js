@@ -1,4 +1,4 @@
-const url = require('./url.json');
+const url = require('../url.json');
 const { config, constStrings, givenStrings } = require('./constants.js');
 
 module.exports = class Navigation {
