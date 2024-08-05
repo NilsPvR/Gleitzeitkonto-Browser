@@ -4,7 +4,7 @@ const { extname } = require('path');
 
 (async function () {
     try {
-        const filterFunc = (src, dest) => {
+        const filterFunc = (src) => {
             return extname(src) != '.js' && extname(src) != '.scss' && extname(src) != '.env'; // exclude js and scss files since these will be created by other npm scripts
         };
         await copy('./src/extension', './compressed/extension', { filter: filterFunc }); // copies directory with subdirectories

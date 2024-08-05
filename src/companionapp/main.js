@@ -58,7 +58,7 @@ async function manageDownloadWorkingTimes(DEBUG) {
             isRunningEmitter.emit('stoppedRunning');
 
             return String(statusCode);
-        } catch (err) {
+        } catch {
             // when using vpn sometimes the download crashes, try again if attempts not exceeded
             if (unsuccessfulDownloadAttempts < 4) {
                 unsuccessfulDownloadAttempts++;
