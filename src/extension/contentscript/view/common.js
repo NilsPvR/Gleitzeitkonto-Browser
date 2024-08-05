@@ -1,7 +1,6 @@
 const browser = require('webextension-polyfill');
 const { constStrings, givenStrings } = require('../utils/constants.js');
 
-
 module.exports = class Common {
     /**
      * Creates a new HTML Element with the specified attributes and the content placed inside
@@ -81,5 +80,4 @@ module.exports = class Common {
             return browser.runtime.getURL('./assets/refresh-light.svg');
         else return browser.runtime.getURL('./assets/refresh-dark.svg');
     }
-
-}
+};

@@ -48,6 +48,4 @@ module.exports = class View {
             display.item(0).replaceChildren(displayText);
         }
     }
-
-   
-}
+};

@@ -2,7 +2,6 @@ const url = require('./url.json');
 const { config, constStrings, givenStrings } = require('./constants.js');
 
 module.exports = class Navigation {
-
     // ========== Checking and waiting for correct page ===========
     // ============================================================
 
@@ -68,10 +67,9 @@ module.exports = class Navigation {
         // Check if extern or intern Fiori website, since these have different amounts of icons
         if (window.location.origin == url) {
             // Internal Fiori
-            return 'internal'
+            return 'internal';
         } else {
-            return 'external'
+            return 'external';
         }
-
     }
-}
+};

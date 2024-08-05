@@ -32,4 +32,4 @@ module.exports = class Floating {
         const oldDisplay = this.getFloatingDisplay();
         if (oldDisplay) oldDisplay.remove(); // delete the old display
     }
-}
+};

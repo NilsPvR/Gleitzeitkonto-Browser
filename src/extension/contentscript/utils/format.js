@@ -12,15 +12,15 @@ module.exports = class Communication {
      * @returns     String - the formatted string derived from the given kontoData object
      */
     static formatDisplayText(kontoData) {
-        if (kontoData?.error?.message)
+        if (kontoData?.error?.message) {
             return constStrings.prefixError + kontoData.error.message; // Error occured
-        if (!kontoData || !kontoData.kontoString)
-            return (
-                constStrings.prefixError +
-                constStrings.errorMsgs.keineDatenVonCompanionApp
-            );
-        // No Data
-        else return constStrings.prefixOvertime + kontoData.kontoString;
+        }
+        if (!kontoData || !kontoData.kontoString) {
+            return constStrings.prefixError + constStrings.errorMsgs.keineDatenVonCompanionApp;
+        } else {
+            // No Data
+            return constStrings.prefixOvertime + kontoData.kontoString;
+        }
     }
 
     // using the global flags the function detemines the latest data which can be shown in the display
@@ -35,16 +35,12 @@ module.exports = class Communication {
             // version outdated has highest priority
             if ((await promiseOutdatedIndex) == 1) {
                 return {
-                    text:
-                        constStrings.prefixError +
-                        constStrings.errorMsgs.extensionOutdated,
+                    text: constStrings.prefixError + constStrings.errorMsgs.extensionOutdated,
                     loading: false,
                 };
             } else if ((await promiseOutdatedIndex) == 2) {
                 return {
-                    text:
-                        constStrings.prefixError +
-                        constStrings.errorMsgs.companionAppOutdated,
+                    text: constStrings.prefixError + constStrings.errorMsgs.companionAppOutdated,
                     loading: false,
                 };
             }
@@ -62,4 +58,4 @@ module.exports = class Communication {
             loading: true,
         };
     }
-}
+};

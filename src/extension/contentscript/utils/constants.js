@@ -1,6 +1,4 @@
-
 module.exports = class Constants {
-
     static config = {
         primaryColors: {
             dunkelblau: '#003869',
@@ -13,7 +11,8 @@ module.exports = class Constants {
             grey: '#222222',
         },
         maxPageloadingLoops: 120, // 2 minutes
-        internal: { // config for the internal page
+        internal: {
+            // config for the internal page
             sideDistance: '11rem', // css margin from the right for floating display
         },
         external: {
@@ -53,8 +52,7 @@ module.exports = class Constants {
         calcaulteCommand: 'calculateFromWorkingTimes',
         waitForDownlodCommand: 'waitfordownload',
         versionCommand: 'version',
-        githubAPIURL:
-            'https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest',
+        githubAPIURL: 'https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest',
     };
 
     static globalFlags = {
@@ -62,4 +60,4 @@ module.exports = class Constants {
         downloadFinished: false,
         versionCheckFinished: false,
     };
-}
+};

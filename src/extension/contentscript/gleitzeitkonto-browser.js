@@ -3,7 +3,7 @@ const { constStrings, givenStrings, globalFlags } = require('./utils/constants.j
 const View = require('./view/view.js');
 const Floating = require('./view/floating.js');
 const Inserted = require('./view/inserted.js');
-const Communication = require('./utils/communication.js')
+const Communication = require('./utils/communication.js');
 const Navigation = require('./utils/navigation.js');
 const Data = require('./utils/format.js');
 
@@ -141,7 +141,6 @@ X-Requested-With: XMLHttpRequest
         console.error(e);
     }
 })();
-
 
 // ============ Main action taking functions =============
 // =======================================================

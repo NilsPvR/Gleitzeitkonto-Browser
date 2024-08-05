@@ -84,9 +84,7 @@ module.exports = class Communication {
         globalFlags.versionCheckFinished = false;
         const localBrowserVersion = browser.runtime.getManifest().version;
 
-        let localCompanionAppVersion = await this.sendMsgToBackgroundS(
-            givenStrings.versionCommand,
-        ); // get version obj
+        let localCompanionAppVersion = await this.sendMsgToBackgroundS(givenStrings.versionCommand); // get version obj
         if (localCompanionAppVersion?.version) {
             localCompanionAppVersion = localCompanionAppVersion.version; // get version string out of object
         }
@@ -136,4 +134,4 @@ module.exports = class Communication {
         globalFlags.versionCheckFinished = true;
         return 0;
     }
-}
+};

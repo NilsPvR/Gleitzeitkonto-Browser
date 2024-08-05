@@ -38,4 +38,4 @@ module.exports = class Inserted {
             previousInsertedDisplay.remove();
         }
     }
-}
+};
