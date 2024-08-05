@@ -1,4 +1,3 @@
-const browser = require('webextension-polyfill');
 const { constStrings, givenStrings, globalFlags } = require('./utils/constants.js');
 const View = require('./view/view.js');
 const Floating = require('./view/floating.js');
@@ -13,16 +12,7 @@ const Data = require('./utils/format.js');
     /* ==========================================================================================
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Main Events <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
-    if (!document.getElementById(constStrings.cssID)) {
-        // if not already added
-        const link = document.createElement('link');
-        link.id = constStrings.cssID;
-        link.rel = 'stylesheet';
-        link.type = 'text/css';
-        link.media = 'all';
-        link.href = browser.runtime.getURL('./gleitzeitkonto-browser.css');
-        document.head.appendChild(link);
-    }
+    View.addCustomCSS('./gleitzeitkonto-browser.css');
 
     // ===== start sending all requests =====
     globalFlags.calculateFromCachedFinished = false;

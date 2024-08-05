@@ -1,6 +1,21 @@
-const { constStrings } = require('./constants.js');
+const browser = require('webextension-polyfill');
+const { constStrings } = require('../utils/constants.js');
 
 module.exports = class View {
+    static addCustomCSS(cssURL) {
+        if (!document.getElementById(constStrings.cssID)) {
+            // if not already added
+            const link = document.createElement('link');
+            link.id = constStrings.cssID;
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.media = 'all';
+            link.href = browser.runtime.getURL(cssURL);
+
+            document.head.appendChild(link);
+        }
+    }
+
     // ========= Changes on Gleitzeitkonto-Display ========
     // ====================================================
 
