@@ -1,6 +1,8 @@
 const browser = require('webextension-polyfill');
 const { constStrings, givenStrings, globalFlags } = require('./utils/constants.js');
-const View = require('./utils/view.js');
+const View = require('./view/view.js');
+const Floating = require('./view/floating.js');
+const Inserted = require('./view/inserted.js');
 const Communication = require('./utils/communication.js')
 const Navigation = require('./utils/navigation.js');
 const Data = require('./utils/format.js');
@@ -35,13 +37,13 @@ const Data = require('./utils/format.js');
 
     // ===== Add floating display =====
     if (document.readyState === 'interactive' || document.readyState === 'complete') {
-        View.addFloatingDisplay(
+        Floating.addFloatingDisplay(
             constStrings.prefixOvertime + constStrings.overtimeLoading,
             true,
         );
     } else if (Navigation.getPageVariant() == 'external') {
         window.addEventListener('DOMContentLoaded', () => {
-            View.addFloatingDisplay(
+            Floating.addFloatingDisplay(
                 constStrings.prefixOvertime + constStrings.overtimeLoading,
                 true,
             );
@@ -135,7 +137,7 @@ X-Requested-With: XMLHttpRequest
             promiseOutdatedIndex,
         );
     } catch (e) {
-        View.removeFloatingDisplay(); // TODO show error in popup
+        Floating.removeFloatingDisplay(); // TODO show error in popup
         console.error(e);
     }
 })();
@@ -154,20 +156,20 @@ async function updateInsertedDisplayOnChange(
 ) {
     const placeOrRemoveInsertedDisplay = async () => {
         // When correct page is open and the display doesn't already exist
-        if (Navigation.checkCorrectMenuIsOpen() && !View.getInsertedDisplay()) {
+        if (Navigation.checkCorrectMenuIsOpen() && !Floating.getInsertedDisplay()) {
             const latestDisplayFormat = await Data.getLatestDisplayFormat(
                 promiseCalcKontoData,
                 promiseDownloadKontoData,
                 promiseOutdatedIndex,
             );
-            View.addInsertedDisplay(
+            Inserted.addInsertedDisplay(
                 pHeaderBar,
                 latestDisplayFormat.text,
                 latestDisplayFormat.loading,
             );
         } else if (!Navigation.checkCorrectMenuIsOpen()) {
             // This will also be removed by Fiori but keep remove just in case this behaviour gets changed
-            View.removeInsertedDisplay();
+            Inserted.removeInsertedDisplay();
         }
     };
 
