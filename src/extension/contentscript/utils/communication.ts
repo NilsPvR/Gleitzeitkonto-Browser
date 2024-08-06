@@ -1,7 +1,7 @@
 import * as browser from 'webextension-polyfill';
 import { Runtime } from 'webextension-polyfill';
 import { BackgroundCommand } from '../../common/enums/command';
-import { givenStrings, globalFlags } from './constants.js';
+import { givenStrings, globalFlags } from './constants';
 
 export default class Communication {
     // =========== Communication with backend ===========
