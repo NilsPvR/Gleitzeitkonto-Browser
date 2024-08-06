@@ -77,12 +77,12 @@ export default class Navigation {
     /**
      * Check if exteral or internal Fiori website, since these have different styling.
      */
-    public getPageVariant(): SiteVariant {
+    public static getPageVariant(): SiteVariant {
         if (window.location.origin == url) {
             // internal Fiori
-            return SiteVariant.internal;
+            return SiteVariant.Internal;
         } else {
-            return SiteVariant.external;
+            return SiteVariant.External;
         }
     }
 }
