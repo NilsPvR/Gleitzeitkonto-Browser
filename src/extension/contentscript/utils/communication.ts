@@ -3,7 +3,7 @@ import { Runtime } from 'webextension-polyfill';
 import { BackgroundCommand } from '../../common/enums/command';
 import { givenStrings, globalFlags } from './constants.js';
 
-export class Communication {
+export default class Communication {
     // =========== Communication with backend ===========
     // ==================================================
 

@@ -2,7 +2,7 @@ import { AccountData, ErrorData } from '../types/accountData';
 import { DisplayFormat } from '../types/display';
 import { constStrings, globalFlags } from './constants';
 
-export class Communication {
+export default class Communication {
     // =============== Data formatting ==================
     // ==================================================
 

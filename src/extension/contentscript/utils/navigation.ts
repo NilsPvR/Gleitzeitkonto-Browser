@@ -2,7 +2,7 @@ import url from '../url.json';
 import { SiteVariant } from '../enums/siteVariant';
 import { constStrings, givenStrings } from './constants';
 
-export class Navigation {
+export default class Navigation {
     // ========== Checking and waiting for correct page ===========
     // ============================================================
 
