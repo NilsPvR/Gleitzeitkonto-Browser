@@ -7,7 +7,7 @@ export class Navigation {
     // ============================================================
 
     /**
-     * Waits and checks multiple times untill the page has fully loaded. This is determined by specific
+     * Waits and checks multiple times until the page has fully loaded. This is determined by specific
      * DOM Elements being present.
      * @param timeout   time in ms between each check, will be limited to min. 1 000 when tab is not focused
      *                  (default: `1 000`)
@@ -15,7 +15,7 @@ export class Navigation {
      * @returns         the found HTMLElement on the page which indicates the page loaded,
      *                  rejects with error message if the maxChecks is exceeded
      */
-    static async waitForPageLoad(
+    public static async waitForPageLoad(
         timeout: number = 1000,
         maxChecks: number = 120,
     ): Promise<HTMLElement> {
@@ -45,7 +45,7 @@ export class Navigation {
      * by checking the hash or the url (the part after #).
      * @returns    true if the user in on "Meine Zeiterfassung" page
      */
-    static checkCorrectMenuIsOpen(): boolean {
+    public static checkCorrectMenuIsOpen(): boolean {
         if (window.location.hash.startsWith(givenStrings.gleitzeitHash)) {
             return true;
         }
@@ -57,7 +57,7 @@ export class Navigation {
      * resolve with no data once the site is opened.
      * @returns    true once the "Meine Zeiterfassung" page is opened
      */
-    static async continuousMenucheck(): Promise<boolean> {
+    public static async continuousMenucheck(): Promise<boolean> {
         if (this.checkCorrectMenuIsOpen()) {
             return true;
         }
@@ -77,7 +77,7 @@ export class Navigation {
     /**
      * Check if exteral or internal Fiori website, since these have different styling.
      */
-    getPageVariant(): SiteVariant {
+    public getPageVariant(): SiteVariant {
         if (window.location.origin == url) {
             // internal Fiori
             return SiteVariant.internal;
