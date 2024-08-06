@@ -1,6 +1,5 @@
 import { AccountData, ErrorData } from '../types/accountData';
 import { DisplayFormat } from '../types/display';
-import { OutdatedIndicator } from '../enums/versionCheck';
 import { constStrings, globalFlags } from './constants';
 
 export class Communication {
@@ -30,29 +29,19 @@ export class Communication {
      * This can be a loading placeholder if no data is available.
      * @param calcAccountData     the data from a local calculate
      * @param downloadAccountData the data from a newly fetched download
-     * @param outdatedIndicator   the indicator if some part is outdated
+     * @param outdated            true if extension is outdated
      */
     public static async getLatestDisplayFormat(
         calcAccountData: Promise<AccountData | ErrorData | Object>,
         downloadAccountData: Promise<AccountData | ErrorData | Object>,
-        outdatedIndicator: Promise<OutdatedIndicator>,
+        outdated: Promise<boolean>,
     ): Promise<DisplayFormat> {
-        if (
-            globalFlags.versionCheckFinished &&
-            (await outdatedIndicator) != OutdatedIndicator.UpToDate
-        ) {
+        if (globalFlags.versionCheckFinished && (await outdated)) {
             // version outdated has highest priority
-            if ((await outdatedIndicator) == OutdatedIndicator.ExtensionOutdated) {
-                return {
-                    text: constStrings.prefixError + constStrings.errorMsgs.extensionOutdated,
-                    loading: false,
-                };
-            } else if ((await outdatedIndicator) == OutdatedIndicator.CompanionAppOutdated) {
-                return {
-                    text: constStrings.prefixError + constStrings.errorMsgs.companionAppOutdated,
-                    loading: false,
-                };
-            }
+            return {
+                text: constStrings.prefixError + constStrings.errorMsgs.companionAppOutdated,
+                loading: false,
+            };
         }
         if (globalFlags.downloadFinished) {
             // download availability has higher priority than calculate
