@@ -3,7 +3,7 @@
   "exclude": ["node_modules", "src/companionapp/gleitzeitkonto-api"],
   "compilerOptions": {
     "target": "es2023",
-    "module": "commonjs",
+    "module": "preserve",
     "esModuleInterop": true,
     "isolatedModules": true,
     "strict": true,
