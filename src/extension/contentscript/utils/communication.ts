@@ -39,6 +39,55 @@ export class Communication {
         });
     }
 
+    // TODO use constants module, allow custom time, better body formatting
+    public static async downloadWorkingTimes(): Promise<void> {
+        // ===== Proof of Concept Fetching API directly =====
+        const urlPath = '/sap/opu/odata/sap/HCM_TIMESHEET_MAN_SRV/$batch?sap-client=300';
+        const csrfResponse = await fetch(
+            new Request(window.location.origin + urlPath, {
+                method: 'HEAD',
+                credentials: 'include',
+                headers: {
+                    'x-csrf-token': 'Fetch',
+                },
+            }),
+        );
+        const possibleCsrfToken = csrfResponse.headers.get('x-csrf-token');
+        let csrfToken: string;
+        if (possibleCsrfToken) csrfToken = possibleCsrfToken;
+        else return;
+
+        const result = await fetch(
+            new Request(window.location.origin + urlPath, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    Accept: '*/*',
+                    'Accept-Encoding': 'gzip, deflate, br, zstd',
+                    'x-csrf-token': csrfToken,
+                    Priority: 'u=4',
+                    Pragma: 'no-cache',
+                    'Cache-Control': 'no-cache',
+                    'Content-Type': 'multipart/mixed;boundary=batch',
+                },
+                body: `--batch
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+GET TimeDataList?sap-client=300&$filter=StartDate%20eq%20%2720240729%27%20and%20EndDate%20eq%20%2720240731%27 HTTP/1.1
+Accept: application/json
+X-CSRF-Token: ${csrfToken}
+DataServiceVersion: 2.0
+MaxDataServiceVersion: 2.0
+X-Requested-With: XMLHttpRequest
+
+
+--batch--`,
+            }),
+        );
+        console.log(result);
+    }
+
     /**
      * Contacts the Github API to check if there are newer versions online. The version is compared to
      * the browser extension version.
