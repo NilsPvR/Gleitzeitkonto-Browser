@@ -44,7 +44,6 @@ const Data = require('./utils/format.js');
         reloadGleitzeitKonto();
     });
 
-
     // ===== Register actions for promises resolving =====
     // update the display as soon as new data is available
     promiseCalcKontoData.then(async () =>

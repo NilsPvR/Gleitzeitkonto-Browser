@@ -114,7 +114,7 @@ X-Requested-With: XMLHttpRequest
         if (typeof onlineVersion != 'string' || !localBrowserVersion) {
             globalFlags.versionCheckFinished = true;
             return false;
-        } 
+        }
 
         // compare strings to compare version numbers
         const resultBrowser = localBrowserVersion.localeCompare(onlineVersion, undefined, {
@@ -131,4 +131,4 @@ X-Requested-With: XMLHttpRequest
         globalFlags.versionCheckFinished = true;
         return false;
     }
-};
+}
