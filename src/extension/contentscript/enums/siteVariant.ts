@@ -1,4 +1,4 @@
 export enum SiteVariant {
-    internal,
-    external,
+    Internal,
+    External,
 }
