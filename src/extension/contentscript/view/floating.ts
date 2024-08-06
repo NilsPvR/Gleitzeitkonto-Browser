@@ -1,20 +1,21 @@
-const { constStrings } = require('../utils/constants.js');
-const Navigation = require('../utils/navigation.js');
-const Common = require('./common.js');
+import { constStrings } from '../utils/constants';
+import Navigation from '../utils/navigation';
+import Common from './common.js';
 
-module.exports = class Floating {
+export default class Floating {
     // ========== floating display ==========
 
-    static addFloatingDisplay(pDisplayText, loading) {
+    public static addFloatingDisplay(pDisplayText: string, loading: false): void {
         const HTMLElements = Common.getInnerHTMLElements(pDisplayText, loading, false);
         const canvas = document.getElementById('shellLayout') ?? document.getElementById('canvas'); // main page element is the (almost) only one loaded when DOM is loaded
+        if (!canvas) return; // unable to insert floating display, when canvas not available
 
         canvas.insertAdjacentElement(
             'beforebegin',
             Common.createRichElement(
                 'div',
                 {
-                    class: `floating-display ${Navigation.getPageVariant()} ${Common.getLightingMode()}`,
+                    class: `floating-display ${Navigation.getPageVariant().toString().toLowerCase()} ${Common.getLightingMode()}`,
                     id: constStrings.floatingDisplayID,
                     style: loading ? ' opacity: 0.5;' : '',
                 },
@@ -23,13 +24,12 @@ module.exports = class Floating {
         );
     }
 
-    static getFloatingDisplay() {
+    public static getFloatingDisplay(): HTMLElement | null {
         return document.getElementById(constStrings.floatingDisplayID);
     }
 
-    // remove the display
-    static removeFloatingDisplay() {
+    public static removeFloatingDisplay(): void {
         const oldDisplay = this.getFloatingDisplay();
         if (oldDisplay) oldDisplay.remove(); // delete the old display
     }
-};
+}

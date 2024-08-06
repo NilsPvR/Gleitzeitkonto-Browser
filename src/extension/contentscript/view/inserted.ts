@@ -1,13 +1,18 @@
-const { constStrings } = require('../utils/constants.js');
-const { reloadGleitzeitKonto } = require('../gleitzeitkonto-browser.js');
-const Navigation = require('../utils/navigation.js');
-const Common = require('./common.js');
+import { constStrings } from '../utils/constants';
+import { reloadGleitzeitKonto } from '../gleitzeitkonto-browser';
+import Navigation from '../utils/navigation';
+import Common from './common';
+import Floating from './floating';
 
-module.exports = class Inserted {
+export default class Inserted {
     // ========== inserted display ==========
 
-    static addInsertedDisplay(pHeaderBar, pDisplayText, loading) {
-        this.removeFloatingDisplay();
+    public static addInsertedDisplay(
+        pHeaderBar: HTMLElement,
+        pDisplayText: string,
+        loading: boolean,
+    ): void {
+        Floating.removeFloatingDisplay();
 
         const HTMLElements = Common.getInnerHTMLElements(pDisplayText, loading, true);
 
@@ -15,7 +20,7 @@ module.exports = class Inserted {
             Common.createRichElement(
                 'div',
                 {
-                    class: `inserted-display ${Navigation.getPageVariant()} ${Common.getLightingMode()}`,
+                    class: `inserted-display ${Navigation.getPageVariant().toString().toLowerCase()} ${Common.getLightingMode()}`,
                     id: constStrings.insertedDisplayID,
                     style: loading ? ' opacity: 0.5;' : '',
                 },
@@ -23,19 +28,21 @@ module.exports = class Inserted {
             ),
         );
         // readd reload event listener
-        document.getElementById(constStrings.refreshIconID).addEventListener('click', () => {
+        const refreshIcon = document.getElementById(constStrings.refreshIconID);
+        if (!refreshIcon) return; // unable to add event listener
+        refreshIcon.addEventListener('click', () => {
             reloadGleitzeitKonto();
         });
     }
 
-    static getInsertedDisplay() {
+    public static getInsertedDisplay(): HTMLElement | null {
         return document.getElementById(constStrings.insertedDisplayID);
     }
 
-    static removeInsertedDisplay() {
+    public static removeInsertedDisplay(): void {
         const previousInsertedDisplay = this.getInsertedDisplay();
         if (previousInsertedDisplay) {
             previousInsertedDisplay.remove();
         }
     }
-};
+}
