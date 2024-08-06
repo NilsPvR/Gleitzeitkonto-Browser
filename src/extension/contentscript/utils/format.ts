@@ -1,7 +1,7 @@
-import { AccountData, ErrorData } from '../types/accountData.js';
-import { DisplayFormat } from '../types/display.js';
-import { OutdatedIndicator } from '../enums/versionCheck.js';
-import { constStrings, globalFlags } from './constants.js';
+import { AccountData, ErrorData } from '../types/accountData';
+import { DisplayFormat } from '../types/display';
+import { OutdatedIndicator } from '../enums/versionCheck';
+import { constStrings, globalFlags } from './constants';
 
 export class Communication {
     // =============== Data formatting ==================
