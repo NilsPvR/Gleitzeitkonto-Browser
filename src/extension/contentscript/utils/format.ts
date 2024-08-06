@@ -1,44 +1,53 @@
-const { constStrings, globalFlags } = require('./constants.js');
+import { AccountData, ErrorData } from '../types/accountData.js';
+import { DisplayFormat } from '../types/display.js';
+import { OutdatedIndicator } from '../enums/versionCheck.js';
+import { constStrings, globalFlags } from './constants.js';
 
-module.exports = class Communication {
+export class Communication {
     // =============== Data formatting ==================
     // ==================================================
 
     /**
-     * Format the given kontoData object to a string which can be displayed. The object is expected to have either kontoData
+     * Format the given accountData object to a string which can be displayed. The object is expected to have either accountData
      * or an error message however if neither of those is available a custom error string will be returned.
-     * @param kontoData     Object - holding the kontostring or an error message, expected to have a form of:
-     * { kontoString: "string"} or { error: { message: "errorMessage" } }
-     * @returns     String - the formatted string derived from the given kontoData object
+     * @param accountData   the object which contains the accountString or error messages
+     * @returns the formatted string derived from the given accountData object
      */
-    static formatDisplayText(kontoData) {
-        if (kontoData?.error?.message) {
-            return constStrings.prefixError + kontoData.error.message; // Error occured
+    public static formatDisplayText(accountData: AccountData | ErrorData | Object): string {
+        if ('error' in accountData && 'message' in accountData.error) {
+            return constStrings.prefixError + accountData.error.message; // error occured
         }
-        if (!kontoData || !kontoData.kontoString) {
+        if (!accountData || !('accountString' in accountData)) {
+            // No Data
             return constStrings.prefixError + constStrings.errorMsgs.keineDatenVonCompanionApp;
         } else {
-            // No Data
-            return constStrings.prefixOvertime + kontoData.kontoString;
+            return constStrings.prefixOvertime + accountData.accountString;
         }
     }
 
-    // using the global flags the function detemines the latest data which can be shown in the display
-    // returns { text: string, laoding: boolean }
-    // promiseOutdatedIndex is optional
-    static async getLatestDisplayFormat(
-        promiseCalcKontoData,
-        promiseDownloadKontoData,
-        promiseOutdatedIndex,
-    ) {
-        if (globalFlags.versionCheckFinished && (await promiseOutdatedIndex) != 0) {
+    /**
+     * Using the global flags the method determines the latest data which can be show in the display.
+     * This can be a loading placeholder if no data is available.
+     * @param calcAccountData     the data from a local calculate
+     * @param downloadAccountData the data from a newly fetched download
+     * @param outdatedIndicator   the indicator if some part is outdated
+     */
+    public static async getLatestDisplayFormat(
+        calcAccountData: Promise<AccountData | ErrorData | Object>,
+        downloadAccountData: Promise<AccountData | ErrorData | Object>,
+        outdatedIndicator: Promise<OutdatedIndicator>,
+    ): Promise<DisplayFormat> {
+        if (
+            globalFlags.versionCheckFinished &&
+            (await outdatedIndicator) != OutdatedIndicator.UpToDate
+        ) {
             // version outdated has highest priority
-            if ((await promiseOutdatedIndex) == 1) {
+            if ((await outdatedIndicator) == OutdatedIndicator.ExtensionOutdated) {
                 return {
                     text: constStrings.prefixError + constStrings.errorMsgs.extensionOutdated,
                     loading: false,
                 };
-            } else if ((await promiseOutdatedIndex) == 2) {
+            } else if ((await outdatedIndicator) == OutdatedIndicator.CompanionAppOutdated) {
                 return {
                     text: constStrings.prefixError + constStrings.errorMsgs.companionAppOutdated,
                     loading: false,
@@ -47,10 +56,16 @@ module.exports = class Communication {
         }
         if (globalFlags.downloadFinished) {
             // download availability has higher priority than calculate
-            return { text: this.formatDisplayText(await promiseDownloadKontoData), loading: false };
+            return {
+                text: this.formatDisplayText(await downloadAccountData),
+                loading: false,
+            };
         }
         if (globalFlags.calculateFromCachedFinished) {
-            return { text: this.formatDisplayText(await promiseCalcKontoData), loading: true };
+            return {
+                text: this.formatDisplayText(await calcAccountData),
+                loading: true,
+            };
         }
         // no data to show
         return {
@@ -58,4 +73,4 @@ module.exports = class Communication {
             loading: true,
         };
     }
-};
+}
