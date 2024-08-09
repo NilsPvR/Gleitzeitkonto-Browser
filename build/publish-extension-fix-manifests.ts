@@ -12,7 +12,10 @@ import { copy } from 'fs-extra';
             './compressed/extension-chromium/manifest.json',
         );
 
-        console.log('Successfully adjusted manifest files and manifest file names.');
+        console.log(
+            '\x1b[32m%s\x1b[0m',
+            'Successfully adjusted manifest files and manifest file names.',
+        );
     } catch (e) {
         console.error(e);
     }
