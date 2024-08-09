@@ -1,4 +1,4 @@
-export enum SiteVariant {
+export enum PageVariant {
     Internal,
     External,
 }

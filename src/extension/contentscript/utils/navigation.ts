@@ -1,5 +1,5 @@
 import url from '../url.json';
-import { SiteVariant } from '../enums/siteVariant';
+import { PageVariant } from '../enums/pageVariant';
 import { constStrings, givenStrings } from './constants';
 
 export default class Navigation {
@@ -77,12 +77,12 @@ export default class Navigation {
     /**
      * Check if exteral or internal Fiori website, since these have different styling.
      */
-    public static getPageVariant(): SiteVariant {
+    public static getPageVariant(): PageVariant {
         if (window.location.origin == url) {
             // internal Fiori
-            return SiteVariant.Internal;
+            return PageVariant.Internal;
         } else {
-            return SiteVariant.External;
+            return PageVariant.External;
         }
     }
 }
