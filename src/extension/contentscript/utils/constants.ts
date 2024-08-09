@@ -53,9 +53,3 @@ export const givenStrings = {
     versionCommand: 'version',
     githubAPIURL: 'https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest',
 };
-
-export const globalFlags = {
-    calculateFromCachedFinished: false,
-    downloadFinished: false,
-    versionCheckFinished: false,
-};

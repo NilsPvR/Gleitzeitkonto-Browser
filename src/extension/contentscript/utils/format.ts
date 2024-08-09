@@ -1,6 +1,7 @@
+import State from '../model/state';
 import { AccountData, ErrorData } from '../types/accountData';
 import { DisplayFormat } from '../types/display';
-import { constStrings, globalFlags } from './constants';
+import { constStrings } from './constants';
 
 export default class Communication {
     // =============== Data formatting ==================
@@ -25,32 +26,25 @@ export default class Communication {
     }
 
     /**
-     * Using the global flags the method determines the latest data which can be show in the display.
+     * Using the provided state the method determines the latest data which can be show in the display.
      * This can be a loading placeholder if no data is available.
-     * @param calcAccountData     the data from a local calculate
-     * @param downloadAccountData the data from a newly fetched download
+     * @param calcAccountData     the data from a calculate
      * @param outdated            true if extension is outdated
+     * @param state               the current state of information
      */
     public static async getLatestDisplayFormat(
         calcAccountData: Promise<AccountData | ErrorData | Object>,
-        downloadAccountData: Promise<AccountData | ErrorData | Object>,
         outdated: Promise<boolean>,
+        state: State,
     ): Promise<DisplayFormat> {
-        if (globalFlags.versionCheckFinished && (await outdated)) {
+        if (state.versionCheckFinished && (await outdated)) {
             // version outdated has highest priority
             return {
                 text: constStrings.prefixError + constStrings.errorMsgs.companionAppOutdated,
                 loading: false,
             };
         }
-        if (globalFlags.downloadFinished) {
-            // download availability has higher priority than calculate
-            return {
-                text: this.formatDisplayText(await downloadAccountData),
-                loading: false,
-            };
-        }
-        if (globalFlags.calculateFromCachedFinished) {
+        if (state.calculateFinished) {
             return {
                 text: this.formatDisplayText(await calcAccountData),
                 loading: true,
