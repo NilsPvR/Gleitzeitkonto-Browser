@@ -17,7 +17,10 @@ export default class Communication {
      * @param content    the content to send to the background script
      * @returns string with the response for the command
      */
-    public static async sendMsgToBackground(command: BackgroundCommand, content: string): Promise<string> {
+    public static async sendMsgToBackground(
+        command: BackgroundCommand,
+        content: string,
+    ): Promise<string> {
         return new Promise((resolve) => {
             if (this.portToBackground == undefined) {
                 this.portToBackground = browser.runtime.connect(); // buid connection if not already established
@@ -92,11 +95,9 @@ X-Requested-With: XMLHttpRequest
     /**
      * Contacts the Github API to check if there are newer versions online. The version is compared to
      * the browser extension version.
-     * @param state    the state to set wheather the version check finished or not
      * @returns true if the extension is outdated
      */
-    public static async checkVersionOutdated(state: State): Promise<boolean> {
-        state.versionCheckFinished = false;
+    public static async checkVersionOutdated(): Promise<boolean> {
         const localBrowserVersion = browser.runtime.getManifest().version;
 
         let onlineVersion;
@@ -105,7 +106,6 @@ X-Requested-With: XMLHttpRequest
             onlineVersion = await onlineVersion.json();
         } catch (e) {
             console.log(e);
-            state.versionCheckFinished = true;
             return false; // don't compare versions since online version not available
         }
         if (onlineVersion?.tag_name) {
@@ -114,7 +114,6 @@ X-Requested-With: XMLHttpRequest
 
         // one of the versions is not available
         if (typeof onlineVersion != 'string' || !localBrowserVersion) {
-            state.versionCheckFinished = true;
             return false;
         }
 
@@ -126,11 +125,9 @@ X-Requested-With: XMLHttpRequest
 
         if (resultBrowser == -1) {
             // browser extension version is outdated
-            state.versionCheckFinished = true;
             return true;
         }
 
-        state.versionCheckFinished = true;
         return false;
     }
 }
