@@ -30,7 +30,7 @@
   "web_accessible_resources": [
     "assets/refresh-light.svg",
     "assets/refresh-dark.svg",
-    "gleitzeitkonto-browser.css"
+    "contentscript/gleitzeitkonto-browser.css"
   ],
 
   "permissions": [

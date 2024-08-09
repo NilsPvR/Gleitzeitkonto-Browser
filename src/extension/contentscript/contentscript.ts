@@ -16,7 +16,7 @@ import { AccountData, ErrorData } from './types/accountData';
     /* ==========================================================================================
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Main Events <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
-    View.addCustomCSS('./gleitzeitkonto-browser.css');
+    View.addCustomCSS('./contentscript/gleitzeitkonto-browser.css');
 
     // ===== Start sending all requests =====
     const state = new State();
