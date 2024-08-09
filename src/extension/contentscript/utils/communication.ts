@@ -14,7 +14,7 @@ export default class Communication {
      * Depending on the command this will be a string with different content.
      * @param command    the command to send to the background script
      * @param content    the content to send to the background script
-     * @returns string with the response for the command
+     * @returns a response for the command
      */
     public static async sendMsgToBackground(
         command: BackgroundCommand,
@@ -34,8 +34,7 @@ export default class Communication {
             this.portToBackground.onMessage.addListener((response) => {
                 // check if the response is a response for this request
                 if (response?.command === command) {
-                    // resolve as reformated response including any errors or with the reponsecontent at top level
-                    response?.error ? resolve(response) : resolve(response.response);
+                    resolve(response);
                 }
             });
             this.portToBackground.postMessage({ command: command, content: content });
