@@ -10,7 +10,7 @@
     "publish": "npm run transpileBuild && node build/publish-extension.js && npm run combineBrowserJS && npm run sass-prod && node build/publish-extension-fix-manifests.js && npm run zipChromium && npm run zipFirefox",
     "transpileBuild": "tsc --project tsconfig.build.json",
     "combineBrowserJS": "tsc -noEmit && esbuild src/extension/contentscript/contentscript.ts --bundle --minify --outfile=compressed/extension/contentscript/gleitzeitkonto-browser.js && esbuild src/extension/backgroundscript/backgroundscript.ts --bundle --minify --outfile=compressed/extension/backgroundscript/backgroundscript.js",
-    "compressBrowserJS": "esbuild src/extension/popup/popup-script.js --minify --outfile=compressed/extension/popup/popup-script.js",
+    "compressBrowserJS": "esbuild src/extension/popup/popupscript.js --minify --outfile=compressed/extension/popup/popupscript.js",
     "zipChromium": "zip-build ./compressed/extension-chromium ./compressed/gleitzeitkonto-browser-zip --interactive --template NICHT-Herunterladen-win-x64-chromium.zip --subDir Chrome-Edge(Chromium) --override true",
     "zipFirefox": "zip-build ./compressed/extension ./compressed/gleitzeitkonto-browser-zip --interactive --template NICHT-Herunterladen-win-x64-firefox.zip --override true",
     "sass-dev": "sass --watch --update --no-source-map --style=expanded src/extension/popup/gleitzeitkonto-browser.scss:src/extension/popup/gleitzeitkonto-browser.css",
