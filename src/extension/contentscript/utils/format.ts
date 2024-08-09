@@ -47,7 +47,7 @@ export default class Communication {
         if (state.calculateFinished) {
             return {
                 text: this.formatDisplayText(await calcAccountData),
-                loading: true,
+                loading: false,
             };
         }
         // no data to show
