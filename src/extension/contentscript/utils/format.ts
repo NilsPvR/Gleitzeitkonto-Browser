@@ -18,8 +18,8 @@ export default class Communication {
             return constStrings.prefixError + accountData.error.message; // error occured
         }
         if (!accountData || !('accountString' in accountData)) {
-            // No Data
-            return constStrings.prefixError + constStrings.errorMsgs.keineDatenVonCompanionApp;
+            // no Data
+            return constStrings.prefixError + constStrings.errorMsgs.noData;
         } else {
             return constStrings.prefixOvertime + accountData.accountString;
         }
@@ -40,7 +40,7 @@ export default class Communication {
         if (state.versionCheckFinished && (await outdated)) {
             // version outdated has highest priority
             return {
-                text: constStrings.prefixError + constStrings.errorMsgs.companionAppOutdated,
+                text: constStrings.prefixError + constStrings.errorMsgs.extensionOutdated,
                 loading: false,
             };
         }

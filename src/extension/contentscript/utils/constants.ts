@@ -9,14 +9,8 @@ export const config = {
         blue: '#00aab4',
         grey: '#222222',
     },
-    maxPageloadingLoops: 120, // 2 minutes
-    internal: {
-        // config for the internal page
-        sideDistance: '11rem', // css margin from the right for floating display
-    },
-    external: {
-        sideDistance: '9rem',
-    },
+    maxPageloadingLoops: 120, // 1s * 120 = 2 minutes
+    pageloadingTimeout: 1000, // 1 s
 };
 
 export const constStrings = {
@@ -30,15 +24,10 @@ export const constStrings = {
     overtimeLoading: 'Loading...',
     // prettier-ignore
     errorMsgs: {
-        keineDatenVonCompanionApp: 'Keine Daten von der CompanionApp erhalten.',
         pageloadingtimeExceeded: 'Die Seite hat zu lange geladen. Das Gleitzeitkonto kann nicht angezeigt werden.',
-        incorrectPath: 'Falscher Browser-Pfad für die API. Bitte Einstellungen im Popup anpassen.', // code 1
-        notInNetwork: 'Nicht im BTC Netz - Du musst mit LAN oder dem BTC-Office-WLAN verbunden sein.', // code 2
-        tooManyCSV: 'Zu viele CSV-Dateien im Ordner der API. Bitte Dateien manuell löschen.', // code 3
-        unknownAPI: 'Unbekannter Fehler der API.', // code 4
         unknown: 'Unbekannter Fehler.',
+        noData: 'Keine Daten erhalten.',
         extensionOutdated: 'Bitte die Erweiterung aktualisieren!',
-        companionAppOutdated: 'Bitte die CompanionApp aktualisieren!'
     },
 };
 
@@ -47,9 +36,5 @@ export const givenStrings = {
     gleitzeitHash: '#btccatstime-create',
     headerID: 'shell-header',
     headerEndID: 'shell-header-hdr-end',
-    downloadCommand: 'downloadWorkingTimes',
-    calcaulteCommand: 'calculateFromWorkingTimes',
-    waitForDownlodCommand: 'waitfordownload',
-    versionCommand: 'version',
     githubAPIURL: 'https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest',
 };

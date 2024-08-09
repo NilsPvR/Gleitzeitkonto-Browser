@@ -1,4 +1,4 @@
-import { constStrings } from './utils/constants';
+import { config, constStrings } from './utils/constants';
 import View from './view/view';
 import Floating from './view/floating';
 import Inserted from './view/inserted';
@@ -67,7 +67,7 @@ import { AccountData, ErrorData } from './types/accountData';
     });
 
     try {
-        const headerBar = await Navigation.waitForPageLoad();
+        const headerBar = await Navigation.waitForPageLoad(config.pageloadingTimeout, config.maxPageloadingLoops);
 
         updateInsertedDisplayOnChange(headerBar, calculatedData, outdated, state);
     } catch (e) {
