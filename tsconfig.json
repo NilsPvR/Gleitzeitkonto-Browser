@@ -1,6 +1,6 @@
 {
   "include": ["src/**/*", "build/**/*"],
-  "exclude": ["node_modules", "src/companionapp/gleitzeitkonto-api"],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "target": "es2023",
     "module": "preserve",
@@ -11,6 +11,6 @@
     "strictNullChecks": true
   },
   "watchOptions": {
-    "excludeDirectories": ["node_modules", "src/companionapp/gleitzeitkonto-api"]
+    "excludeDirectories": ["node_modules"]
   }
 }

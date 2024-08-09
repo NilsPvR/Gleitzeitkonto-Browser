@@ -6,17 +6,14 @@
   "scripts": {
     "check-format": "prettier --check . && eslint && tsc -noEmit",
     "format": "prettier --write .",
-    "publishProject": "npm run publishExtension && npm run publishCompanionApp",
+    "publish": "npm run publishExtension",
     "publishExtension": "node build/publish-extension.js && npm run combineBrowserJS && npm run sass-prod && node build/publish-extension-fix-manifests.js && npm run zipChromium && npm run zipFirefox",
-    "publishCompanionApp": "node build/publish-companionapp.js && npm run combineCompanionAppJS && npm run zipCompanionApp",
-    "combineCompanionAppJS": "tsc -noEmit && esbuild src/companionapp/main.js --bundle --minify --platform=node --external:puppeteer --outfile=compressed/companionapp/main.js",
     "combineBrowserJS": "tsc -noEmit && esbuild src/extension/contentscript/contentscript.ts --bundle --minify --outfile=compressed/extension/contentscript/gleitzeitkonto-browser.js && esbuild src/extension/backgroundscript/background-messaging.js --bundle --minify --outfile=compressed/extension/backgroundscript/background-messaging.js",
     "compressBrowserJS": "esbuild src/extension/popup/popup-script.js --minify --outfile=compressed/extension/popup/popup-script.js",
     "zipChromium": "zip-build ./compressed/extension-chromium ./compressed/gleitzeitkonto-browser-zip --interactive --template NICHT-Herunterladen-win-x64-chromium.zip --subDir Chrome-Edge(Chromium) --override true",
     "zipFirefox": "zip-build ./compressed/extension ./compressed/gleitzeitkonto-browser-zip --interactive --template NICHT-Herunterladen-win-x64-firefox.zip --override true",
     "sass-dev": "sass --watch --update --no-source-map --style=expanded src/extension/popup/gleitzeitkonto-browser.scss:src/extension/popup/gleitzeitkonto-browser.css",
     "sass-prod": "sass --no-source-map --style=compressed src/extension/popup/gleitzeitkonto-browser.scss:compressed/extension/popup/gleitzeitkonto-browser.css",
-    "zipCompanionApp": "zip-build ./compressed/companionapp ./compressed/gleitzeitkonto-browser-zip --interactive --template NICHT-Herunterladen-win-x64-companionApp.zip --subDir CompanionApp --override true"
   },
   "repository": {
     "type": "git",

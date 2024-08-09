@@ -19,7 +19,6 @@ function connectedToContentScript(port: browser.Runtime.Port) {
         port.disconnect();
     }
 
-    // will only receive messages meant to be sent to companion app
     portFromCS.onMessage.addListener((message) => {
         switch (message?.command) {
             case BackgroundCommand.calculateOvertime:

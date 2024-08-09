@@ -7,7 +7,6 @@ package-lock.json
 
 
 # Secrets
-src/companionapp/url.json
 src/extension/contentscript/url.json
 url.json
 

@@ -9,15 +9,14 @@ export default [
     },
     {
         files: ['src/**/*.js'],
-        ignores: ['src/companionapp/'],
         languageOptions: { globals: globals.browser },
     },
     {
-        files: ['src/companionapp/**/*.js', 'build/**/*.js'],
+        files: ['build/**/*.js'],
         languageOptions: { globals: globals.node },
     },
     {
-        ignores: ['compressed/', 'src/companionapp/gleitzeitkonto-api'],
+        ignores: ['compressed/'],
     },
     pluginJs.configs.recommended,
     eslintConfigPrettier,
