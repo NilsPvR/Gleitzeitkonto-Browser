@@ -1,6 +1,6 @@
 import { constStrings } from '../utils/constants';
 import Navigation from '../utils/navigation';
-import Common from './common.js';
+import Common from './common';
 
 export default class Floating {
     // ========== floating display ==========

@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill';
-import { constStrings } from '../utils/constants.js';
-import { DisplayFormat } from '../types/display.js';
+import { constStrings } from '../utils/constants';
+import { DisplayFormat } from '../types/display';
 
 export default class View {
     public static addCustomCSS(cssURL: string): void {
