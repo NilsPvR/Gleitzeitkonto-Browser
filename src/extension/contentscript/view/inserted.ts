@@ -3,6 +3,7 @@ import { reloadGleitzeitKonto } from '../contentscript';
 import Navigation from '../utils/navigation';
 import Common from './common';
 import Floating from './floating';
+import State from '../model/state';
 
 export default class Inserted {
     // ========== inserted display ==========
@@ -11,6 +12,7 @@ export default class Inserted {
         pHeaderBar: HTMLElement,
         pDisplayText: string,
         loading: boolean,
+        state: State
     ): void {
         Floating.removeFloatingDisplay();
 
@@ -31,7 +33,7 @@ export default class Inserted {
         const refreshIcon = document.getElementById(constStrings.refreshIconID);
         if (!refreshIcon) return; // unable to add event listener
         refreshIcon.addEventListener('click', () => {
-            reloadGleitzeitKonto();
+            reloadGleitzeitKonto(state);
         });
     }
 

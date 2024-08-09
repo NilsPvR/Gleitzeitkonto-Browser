@@ -1,10 +1,14 @@
-const { constStrings, givenStrings, globalFlags } = require('./utils/constants.js');
-const View = require('./view/view.js');
-const Floating = require('./view/floating.js');
-const Inserted = require('./view/inserted.js');
-const Communication = require('./utils/communication.js');
-const Navigation = require('./utils/navigation.js');
-const Data = require('./utils/format.js');
+import { constStrings } from './utils/constants';
+import View from './view/view';
+import Floating from './view/floating';
+import Inserted from './view/inserted';
+import Communication from './utils/communication';
+import Navigation from './utils/navigation';
+import Data from './utils/format';
+import State from './model/state';
+import { BackgroundCommand } from '../common/enums/command';
+import { PageVariant } from './enums/pageVariant';
+import { AccountData, ErrorData } from './types/accountData';
 
 (async () => {
     'use strict';
@@ -14,13 +18,21 @@ const Data = require('./utils/format.js');
 
     View.addCustomCSS('./gleitzeitkonto-browser.css');
 
-    // ===== start sending all requests =====
-    globalFlags.calculateFromCachedFinished = false;
-    const promiseCalcKontoData = Communication.sendMsgToBackgroundS(givenStrings.calcaulteCommand);
-    promiseCalcKontoData.then(() => (globalFlags.calculateFromCachedFinished = true));
+    // ===== Start sending all requests =====
+    const state = new State();
 
-    const promiseDownloadKontoData = Communication.getDownloadKontoData(); // preload display to save time
-    const promiseOutdatedIndex = Communication.checkVersionOutdated(); // preload version
+    let calculatedData = new Promise<Object>(() => {});
+    Communication.downloadWorkingTimes().then((/* data: string */) => {
+        const data = 'TEST DUMMY DATA'; // TODO send actual data
+
+        state.downloadFinished = true;
+        calculatedData = Communication.sendMsgToBackground(
+            BackgroundCommand.calculateOvertime,
+            data,
+        );
+    });
+
+    const outdated = Communication.checkVersionOutdated(); // preload version
 
     // ===== Wait for correct page to be opened =====
     await Navigation.continuousMenucheck();
@@ -31,7 +43,7 @@ const Data = require('./utils/format.js');
             constStrings.prefixOvertime + constStrings.overtimeLoading,
             true,
         );
-    } else if (Navigation.getPageVariant() == 'external') {
+    } else if (Navigation.getPageVariant() == PageVariant.External) {
         window.addEventListener('DOMContentLoaded', () => {
             Floating.addFloatingDisplay(
                 constStrings.prefixOvertime + constStrings.overtimeLoading,
@@ -40,49 +52,28 @@ const Data = require('./utils/format.js');
         });
     }
     // register button click for reload
-    document.getElementById(constStrings.buttonID).addEventListener('click', () => {
-        reloadGleitzeitKonto();
-    });
+    const realodBtn = document.getElementById(constStrings.buttonID);
+    if (realodBtn) {
+        realodBtn.addEventListener('click', () => {
+            reloadGleitzeitKonto(state);
+        });
+    }
 
     // ===== Register actions for promises resolving =====
     // update the display as soon as new data is available
-    promiseCalcKontoData.then(async () =>
-        View.updateDisplay(
-            await Data.getLatestDisplayFormat(
-                promiseCalcKontoData,
-                promiseDownloadKontoData,
-                promiseOutdatedIndex,
-            ),
-        ),
-    );
-    promiseDownloadKontoData.then(async () =>
-        View.updateDisplay(
-            await Data.getLatestDisplayFormat(
-                promiseCalcKontoData,
-                promiseDownloadKontoData,
-                promiseOutdatedIndex,
-            ),
-        ),
-    );
-    promiseOutdatedIndex.then(async () =>
-        View.updateDisplay(
-            await Data.getLatestDisplayFormat(
-                promiseCalcKontoData,
-                promiseDownloadKontoData,
-                promiseOutdatedIndex,
-            ),
-        ),
-    );
+    calculatedData.then(async () => {
+        state.calculateFinished = true;
+        View.updateDisplay(await Data.getLatestDisplayFormat(calculatedData, outdated, state));
+    });
+    outdated.then(async () => {
+        state.versionCheckFinished = true;
+        View.updateDisplay(await Data.getLatestDisplayFormat(calculatedData, outdated, state));
+    });
 
     try {
         const headerBar = await Navigation.waitForPageLoad();
 
-        updateInsertedDisplayOnChange(
-            headerBar,
-            promiseCalcKontoData,
-            promiseDownloadKontoData,
-            promiseOutdatedIndex,
-        );
+        updateInsertedDisplayOnChange(headerBar, calculatedData, outdated, state);
     } catch (e) {
         Floating.removeFloatingDisplay(); // TODO show error in popup
         console.error(e);
@@ -92,29 +83,30 @@ const Data = require('./utils/format.js');
 // ============ Main action taking functions =============
 // =======================================================
 
-// Update the display continuously for as long as the script is loaded
-// It is asumed that the page has already loaded completely
+// update the display continuously for as long as the script is loaded
+// it is assumed that the page has already loaded completely
 async function updateInsertedDisplayOnChange(
-    pHeaderBar,
-    promiseCalcKontoData,
-    promiseDownloadKontoData,
-    promiseOutdatedIndex,
+    headerBar: HTMLElement,
+    calculatedData: Promise<AccountData | ErrorData | Object>,
+    outdated: Promise<boolean>,
+    state: State,
 ) {
     const placeOrRemoveInsertedDisplay = async () => {
-        // When correct page is open and the display doesn't already exist
-        if (Navigation.checkCorrectMenuIsOpen() && !Floating.getInsertedDisplay()) {
+        // when correct page is open and the display doesn't already exist
+        if (Navigation.checkCorrectMenuIsOpen() && !Inserted.getInsertedDisplay()) {
             const latestDisplayFormat = await Data.getLatestDisplayFormat(
-                promiseCalcKontoData,
-                promiseDownloadKontoData,
-                promiseOutdatedIndex,
+                calculatedData,
+                outdated,
+                state,
             );
             Inserted.addInsertedDisplay(
-                pHeaderBar,
+                headerBar,
                 latestDisplayFormat.text,
                 latestDisplayFormat.loading,
+                state
             );
         } else if (!Navigation.checkCorrectMenuIsOpen()) {
-            // This will also be removed by Fiori but keep remove just in case this behaviour gets changed
+            // this will also be removed by Fiori but keep remove just in case this behaviour gets changed
             Inserted.removeInsertedDisplay();
         }
     };
@@ -123,7 +115,7 @@ async function updateInsertedDisplayOnChange(
         await placeOrRemoveInsertedDisplay();
     });
 
-    // Check if the HeaderBar is being manipulated -> Fiori does sometimes remove the inserted display
+    // check if the HeaderBar is being manipulated -> Fiori does sometimes remove the inserted display
     const observer = new MutationObserver(async () => {
         await placeOrRemoveInsertedDisplay();
     });
@@ -131,33 +123,38 @@ async function updateInsertedDisplayOnChange(
     // add the display to make sure the observer can actually observe something and the display isn't already removed
     await placeOrRemoveInsertedDisplay();
 
-    observer.observe(pHeaderBar, {
+    observer.observe(headerBar, {
         // config
-        attrtibutes: false,
+        attributes: false,
         childList: true,
         subtree: true,
     });
 }
 
 // called from the reload btn, recalculates the Gleitzeitkontos
-function reloadGleitzeitKonto() {
+export function reloadGleitzeitKonto(state: State) {
     View.startLoading(); // start loading immediately
 
     // == Start new requests ==
-    globalFlags.calculateFromCachedFinished = false;
-    const promiseCalcKontoData = Communication.sendMsgToBackgroundS(givenStrings.calcaulteCommand);
-    promiseCalcKontoData.then(() => (globalFlags.calculateFromCachedFinished = true));
-    const promiseDownloadKontoData = Communication.getDownloadKontoData();
+    state.downloadFinished = false;
+    state.calculateFinished = false;
 
-    // == Register actions for promises resolving ==
-    promiseCalcKontoData.then(async () =>
+    let calculatedData = new Promise<Object>(() => {});
+    Communication.downloadWorkingTimes().then((/* data: string */) => {
+        const data = 'TEST DUMMY DATA'; // TODO send actual data
+
+        state.downloadFinished = true;
+        calculatedData = Communication.sendMsgToBackground(
+            BackgroundCommand.calculateOvertime,
+            data,
+        );
+    });
+
+    // == Register actions for promise resolving ==
+    calculatedData.then(async () => {
+        state.calculateFinished = true;
         View.updateDisplay(
-            await Data.getLatestDisplayFormat(promiseCalcKontoData, promiseDownloadKontoData),
-        ),
-    );
-    promiseDownloadKontoData.then(async () =>
-        View.updateDisplay(
-            await Data.getLatestDisplayFormat(promiseCalcKontoData, promiseDownloadKontoData),
-        ),
-    );
+            await Data.getLatestDisplayFormat(calculatedData, Promise.resolve(false), state),
+        );
+    });
 }

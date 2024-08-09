@@ -20,7 +20,7 @@ export default class Communication {
     public static async sendMsgToBackground(
         command: BackgroundCommand,
         content: string,
-    ): Promise<string> {
+    ): Promise<Object> {
         return new Promise((resolve) => {
             if (this.portToBackground == undefined) {
                 this.portToBackground = browser.runtime.connect(); // buid connection if not already established
