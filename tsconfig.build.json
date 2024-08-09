@@ -1,0 +1,13 @@
+{
+  "include": ["build/**/*"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "target": "es2023",
+    "module": "preserve",
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true
+  }
+}

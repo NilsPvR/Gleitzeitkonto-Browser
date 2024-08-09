@@ -22,7 +22,7 @@
   },
 
   "background": {
-    "scripts": ["backgroundscript/background-messaging.js"]
+    "scripts": ["backgroundscript/backgroundscript.js"]
   },
 
   "content_scripts": [

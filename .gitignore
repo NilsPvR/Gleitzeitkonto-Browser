@@ -2,8 +2,9 @@
 /node_modules
 package-lock.json
 
-# Project building folder
+# Project building folder and files
 /compressed
+build/*.js
 
 
 # Secrets
