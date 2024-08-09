@@ -135,15 +135,11 @@ export function reloadGleitzeitKonto(state: State) {
     state.downloadFinished = false;
     state.calculateFinished = false;
 
-    let calculatedData = new Promise<Object>(() => {});
-    Communication.downloadWorkingTimes().then((/* data: string */) => {
+    const calculatedData = Communication.downloadWorkingTimes().then(async (/* data: string */) => {
         const data = 'TEST DUMMY DATA'; // TODO send actual data
 
         state.downloadFinished = true;
-        calculatedData = Communication.sendMsgToBackground(
-            BackgroundCommand.calculateOvertime,
-            data,
-        );
+        return await Communication.sendMsgToBackground(BackgroundCommand.calculateOvertime, data);
     });
 
     // == Register actions for promise resolving ==
