@@ -1,8 +1,9 @@
-const browser = require('webextension-polyfill');
-const { constStrings } = require('../utils/constants.js');
+import browser from 'webextension-polyfill';
+import { constStrings } from '../utils/constants.js';
+import { DisplayFormat } from '../types/display.js';
 
-module.exports = class View {
-    static addCustomCSS(cssURL) {
+export default class View {
+    public static addCustomCSS(cssURL: string): void {
         if (!document.getElementById(constStrings.cssID)) {
             // if not already added
             const link = document.createElement('link');
@@ -19,7 +20,7 @@ module.exports = class View {
     // ========= Changes on Gleitzeitkonto-Display ========
     // ====================================================
 
-    static startLoading() {
+    public static startLoading(): void {
         const currentDisplay =
             document.getElementById(constStrings.insertedDisplayID) ??
             document.getElementById(constStrings.floatingDisplayID); // get the display;
@@ -29,10 +30,13 @@ module.exports = class View {
         if (refreshIcon) refreshIcon.style.animationPlayState = 'running';
 
         const refreshButton = document.getElementById(constStrings.buttonID);
-        if (refreshButton) refreshButton.disabled = true;
+        if (refreshButton) {
+            // the only element having that id will be the button so casting is safe
+            (refreshButton as HTMLButtonElement).disabled = true;
+        }
     }
 
-    static stopLoading() {
+    public static stopLoading(): void {
         const currentDisplay =
             document.getElementById(constStrings.insertedDisplayID) ??
             document.getElementById(constStrings.floatingDisplayID); // get the display
@@ -42,25 +46,33 @@ module.exports = class View {
         if (refreshIcon) refreshIcon.style.animationPlayState = 'paused';
 
         const refreshButton = document.getElementById(constStrings.buttonID);
-        if (refreshButton) refreshButton.disabled = false;
+        if (refreshButton) {
+            // the only element having that id will be the button so casting is safe
+            (refreshButton as HTMLButtonElement).disabled = false;
+        }
     }
 
-    // updates the loading state once and updates display with the displayFormat object
-    // { text: string, loading: boolean }
-    static updateDisplay(displayFormat) {
+    /**
+     * Updates the text and loading state of the display.
+     * @param displayFormat text and loading state to update the display with
+     */
+    public static updateDisplay(displayFormat: DisplayFormat): void {
         if (displayFormat.text) {
             this.updateDisplayText(displayFormat.text);
+
             if (displayFormat.loading) this.startLoading();
             else this.stopLoading();
         }
     }
 
-    static async updateDisplayText(possiblePromiseDisplayText) {
-        const displayText = await possiblePromiseDisplayText;
-        const display = document.getElementsByClassName('gleitzeit-display-line');
+    public static async updateDisplayText(displayText: Promise<string> | string): Promise<void> {
+        const text = await displayText;
+        const displayList = document.getElementsByClassName('gleitzeit-display-line');
+        if (!displayList) return;
 
-        if (display?.item(0) && displayText) {
-            display.item(0).replaceChildren(displayText);
+        const display = displayList.item(0);
+        if (display) {
+            display.replaceChildren(text);
         }
     }
-};
+}

@@ -14,7 +14,7 @@ export default class Inserted {
     ): void {
         Floating.removeFloatingDisplay();
 
-        const HTMLElements = Common.getInnerHTMLElements(pDisplayText, loading, true);
+        const HTMLElements = Common.createInnerHTMLElements(pDisplayText, loading, true);
 
         pHeaderBar.prepend(
             Common.createRichElement(
