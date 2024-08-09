@@ -21,15 +21,11 @@ import { AccountData, ErrorData } from './types/accountData';
     // ===== Start sending all requests =====
     const state = new State();
 
-    let calculatedData = new Promise<Object>(() => {});
-    Communication.downloadWorkingTimes().then((/* data: string */) => {
+    const calculatedData = Communication.downloadWorkingTimes().then(async (/* data: string */) => {
         const data = 'TEST DUMMY DATA'; // TODO send actual data
 
         state.downloadFinished = true;
-        calculatedData = Communication.sendMsgToBackground(
-            BackgroundCommand.calculateOvertime,
-            data,
-        );
+        return await Communication.sendMsgToBackground(BackgroundCommand.calculateOvertime, data);
     });
 
     const outdated = Communication.checkVersionOutdated(); // preload version
