@@ -12,7 +12,7 @@ export default class Inserted {
         pHeaderBar: HTMLElement,
         pDisplayText: string,
         loading: boolean,
-        state: State
+        state: State,
     ): void {
         Floating.removeFloatingDisplay();
 

@@ -103,7 +103,7 @@ async function updateInsertedDisplayOnChange(
                 headerBar,
                 latestDisplayFormat.text,
                 latestDisplayFormat.loading,
-                state
+                state,
             );
         } else if (!Navigation.checkCorrectMenuIsOpen()) {
             // this will also be removed by Fiori but keep remove just in case this behaviour gets changed
