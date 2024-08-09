@@ -22,7 +22,9 @@ export default class Inserted {
             Common.createRichElement(
                 'div',
                 {
-                    class: `inserted-display ${Navigation.getPageVariant().toString().toLowerCase()} ${Common.getLightingMode()}`,
+                    class:
+                        `${constStrings.cssClasses.insertedDisplay} ${Navigation.getPageVariant().toString().toLowerCase()} ` +
+                        Common.getLightingClassName(Common.getLightingMode()),
                     id: constStrings.insertedDisplayID,
                     style: loading ? ' opacity: 0.5;' : '',
                 },

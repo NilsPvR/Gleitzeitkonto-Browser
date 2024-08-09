@@ -74,7 +74,7 @@ export default class Common {
         const header =
             document.getElementById(givenStrings.headerID) ??
             document.getElementsByTagName('body')[0];
-        if (!header) return LightingMode['gleitzeitkonto-light']; // default to lightmode if header not available
+        if (!header) return LightingMode.Light; // default to lightmode if header not available
 
         // the rgb value of the header, is normally either white or dark grey/black
         const rgbColor = window.getComputedStyle(header, null).getPropertyValue('background-color');
@@ -89,8 +89,17 @@ export default class Common {
         // luminance calculation according to: https://www.w3.org/TR/WCAG20-TECHS/G17.html#G17-procedure
         const luminance = 0.2126 * colors[0] + 0.7152 * colors[1] + 0.0722 * colors[2];
 
-        if (luminance > 128) return LightingMode['gleitzeitkonto-light'];
-        else return LightingMode['gleitzeitkonto-dark'];
+        if (luminance > 128) return LightingMode.Light;
+        else return LightingMode.Dark;
+    }
+
+    /**
+     * Returns the according CSS class for the given parameter
+     * @param lightingMode    the current lighting mode of the page
+     */
+    public static getLightingClassName(lightingMode: LightingMode): string {
+        if (lightingMode == LightingMode.Light) return constStrings.cssClasses.lightMode;
+        return constStrings.cssClasses.darkMode;
     }
 
     /**
@@ -98,7 +107,7 @@ export default class Common {
      * @returns the URL
      */
     static getRefreshIconURL(): string {
-        if (this.getLightingMode() == LightingMode['gleitzeitkonto-light']) {
+        if (this.getLightingMode() == LightingMode.Light) {
             return browser.runtime.getURL('./assets/refresh-light.svg');
         } else {
             return browser.runtime.getURL('./assets/refresh-dark.svg');

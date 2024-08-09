@@ -15,7 +15,9 @@ export default class Floating {
             Common.createRichElement(
                 'div',
                 {
-                    class: `floating-display ${Navigation.getPageVariant().toString().toLowerCase()} ${Common.getLightingMode()}`,
+                    class:
+                        `${constStrings.cssClasses.floatingDisplay} ${Navigation.getPageVariant().toString().toLowerCase()} ` +
+                        Common.getLightingClassName(Common.getLightingMode()),
                     id: constStrings.floatingDisplayID,
                     style: loading ? ' opacity: 0.5;' : '',
                 },

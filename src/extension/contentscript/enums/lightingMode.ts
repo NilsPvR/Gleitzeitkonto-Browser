@@ -1,4 +1,4 @@
 export enum LightingMode {
-    'gleitzeitkonto-light',
-    'gleitzeitkonto-dark',
+    Light,
+    Dark,
 }

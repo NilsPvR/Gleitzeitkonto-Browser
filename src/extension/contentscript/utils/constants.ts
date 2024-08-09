@@ -29,6 +29,10 @@ export const constStrings = {
         noData: 'Keine Daten erhalten.',
         extensionOutdated: 'Bitte die Erweiterung aktualisieren!',
     },
+    cssClasses: {
+        lightMode: 'gleitzeitkonto-light',
+        darkMode: 'gleitzeitkonto-dark',
+    },
 };
 
 /** Strings defined by external third parties, e.g. Fiori */
