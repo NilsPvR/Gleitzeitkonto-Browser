@@ -5,7 +5,7 @@ import Common from './common';
 export default class Floating {
     // ========== floating display ==========
 
-    public static addFloatingDisplay(pDisplayText: string, loading: false): void {
+    public static addFloatingDisplay(pDisplayText: string, loading = false): void {
         const HTMLElements = Common.createInnerHTMLElements(pDisplayText, loading, false);
         const canvas = document.getElementById('shellLayout') ?? document.getElementById('canvas'); // main page element is the (almost) only one loaded when DOM is loaded
         if (!canvas) return; // unable to insert floating display, when canvas not available
