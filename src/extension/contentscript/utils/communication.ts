@@ -2,7 +2,6 @@ import * as browser from 'webextension-polyfill';
 import { Runtime } from 'webextension-polyfill';
 import { BackgroundCommand } from '../../common/enums/command';
 import { givenStrings } from './constants';
-import State from '../model/state';
 
 export default class Communication {
     // =========== Communication with backend ===========
