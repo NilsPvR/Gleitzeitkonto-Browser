@@ -1,5 +1,5 @@
 import { constStrings } from '../utils/constants';
-import { reloadGleitzeitKonto } from '../gleitzeitkonto-browser';
+import { reloadGleitzeitKonto } from '../contentscript';
 import Navigation from '../utils/navigation';
 import Common from './common';
 import Floating from './floating';
