@@ -11,6 +11,7 @@ export const config = {
     },
     maxPageloadingLoops: 120, // 1s * 120 = 2 minutes
     pageloadingTimeout: 1000, // 1 s
+    loadingOpacity: '0.5',
 };
 
 export const constStrings = {
@@ -32,12 +33,18 @@ export const constStrings = {
     cssClasses: {
         lightMode: 'gleitzeitkonto-light',
         darkMode: 'gleitzeitkonto-dark',
+        displayLine: 'gleitzeit-display-line',
+        insertedDisplay: 'inserted-display',
+        floatingDisplay: 'floating-display',
+        button: 'reset-button reload-button',
     },
 };
 
 /** Strings defined by external third parties, e.g. Fiori */
 export const givenStrings = {
     gleitzeitHash: '#btccatstime-create',
+    mainPageElement1: 'shellLayout',
+    mainPageElement2: 'canvas',
     headerID: 'shell-header',
     headerEndID: 'shell-header-hdr-end',
     githubAPIURL: 'https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest',

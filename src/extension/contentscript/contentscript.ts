@@ -67,7 +67,10 @@ import { AccountData, ErrorData } from './types/accountData';
     });
 
     try {
-        const headerBar = await Navigation.waitForPageLoad(config.pageloadingTimeout, config.maxPageloadingLoops);
+        const headerBar = await Navigation.waitForPageLoad(
+            config.pageloadingTimeout,
+            config.maxPageloadingLoops,
+        );
 
         updateInsertedDisplayOnChange(headerBar, calculatedData, outdated, state);
     } catch (e) {

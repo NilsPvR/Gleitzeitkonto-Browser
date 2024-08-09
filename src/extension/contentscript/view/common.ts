@@ -50,7 +50,7 @@ export default class Common {
             'button',
             {
                 id: constStrings.buttonID,
-                class: 'reset-button reload-button',
+                class: constStrings.cssClasses.button,
                 style: inserted ? 'align-self: center;' : '',
                 disabled: loading ? 'true' : 'false',
             },
@@ -59,7 +59,7 @@ export default class Common {
 
         const headline = this.createRichElement(
             'h3',
-            { class: 'gleitzeit-display-line' },
+            { class: constStrings.cssClasses.displayLine },
             displayText ?? constStrings.errorMsgs.unknown,
         );
 

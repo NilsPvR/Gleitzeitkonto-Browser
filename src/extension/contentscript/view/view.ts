@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import { constStrings } from '../utils/constants';
+import { config, constStrings } from '../utils/constants';
 import { DisplayFormat } from '../types/display';
 
 export default class View {
@@ -24,9 +24,9 @@ export default class View {
         const currentDisplay =
             document.getElementById(constStrings.insertedDisplayID) ??
             document.getElementById(constStrings.floatingDisplayID); // get the display;
-        if (currentDisplay) currentDisplay.style.opacity = '0.5';
+        if (currentDisplay) currentDisplay.style.opacity = config.loadingOpacity;
 
-        const refreshIcon = document.getElementById('refresh-icon');
+        const refreshIcon = document.getElementById(constStrings.refreshIconID);
         if (refreshIcon) refreshIcon.style.animationPlayState = 'running';
 
         const refreshButton = document.getElementById(constStrings.buttonID);
@@ -42,7 +42,7 @@ export default class View {
             document.getElementById(constStrings.floatingDisplayID); // get the display
         if (currentDisplay) currentDisplay.style.opacity = '';
 
-        const refreshIcon = document.getElementById('refresh-icon');
+        const refreshIcon = document.getElementById(constStrings.refreshIconID);
         if (refreshIcon) refreshIcon.style.animationPlayState = 'paused';
 
         const refreshButton = document.getElementById(constStrings.buttonID);
@@ -67,7 +67,7 @@ export default class View {
 
     public static async updateDisplayText(displayText: Promise<string> | string): Promise<void> {
         const text = await displayText;
-        const displayList = document.getElementsByClassName('gleitzeit-display-line');
+        const displayList = document.getElementsByClassName(constStrings.cssClasses.displayLine);
         if (!displayList) return;
 
         const display = displayList.item(0);
