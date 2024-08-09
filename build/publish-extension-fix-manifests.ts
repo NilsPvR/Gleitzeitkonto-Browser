@@ -1,5 +1,5 @@
-const fs = require('fs');
-const { copy } = require('fs-extra');
+import fs from 'fs';
+import { copy } from 'fs-extra';
 
 (async function () {
     try {
