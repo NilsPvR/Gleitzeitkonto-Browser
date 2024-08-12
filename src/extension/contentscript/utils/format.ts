@@ -3,7 +3,7 @@ import { AccountData, ErrorData } from '../types/accountData';
 import { DisplayFormat } from '../types/display';
 import { constStrings } from './constants';
 
-export default class Communication {
+export default class Formater {
     // =============== Data formatting ==================
     // ==================================================
 
@@ -55,5 +55,14 @@ export default class Communication {
             text: constStrings.prefixOvertime + constStrings.overtimeLoading,
             loading: true,
         };
+    }
+
+    /**
+     * Takes the given date an returns the date in the format YYYYMMDD. The method uses UTC time.
+     * @param date    the date to be formatted
+     * @returns the formatted date string
+     */
+    public static formatDateToYYYYMMDD(date: Date): string {
+        return `${date.getUTCFullYear()}${date.getUTCMonth()}${date.getUTCDate()}`;
     }
 }

@@ -2,6 +2,7 @@ import * as browser from 'webextension-polyfill';
 import { Runtime } from 'webextension-polyfill';
 import { BackgroundCommand } from '../../common/enums/command';
 import { givenStrings } from './constants';
+import Formater from './format';
 
 export default class Communication {
     // =========== Communication with backend ===========
@@ -41,12 +42,15 @@ export default class Communication {
         });
     }
 
-    // TODO use constants module, allow custom time, better body formatting
-    public static async downloadWorkingTimes(): Promise<void> {
-        // ===== Proof of Concept Fetching API directly =====
-        const urlPath = '/sap/opu/odata/sap/HCM_TIMESHEET_MAN_SRV/$batch?sap-client=300';
+    /**
+     * Contacts the API to get the current CSRF token. The token can be used to
+     * make future POST requests to the API.
+     * @returns the CSRF token
+     * @throws if the token is not sent by the API
+     */
+    private static async fetchCSRFToken(): Promise<string> {
         const csrfResponse = await fetch(
-            new Request(window.location.origin + urlPath, {
+            new Request(window.location.origin + givenStrings.timesheetURLPath, {
                 method: 'HEAD',
                 credentials: 'include',
                 headers: {
@@ -54,40 +58,65 @@ export default class Communication {
                 },
             }),
         );
-        const possibleCsrfToken = csrfResponse.headers.get('x-csrf-token');
-        let csrfToken: string;
-        if (possibleCsrfToken) csrfToken = possibleCsrfToken;
-        else return;
+        const csrfToken = csrfResponse.headers.get('x-csrf-token');
+        if (csrfToken) return csrfToken;
+
+        throw new Error('Unable to fetch CSRF-Token');
+    }
+
+    /**
+     * Contacts the API to get the working times response string. The given start- and enddate
+     * will be used for the request. The response string will be the data returned by the api. This data
+     * contains the working times but has to be formatted to be able to use them.
+     * @param startDate    the first day to fetch working times for (time is ignored)
+     * @param endDate      the last date to fetch working times for, has to be after `startDate` (time is ignored)
+     * @returns a unformatted response string with the working times
+     * @throws if the endDate is not after the startDate
+     * @throws if communication error with api occurs
+     */
+    public static async fetchWorkingTimes(startDate: Date, endDate: Date): Promise<string> {
+        if (startDate >= endDate || startDate.getDate() >= endDate.getDate()) {
+            throw new Error('End date is not after start date');
+        }
+        const csrfToken = this.fetchCSRFToken();
+
+        const start = Formater.formatDateToYYYYMMDD(startDate);
+        const end = Formater.formatDateToYYYYMMDD(endDate);
+        const requestBody =
+            '--batch\n' +
+            'Content-Type: application/http\n' +
+            'Content-Transfer-Encoding: binary\n' +
+            '\n' +
+            `GET TimeDataList?sap-client=300&$filter=StartDate%20eq%20%27${start}%27%20and%20EndDate%20eq%20%27${end}%27 HTTP/1.1\n` +
+            'Accept: application/json\n' +
+            `X-CSRF-Token: ${await csrfToken}\n` +
+            'DataServiceVersion: 2.0\n' +
+            'MaxDataServiceVersion: 2.0\n' +
+            'X-Requested-With: XMLHttpRequest\n' +
+            '\n\n' +
+            '--batch--';
 
         const result = await fetch(
-            new Request(window.location.origin + urlPath, {
+            new Request(window.location.origin + givenStrings.timesheetURLPath, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
                     Accept: '*/*',
                     'Accept-Encoding': 'gzip, deflate, br, zstd',
-                    'x-csrf-token': csrfToken,
+                    'x-csrf-token': await csrfToken,
                     Priority: 'u=4',
                     Pragma: 'no-cache',
                     'Cache-Control': 'no-cache',
                     'Content-Type': 'multipart/mixed;boundary=batch',
                 },
-                body: `--batch
-Content-Type: application/http
-Content-Transfer-Encoding: binary
-
-GET TimeDataList?sap-client=300&$filter=StartDate%20eq%20%2720240729%27%20and%20EndDate%20eq%20%2720240731%27 HTTP/1.1
-Accept: application/json
-X-CSRF-Token: ${csrfToken}
-DataServiceVersion: 2.0
-MaxDataServiceVersion: 2.0
-X-Requested-With: XMLHttpRequest
-
-
---batch--`,
+                body: requestBody,
             }),
         );
-        console.log(result);
+
+        if (!result.ok) {
+            throw new Error('Unexpected API response! Received status code: ' + result.status);
+        }
+        return result.text();
     }
 
     /**

@@ -21,12 +21,7 @@ import { AccountData, ErrorData } from './types/accountData';
     // ===== Start sending all requests =====
     const state = new State();
 
-    const calculatedData = Communication.downloadWorkingTimes().then(async (/* data: string */) => {
-        const data = 'TEST DUMMY DATA'; // TODO send actual data
-
-        state.downloadFinished = true;
-        return await Communication.sendMsgToBackground(BackgroundCommand.calculateOvertime, data);
-    });
+    const calculatedData = fetchGleitzeitKonto(state);
 
     const outdated = Communication.checkVersionOutdated(); // preload version
 
@@ -130,6 +125,23 @@ async function updateInsertedDisplayOnChange(
     });
 }
 
+// downloads and calculates afterwards, returns a displayable text in any case
+async function fetchGleitzeitKonto(state: State): Promise<AccountData | ErrorData | object> {
+    try {
+        const data = await Communication.fetchWorkingTimes(config.startDate, config.endDate);
+        state.downloadFinished = true;
+
+        return await Communication.sendMsgToBackground(BackgroundCommand.calculateOvertime, data);
+    } catch (e) {
+        console.error(e);
+        return {
+            error: {
+                message: constStrings.errorMsgs.unableToContactAPI,
+            },
+        };
+    }
+}
+
 // called from the reload btn, recalculates the Gleitzeitkontos
 export function reloadGleitzeitKonto(state: State) {
     View.startLoading(); // start loading immediately
@@ -138,12 +150,7 @@ export function reloadGleitzeitKonto(state: State) {
     state.downloadFinished = false;
     state.calculateFinished = false;
 
-    const calculatedData = Communication.downloadWorkingTimes().then(async (/* data: string */) => {
-        const data = 'TEST DUMMY DATA'; // TODO send actual data
-
-        state.downloadFinished = true;
-        return await Communication.sendMsgToBackground(BackgroundCommand.calculateOvertime, data);
-    });
+    const calculatedData = fetchGleitzeitKonto(state);
 
     // == Register actions for promise resolving ==
     calculatedData.then(async () => {

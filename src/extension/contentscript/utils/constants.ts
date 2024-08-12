@@ -12,6 +12,8 @@ export const config = {
     maxPageloadingLoops: 120, // 1s * 120 = 2 minutes
     pageloadingTimeout: 1000, // 1 s
     loadingOpacity: '0.5',
+    startDate: new Date(2000, 1, 1),
+    endDate: new Date(2099, 11, 31),
 };
 
 export const constStrings = {
@@ -28,6 +30,7 @@ export const constStrings = {
         pageloadingtimeExceeded: 'Die Seite hat zu lange geladen. Das Gleitzeitkonto kann nicht angezeigt werden.',
         unknown: 'Unbekannter Fehler.',
         noData: 'Keine Daten erhalten.',
+        unableToContactAPI: 'Keine Daten erhalten. Bitte Seite neu laden!',
         extensionOutdated: 'Bitte die Erweiterung aktualisieren!',
     },
     cssClasses: {
@@ -48,4 +51,5 @@ export const givenStrings = {
     headerID: 'shell-header',
     headerEndID: 'shell-header-hdr-end',
     githubAPIURL: 'https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest',
+    timesheetURLPath: '/sap/opu/odata/sap/HCM_TIMESHEET_MAN_SRV/$batch?sap-client=300',
 };
