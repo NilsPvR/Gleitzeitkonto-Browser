@@ -12,10 +12,10 @@ export default class Common {
      */
     public static createRichElement(
         tagName: string,
-        attributes: Object,
+        attributes: object,
         ...content: HTMLElement[] | string[] | []
     ): HTMLElement {
-        let element = document.createElement(tagName);
+        const element = document.createElement(tagName);
         if (attributes) {
             for (const [attr, value] of Object.entries(attributes)) {
                 element.setAttribute(attr, value);

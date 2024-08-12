@@ -13,7 +13,7 @@ export default class Communication {
      * @param accountData   the object which contains the accountString or error messages
      * @returns the formatted string derived from the given accountData object
      */
-    public static formatDisplayText(accountData: AccountData | ErrorData | Object): string {
+    public static formatDisplayText(accountData: AccountData | ErrorData | object): string {
         if ('error' in accountData && 'message' in accountData.error) {
             return constStrings.prefixError + accountData.error.message; // error occured
         }
@@ -33,7 +33,7 @@ export default class Communication {
      * @param state               the current state of information
      */
     public static async getLatestDisplayFormat(
-        calcAccountData: Promise<AccountData | ErrorData | Object>,
+        calcAccountData: Promise<AccountData | ErrorData | object>,
         outdated: Promise<boolean>,
         state: State,
     ): Promise<DisplayFormat> {

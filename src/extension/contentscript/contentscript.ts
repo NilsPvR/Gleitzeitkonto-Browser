@@ -86,7 +86,7 @@ import { AccountData, ErrorData } from './types/accountData';
 // it is assumed that the page has already loaded completely
 async function updateInsertedDisplayOnChange(
     headerBar: HTMLElement,
-    calculatedData: Promise<AccountData | ErrorData | Object>,
+    calculatedData: Promise<AccountData | ErrorData | object>,
     outdated: Promise<boolean>,
     state: State,
 ) {
