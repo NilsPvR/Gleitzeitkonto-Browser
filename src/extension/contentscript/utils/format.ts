@@ -8,13 +8,13 @@ export default class Formater {
     // ==================================================
 
     /**
-     * Format the given accountData object to a string which can be displayed. The object is expected to have either accountData
-     * or an error message however if neither of those is available a custom error string will be returned.
+     * Format the given AccountData object to a string which can be displayed. If an ErrorData object is provided
+     * the error message will be formatted. If the AccountData is invalid a special error message will be returned.
      * @param accountData   the object which contains the accountString or error messages
-     * @returns the formatted string derived from the given accountData object
+     * @returns the formatted string derived from the given AccountData object
      */
-    public static formatDisplayText(accountData: AccountData | ErrorData | object): string {
-        if ('error' in accountData && 'message' in accountData.error) {
+    public static formatDisplayText(accountData: AccountData | ErrorData): string {
+        if ('error' in accountData) {
             return constStrings.prefixError + accountData.error.message; // error occured
         }
         if (!accountData || !('accountString' in accountData)) {
@@ -33,7 +33,7 @@ export default class Formater {
      * @param state               the current state of information
      */
     public static async getLatestDisplayFormat(
-        calcAccountData: Promise<AccountData | ErrorData | object>,
+        calcAccountData: Promise<AccountData | ErrorData>,
         outdated: Promise<boolean>,
         state: State,
     ): Promise<DisplayFormat> {

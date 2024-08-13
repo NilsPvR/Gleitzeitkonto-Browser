@@ -31,6 +31,7 @@ export const constStrings = {
         unknown: 'Unbekannter Fehler.',
         noData: 'Keine Daten erhalten.',
         unableToContactAPI: 'Keine Daten erhalten. Bitte Seite neu laden!',
+        unexpectedBackgroundResponse: 'Datenverarbeitung fehlgeschlagen.',
         extensionOutdated: 'Bitte die Erweiterung aktualisieren!',
     },
     cssClasses: {

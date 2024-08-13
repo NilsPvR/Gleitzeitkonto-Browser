@@ -6,7 +6,6 @@ import Communication from './utils/communication';
 import Navigation from './utils/navigation';
 import Data from './utils/format';
 import State from './model/state';
-import { BackgroundCommand } from '../common/enums/command';
 import { PageVariant } from './enums/pageVariant';
 import { AccountData, ErrorData } from './types/accountData';
 
@@ -81,7 +80,7 @@ import { AccountData, ErrorData } from './types/accountData';
 // it is assumed that the page has already loaded completely
 async function updateInsertedDisplayOnChange(
     headerBar: HTMLElement,
-    calculatedData: Promise<AccountData | ErrorData | object>,
+    calculatedData: Promise<AccountData | ErrorData>,
     outdated: Promise<boolean>,
     state: State,
 ) {
@@ -126,12 +125,12 @@ async function updateInsertedDisplayOnChange(
 }
 
 // downloads and calculates afterwards, returns a displayable text in any case
-async function fetchGleitzeitKonto(state: State): Promise<AccountData | ErrorData | object> {
+async function fetchGleitzeitKonto(state: State): Promise<AccountData | ErrorData> {
     try {
         const data = await Communication.fetchWorkingTimes(config.startDate, config.endDate);
         state.downloadFinished = true;
 
-        return await Communication.sendMsgToBackground(BackgroundCommand.calculateOvertime, data);
+        return await Communication.calculateOvertime(data);
     } catch (e) {
         console.error(e);
         return {

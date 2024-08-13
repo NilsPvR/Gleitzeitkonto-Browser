@@ -1,8 +1,9 @@
 import * as browser from 'webextension-polyfill';
 import { Runtime } from 'webextension-polyfill';
 import { BackgroundCommand } from '../../common/enums/command';
-import { givenStrings } from './constants';
+import { constStrings, givenStrings } from './constants';
 import Formater from './format';
+import { AccountData, ErrorData } from '../types/accountData';
 
 export default class Communication {
     // =========== Communication with backend ===========
@@ -40,6 +41,29 @@ export default class Communication {
             });
             this.portToBackground.postMessage({ command: command, content: content });
         });
+    }
+
+    /**
+     * Sends the given data to the background script to calculate the overtime.
+     * @param data    the data to calculate overtime from, is expected to be in the format received by the API
+     * @returns the calculated account data or an error message object
+     */
+    public static async calculateOvertime(data: string): Promise<AccountData | ErrorData> {
+        const response = await this.sendMsgToBackground(BackgroundCommand.CalculateOvertime, data);
+
+        if (
+            'error' in response &&
+            typeof response.error == 'object' &&
+            response.error &&
+            'message' in response.error
+        ) {
+            return <ErrorData>response;
+        }
+        if ('accountString' in response) {
+            return <AccountData>response;
+        }
+
+        return { error: { message: constStrings.errorMsgs.unexpectedBackgroundResponse } };
     }
 
     /**

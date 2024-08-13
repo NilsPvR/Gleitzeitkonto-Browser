@@ -21,11 +21,11 @@ function connectedToContentScript(port: browser.Runtime.Port) {
 
     portFromCS.onMessage.addListener((message) => {
         switch (message?.command) {
-            case BackgroundCommand.calculateOvertime:
+            case BackgroundCommand.CalculateOvertime:
                 // TODO actually calculate the overtime from the received data
                 window.setTimeout(() => {
                     portFromCS.postMessage({
-                        command: BackgroundCommand.calculateOvertime,
+                        command: BackgroundCommand.CalculateOvertime,
                         accountString: '100h',
                     });
                 }, 1000);
