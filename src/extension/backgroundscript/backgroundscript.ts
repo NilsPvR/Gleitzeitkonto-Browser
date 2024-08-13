@@ -1,11 +1,7 @@
 import browser from 'webextension-polyfill';
 import { BackgroundCommand } from '../common/enums/command';
-
-// Constants
-const errorMsgs = {
-    invalidRequest: 'Anfrage von ungültiger extension ID erhalten. Anfrage wird abgelehnt.',
-    invalidCommand: 'Interner Fehler: ungültiger Befehl!',
-};
+import Formater from './util/format';
+import { constStrings } from './util/constants';
 
 let portFromCS: browser.Runtime.Port; // port form content script
 
@@ -15,13 +11,24 @@ function connectedToContentScript(port: browser.Runtime.Port) {
     if (portFromCS.sender?.id !== browser.runtime.id) {
         // sender id is not the one of this extension
         // invalid id, incoming request might be malicious
-        console.error(errorMsgs.invalidRequest);
+        console.error(constStrings.errorMsgs.invalidRequest);
         port.disconnect();
     }
 
     portFromCS.onMessage.addListener((message) => {
         switch (message?.command) {
             case BackgroundCommand.CalculateOvertime:
+                try {
+                    Formater.getJSONFromAPIData(message.content);
+                } catch (e) {
+                    console.error(e);
+                    portFromCS.postMessage({
+                        command: BackgroundCommand.CalculateOvertime,
+                        error: { message: constStrings.errorMsgs.unableToParseJSON },
+                    });
+                    break;
+                }
+
                 // TODO actually calculate the overtime from the received data
                 window.setTimeout(() => {
                     portFromCS.postMessage({
