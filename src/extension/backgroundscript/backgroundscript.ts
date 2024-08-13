@@ -33,7 +33,12 @@ function connectedToContentScript(port: browser.Runtime.Port) {
                 break;
 
             default:
-                portFromCS.postMessage({ error: { message: errorMsgs.invalidCommand } });
+                portFromCS.postMessage({
+                    error: {
+                        command: BackgroundCommand.CalculateOvertime,
+                        message: constStrings.errorMsgs.invalidCommand,
+                    },
+                });
                 break;
         }
     });
