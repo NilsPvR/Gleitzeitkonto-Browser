@@ -1,5 +1,5 @@
 import { constStrings } from '../utils/constants';
-import { reloadGleitzeitKonto } from '../contentscript';
+import { realodAccountData } from '../contentscript';
 import Navigation from '../utils/navigation';
 import Common from './common';
 import Floating from './floating';
@@ -35,7 +35,7 @@ export default class Inserted {
         const refreshIcon = document.getElementById(constStrings.refreshIconID);
         if (!refreshIcon) return; // unable to add event listener
         refreshIcon.addEventListener('click', () => {
-            reloadGleitzeitKonto(state);
+            realodAccountData(state);
         });
     }
 

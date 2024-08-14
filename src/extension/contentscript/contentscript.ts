@@ -20,7 +20,7 @@ import { AccountData, ErrorData } from './types/accountData';
     // ===== Start sending all requests =====
     const state = new State();
 
-    const calculatedData = fetchGleitzeitKonto(state);
+    const calculatedData = fetchAccountData(state);
 
     const outdated = Communication.checkVersionOutdated(); // preload version
 
@@ -45,7 +45,7 @@ import { AccountData, ErrorData } from './types/accountData';
     const realodBtn = document.getElementById(constStrings.buttonID);
     if (realodBtn) {
         realodBtn.addEventListener('click', () => {
-            reloadGleitzeitKonto(state);
+            realodAccountData(state);
         });
     }
 
@@ -125,7 +125,7 @@ async function updateInsertedDisplayOnChange(
 }
 
 // downloads and calculates afterwards, returns a displayable text in any case
-async function fetchGleitzeitKonto(state: State): Promise<AccountData | ErrorData> {
+async function fetchAccountData(state: State): Promise<AccountData | ErrorData> {
     try {
         const data = await Communication.fetchWorkingTimes(config.startDate, config.endDate);
         state.downloadFinished = true;
@@ -141,15 +141,15 @@ async function fetchGleitzeitKonto(state: State): Promise<AccountData | ErrorDat
     }
 }
 
-// called from the reload btn, recalculates the Gleitzeitkontos
-export function reloadGleitzeitKonto(state: State) {
+// called from the reload btn, recalculates the overtime
+export function realodAccountData(state: State) {
     View.startLoading(); // start loading immediately
 
     // == Start new requests ==
     state.downloadFinished = false;
     state.calculateFinished = false;
 
-    const calculatedData = fetchGleitzeitKonto(state);
+    const calculatedData = fetchAccountData(state);
 
     // == Register actions for promise resolving ==
     calculatedData.then(async () => {
