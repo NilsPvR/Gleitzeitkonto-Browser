@@ -3,7 +3,7 @@ import Navigation from '../utils/navigation';
 import Common from './common';
 
 export default class Floating {
-    // ========== floating display ==========
+    // ========== Floating display ==========
 
     public static addFloatingDisplay(pDisplayText: string, loading = false): void {
         const HTMLElements = Common.createInnerHTMLElements(pDisplayText, loading, false);

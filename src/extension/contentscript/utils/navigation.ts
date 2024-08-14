@@ -42,7 +42,7 @@ export default class Navigation {
 
     /**
      * Checks if the user is on the "Meine Zeiterfassung" page. This is possible
-     * by checking the hash or the url (the part after #).
+     * by checking the hash of the url (the part after #).
      * @returns    true if the user in on "Meine Zeiterfassung" page
      */
     public static checkCorrectMenuIsOpen(): boolean {
@@ -53,8 +53,7 @@ export default class Navigation {
     }
 
     /**
-     * Waits until the user opens the "Meine Zeiterfassung" page. The promise will
-     * resolve with no data once the site is opened.
+     * Waits until the user opens the "Meine Zeiterfassung" page.
      * @returns    true once the "Meine Zeiterfassung" page is opened
      */
     public static async continuousMenucheck(): Promise<boolean> {
@@ -76,6 +75,7 @@ export default class Navigation {
 
     /**
      * Check if exteral or internal Fiori website, since these have different styling.
+     * @returns the PageVariant of the currently opened page
      */
     public static getPageVariant(): PageVariant {
         if (window.location.origin == url) {

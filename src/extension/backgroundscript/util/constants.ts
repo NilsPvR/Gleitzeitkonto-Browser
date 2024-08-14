@@ -16,7 +16,7 @@ export const givenStrings = {
     jsonStartString: '{"d":{"results":[',
     /**
      * The end of the JSON for the working times. The JSON is expected to end with
-     * closing the previously openend array and objects, followed by a newline.
+     * closing the previously openend array and objects, followed by a newline (CRLF).
      */
     jsonEndString: ']}}\r\n',
 };

@@ -6,7 +6,7 @@ import Floating from './floating';
 import State from '../model/state';
 
 export default class Inserted {
-    // ========== inserted display ==========
+    // ========== Inserted display ==========
 
     public static addInsertedDisplay(
         pHeaderBar: HTMLElement,

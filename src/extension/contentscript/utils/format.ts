@@ -26,7 +26,7 @@ export default class Formater {
     }
 
     /**
-     * Using the provided state the method determines the latest data which can be show in the display.
+     * Using the provided state the method determines the latest data which can be shown in the display.
      * This can be a loading placeholder if no data is available.
      * @param calcAccountData     the data from a calculate
      * @param outdated            true if extension is outdated
@@ -58,7 +58,7 @@ export default class Formater {
     }
 
     /**
-     * Takes the given date an returns the date in the format YYYYMMDD. The method uses UTC time.
+     * Takes the given date and returns the date in the format YYYYMMDD. The method uses UTC time.
      * @param date    the date to be formatted
      * @returns the formatted date string
      */

@@ -3,7 +3,7 @@ import { BackgroundCommand } from '../common/enums/command';
 import Formater from './util/format';
 import { constStrings } from './util/constants';
 
-let portFromCS: browser.Runtime.Port; // port form content script
+let portFromCS: browser.Runtime.Port; // port from content script
 
 function connectedToContentScript(port: browser.Runtime.Port) {
     portFromCS = port;

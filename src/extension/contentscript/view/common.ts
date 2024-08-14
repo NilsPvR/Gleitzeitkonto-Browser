@@ -4,7 +4,7 @@ import { LightingMode } from '../enums/lightingMode';
 
 export default class Common {
     /**
-     * Creates a new HTML Element with the specified attributes and the content placed inside
+     * Creates a new HTML element with the specified attributes and the content placed inside
      * @param tagName       the name of the HTML-Tag, e.g: <div> -> 'div'
      * @param attributes    Object - key: attribute name, value: value of the attribute
      * @param content       the nodes or strings to be placed inside of the element
@@ -28,12 +28,12 @@ export default class Common {
     }
 
     /**
-     * Creates HTML Elements which can be placed inside the display. Styling will be adjusted
+     * Creates HTML elements which can be placed inside the display. Styling will be adjusted
      * based on given parameters.
      * @param displayText   the text to place inside of the display
      * @param loading       if true show a loading animation and disable button
      * @param inserted      if true style according to inserted display
-     * @returns an array of html elements: first element is a button, second element is a heading
+     * @returns an array of HTML elements: first element is a button, second element is a heading
      */
     public static createInnerHTMLElements(
         displayText: string,
@@ -67,7 +67,7 @@ export default class Common {
     }
 
     /**
-     * Determines wheather the page is displayed in a light or dark mode.
+     * Determines whether the page is displayed in a light or dark mode.
      * @returns the lighting mode
      */
     public static getLightingMode(): LightingMode {
@@ -103,7 +103,7 @@ export default class Common {
     }
 
     /**
-     * Get the URL for the refresh icon based on the current lightingMode (light/dark) of the page.
+     * Get the URL for the refresh icon based on the current LightingMode (light/dark) of the page.
      * @returns the URL
      */
     static getRefreshIconURL(): string {

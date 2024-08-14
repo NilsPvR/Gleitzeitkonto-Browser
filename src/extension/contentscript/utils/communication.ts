@@ -94,7 +94,7 @@ export default class Communication {
      * contains the working times but has to be formatted to be able to use them.
      * @param startDate    the first day to fetch working times for (time is ignored)
      * @param endDate      the last date to fetch working times for, has to be after `startDate` (time is ignored)
-     * @returns a unformatted response string with the working times
+     * @returns an unformatted response string with the working times
      * @throws if the endDate is not after the startDate
      * @throws if communication error with api occurs
      */
