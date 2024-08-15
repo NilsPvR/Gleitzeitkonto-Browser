@@ -12,16 +12,15 @@ export default class WorkingTimes {
 
     public parseTimeDataToTimeElements(timeData: TimeData): TimeElement[] {
         const results: Result[] = timeData.d.results;
-    
+
         let index = 0;
-    
+
         let date: string;
         let startTime: string;
         let endTime: string;
         let attendanceType: string;
-    
-        results.forEach((dataElement) => {
 
+        results.forEach((dataElement) => {
             // temporarily save the necessary information
             switch (dataElement.fieldName) {
                 case 'WORKDATE':
@@ -34,21 +33,26 @@ export default class WorkingTimes {
                     startTime = dataElement.fieldValue;
                     break;
                 case 'ENDTIME':
-                    endTime = dataElement.fieldValue
+                    endTime = dataElement.fieldValue;
                     break;
                 default:
             }
-    
+
             // each TimeElement corresponds to 13 entries in the results object
             if (index == 12) {
                 index = 0;
-                const currentElement = this.createNewTimeElement(date, startTime, endTime, attendanceType);
+                const currentElement = this.createNewTimeElement(
+                    date,
+                    startTime,
+                    endTime,
+                    attendanceType,
+                );
                 this.timeElements.push(currentElement);
             } else {
                 index++;
             }
         });
-    
+
         return this.timeElements;
     }
 

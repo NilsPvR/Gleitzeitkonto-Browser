@@ -5,7 +5,7 @@
 export default class TimeElement {
     /** The start of this entry */
     startDate: Date;
-    
+
     /** The end of this entry */
     endDate: Date;
 
@@ -19,10 +19,12 @@ export default class TimeElement {
      */
     public constructor(startDate: Date, endDate: Date, attendanceType: number) {
         if (startDate >= endDate) {
-            throw new Error('Invalid startDate and endDate parameter. endDate has to be after startDate')
+            throw new Error(
+                'Invalid startDate and endDate parameter. endDate has to be after startDate',
+            );
         }
         this.startDate = startDate;
-        this.endDate = endDate
+        this.endDate = endDate;
         this.attendanceType = Number(attendanceType);
     }
 }
