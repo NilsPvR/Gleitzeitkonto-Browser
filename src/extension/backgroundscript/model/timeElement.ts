@@ -20,7 +20,7 @@ export default class TimeElement {
     public constructor(startDate: Date, endDate: Date, attendanceType: number) {
         if (startDate >= endDate) {
             throw new Error(
-                'Invalid startDate and endDate parameter. endDate has to be after startDate',
+                `Invalid startDate and endDate parameter. endDate "${endDate}" has to be after startDate "${startDate}"`,
             );
         }
         this.startDate = startDate;
