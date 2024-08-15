@@ -25,4 +25,20 @@ export default class Formater {
         // TODO use model with parsing
         return JSON.parse(jsonString);
     }
+
+    public static getDateFromYYYYMMDD(date: string): Date {
+        return new Date(`${date.substring(0, 4)}-${date.substring(4, 6)}-${date.substring(6, 8)}`);
+    }
+
+    /**
+     * Gets a Datetime object from the provided date and time.
+     * @param date    the date or more precise the day to use
+     * @param time    the time in the format HHMMSS
+     */
+    public static getDateFromDateAndTime(date: Date, time: string): Date {
+        return new Date(
+            `${date.getUTCFullYear()}${date.getUTCMonth()}${date.getUTCDate()}` +
+                `T${time.substring(0, 2)}:${time.substring(2, 4)}:${time.substring(4)}`,
+        );
+    }
 }

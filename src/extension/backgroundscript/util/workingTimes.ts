@@ -1,6 +1,7 @@
 import TimeElement from '../model/timeElement';
 import TimeData from '../model/timeData';
 import Result from '../model/result';
+import Formater from './format';
 
 export default class WorkingTimes {
     private timeElements: TimeElement[];
@@ -51,8 +52,23 @@ export default class WorkingTimes {
         return this.timeElements;
     }
 
-    private createNewTimeElement(date: string, startTime: string, endTime: string, attendanceType: string): TimeElement {
-        // TODO
-        return new TimeElement(new Date(), new Date(), 1);
+    /**
+     * Creates an instance of a TimeElement by parsing the strings into expected types.
+     * @param date              the date or more precise the day in the format YYYYMMDD
+     * @param startTime         expected format is HHMMSS
+     * @param endTime           expected format is HHMMSS
+     * @param attendanceType    expected to be a number
+     */
+    private createNewTimeElement(
+        date: string,
+        startTime: string,
+        endTime: string,
+        attendanceType: string,
+    ): TimeElement {
+        return new TimeElement(
+            Formater.getDateFromDateAndTime(Formater.getDateFromYYYYMMDD(date), startTime),
+            new Date(Formater.getDateFromDateAndTime(Formater.getDateFromYYYYMMDD(date), endTime)),
+            Number(attendanceType),
+        );
     }
 }
