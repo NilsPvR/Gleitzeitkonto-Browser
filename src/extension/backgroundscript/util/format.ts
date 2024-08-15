@@ -36,8 +36,12 @@ export default class Formater {
      */
     public static getDateFromDateAndTime(date: Date, time: string): Date {
         return new Date(
-            `${date.getUTCFullYear()}${date.getUTCMonth()}${date.getUTCDate()}` +
-                `T${time.substring(0, 2)}:${time.substring(2, 4)}:${time.substring(4)}`,
+            date.getUTCFullYear(),
+            date.getUTCMonth(),
+            date.getUTCDate(),
+            Number(time.substring(0, 2)),
+            Number(time.substring(2, 4)),
+            Number(time.substring(4)),
         );
     }
 }

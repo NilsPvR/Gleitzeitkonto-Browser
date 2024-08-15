@@ -39,6 +39,8 @@ export default class WorkingTimes {
             }
 
             // each TimeElement corresponds to 13 entries in the results object
+            // TODO API doesn't always send 13 entries, figure out in which cases this happens
+            // TODO probably filter by the workdate entry
             if (index == 12) {
                 index = 0;
                 const currentElement = this.createNewTimeElement(

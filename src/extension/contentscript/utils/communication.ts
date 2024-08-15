@@ -93,13 +93,13 @@ export default class Communication {
      * will be used for the request. The response string will be the data returned by the api. This data
      * contains the working times but has to be formatted to be able to use them.
      * @param startDate    the first day to fetch working times for (time is ignored)
-     * @param endDate      the last date to fetch working times for, has to be after `startDate` (time is ignored)
+     * @param endDate      the last date to fetch working times for, has to be the same or after `startDate` (time is ignored)
      * @returns an unformatted response string with the working times
      * @throws if the endDate is not after the startDate
      * @throws if communication error with api occurs
      */
     public static async fetchWorkingTimes(startDate: Date, endDate: Date): Promise<string> {
-        if (startDate >= endDate || startDate.getDate() >= endDate.getDate()) {
+        if (startDate > endDate || startDate.getDate() > endDate.getDate()) {
             throw new Error('End date is not after start date');
         }
         const csrfToken = this.fetchCSRFToken();
