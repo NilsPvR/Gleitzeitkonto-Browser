@@ -3,7 +3,10 @@ export const constStrings = {
     errorMsgs: {
         invalidRequest: 'Anfrage von ungültiger extension ID erhalten. Anfrage wird abgelehnt.',
         invalidCommand: 'Interner Fehler: ungültiger Befehl!',
-        unableToParseJSON: 'Ungültige Daten erhalten.'
+        unableToParseJSON: 'Ungültige Daten erhalten.',
+    },
+    internalErrorMsgs: {
+        unableToParseObj: 'Object is not in form of expected class',
     },
 };
 
