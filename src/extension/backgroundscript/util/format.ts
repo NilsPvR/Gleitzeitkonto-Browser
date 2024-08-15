@@ -22,7 +22,6 @@ export default class Formater {
         // + length to include the closing brackets
         const jsonString = data.slice(startIndex, endIndex + givenStrings.jsonEndString.length);
 
-        // TODO use model with parsing
         return JSON.parse(jsonString);
     }
 

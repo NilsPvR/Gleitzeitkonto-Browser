@@ -4,10 +4,10 @@ import Result from '../model/result';
 import Formater from './format';
 
 export default class WorkingTimes {
-    private timeElements: TimeElement[];
+    timeElements: TimeElement[];
 
-    public constructor(timeElements: TimeElement[]) {
-        this.timeElements = timeElements;
+    public constructor() {
+        this.timeElements = [];
     }
 
     public parseTimeDataToTimeElements(timeData: TimeData): TimeElement[] {

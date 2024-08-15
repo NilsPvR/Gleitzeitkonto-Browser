@@ -2,6 +2,8 @@ import browser from 'webextension-polyfill';
 import { BackgroundCommand } from '../common/enums/command';
 import Formater from './util/format';
 import { constStrings } from './util/constants';
+import TimeData from './model/timeData';
+import WorkingTimes from './util/workingTimes';
 
 let portFromCS: browser.Runtime.Port; // port from content script
 
@@ -18,27 +20,8 @@ function connectedToContentScript(port: browser.Runtime.Port) {
     portFromCS.onMessage.addListener((message) => {
         switch (message?.command) {
             case BackgroundCommand.CalculateOvertime:
-                try {
-                    Formater.getJSONFromAPIData(message.content);
-                } catch (e) {
-                    console.error(e);
-                    portFromCS.postMessage({
-                        command: BackgroundCommand.CalculateOvertime,
-                        error: { message: constStrings.errorMsgs.unableToParseJSON },
-                    });
-                    break;
-                }
-
-                // TODO actually calculate the overtime from the received data
-                window.setTimeout(() => {
-                    portFromCS.postMessage({
-                        command: BackgroundCommand.CalculateOvertime,
-                        accountString: '100h',
-                    });
-                }, 1000);
-
+                sendBackOvertime(message);
                 break;
-
             default:
                 portFromCS.postMessage({
                     error: {
@@ -49,6 +32,42 @@ function connectedToContentScript(port: browser.Runtime.Port) {
                 break;
         }
     });
+}
+
+function sendBackOvertime(message: unknown) {
+    const controller = new WorkingTimes();
+
+    try {
+        if (
+            typeof message !== 'object' ||
+            !message ||
+            !('content' in message) ||
+            typeof message.content !== 'string'
+        ) {
+            throw new Error('No message or no content received from the content script');
+        }
+        const jsonObject = Formater.getJSONFromAPIData(message.content);
+        const timeData = TimeData.fromObject(jsonObject);
+
+        controller.timeElements = controller.parseTimeDataToTimeElements(timeData);
+    } catch (e) {
+        console.error(e);
+        portFromCS.postMessage({
+            command: BackgroundCommand.CalculateOvertime,
+            error: { message: constStrings.errorMsgs.unableToParseJSON },
+        });
+        return;
+    }
+
+    console.log(controller.timeElements);
+
+    // TODO actually calculate the overtime from the formatted data
+    window.setTimeout(() => {
+        portFromCS.postMessage({
+            command: BackgroundCommand.CalculateOvertime,
+            accountString: '100h',
+        });
+    }, 1000);
 }
 
 // listen for connection opening from the content script
