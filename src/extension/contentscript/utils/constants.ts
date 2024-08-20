@@ -53,4 +53,8 @@ export const givenStrings = {
     headerEndID: 'shell-header-hdr-end',
     githubAPIURL: 'https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest',
     timesheetURLPath: '/sap/opu/odata/sap/HCM_TIMESHEET_MAN_SRV/$batch?sap-client=300',
+    /** This parts needs to be inserted into the external URL when not present */
+    externalURLInsert: '-sapdelim-fesruntime',
+    /** The string after which the `externalURLInsert` needs to be inserted */
+    externalURLInsertAfter: 'xvixnuoa',
 };

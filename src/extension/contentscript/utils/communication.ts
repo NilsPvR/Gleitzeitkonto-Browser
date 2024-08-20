@@ -4,6 +4,8 @@ import { BackgroundCommand } from '../../common/enums/command';
 import { constStrings, givenStrings } from './constants';
 import Formater from './format';
 import { AccountData, ErrorData } from '../types/accountData';
+import Navigation from './navigation';
+import { PageVariant } from '../enums/pageVariant';
 
 export default class Communication {
     // =========== Communication with backend ===========
@@ -67,6 +69,25 @@ export default class Communication {
     }
 
     /**
+     * Determines the URL which should be used to fetch the API based on the currently open page.
+     * @returns the URL to fetch the API
+     */
+    private static getFetchURL(): string {
+        if (
+            Navigation.getPageVariant() == PageVariant.Internal ||
+            window.location.origin.includes(givenStrings.externalURLInsert)
+        ) {
+            return window.location.origin + givenStrings.timesheetURLPath;
+        }
+        // user is on external page which is missing the URLInsert part
+        const fixedURLOrigin = window.location.origin.replace(
+            givenStrings.externalURLInsertAfter,
+            givenStrings.externalURLInsertAfter + givenStrings.externalURLInsert,
+        );
+        return fixedURLOrigin + givenStrings.timesheetURLPath;
+    }
+
+    /**
      * Contacts the API to get the current CSRF token. The token can be used to
      * make future POST requests to the API.
      * @returns the CSRF token
@@ -74,7 +95,7 @@ export default class Communication {
      */
     private static async fetchCSRFToken(): Promise<string> {
         const csrfResponse = await fetch(
-            new Request(window.location.origin + givenStrings.timesheetURLPath, {
+            new Request(this.getFetchURL(), {
                 method: 'HEAD',
                 credentials: 'include',
                 headers: {
@@ -121,7 +142,7 @@ export default class Communication {
             '--batch--';
 
         const result = await fetch(
-            new Request(window.location.origin + givenStrings.timesheetURLPath, {
+            new Request(this.getFetchURL(), {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
