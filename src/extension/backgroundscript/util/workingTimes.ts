@@ -13,12 +13,20 @@ export default class WorkingTimes {
     public parseTimeDataToTimeElements(timeData: TimeData): TimeElement[] {
         const results: Result[] = timeData.d.results;
 
-        let index = 0;
-
         let date: string;
         let startTime: string;
         let endTime: string;
         let attendanceType: string;
+
+        const saveElement = () => {
+            const currentElement = this.createNewTimeElement(
+                date,
+                startTime,
+                endTime,
+                attendanceType,
+            );
+            this.timeElements.push(currentElement);
+        };
 
         results.forEach((dataElement) => {
             // temporarily save the necessary information
@@ -35,23 +43,10 @@ export default class WorkingTimes {
                 case 'ENDTIME':
                     endTime = dataElement.fieldValue;
                     break;
+                case 'STATUS':
+                    saveElement();
+                    break;
                 default:
-            }
-
-            // each TimeElement corresponds to 13 entries in the results object
-            // TODO API doesn't always send 13 entries, figure out in which cases this happens
-            // TODO probably filter by the workdate entry
-            if (index == 12) {
-                index = 0;
-                const currentElement = this.createNewTimeElement(
-                    date,
-                    startTime,
-                    endTime,
-                    attendanceType,
-                );
-                this.timeElements.push(currentElement);
-            } else {
-                index++;
             }
         });
 
