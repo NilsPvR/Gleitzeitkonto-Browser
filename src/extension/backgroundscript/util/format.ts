@@ -44,4 +44,23 @@ export default class Formater {
             Number(time.substring(4)),
         );
     }
+
+    /**
+     * Checks whether or not the provided Date objects reference the same day while
+     * ignoring the time.
+     * @returns true if both Date objects reference the same day
+     */
+    public static isSameDay(date1: Date, date2: Date) {
+        return (
+            date1.getFullYear() === date2.getFullYear() &&
+            date1.getMonth() === date2.getMonth() &&
+            date1.getDate() === date2.getDate()
+        );
+    }
+
+    public static getMinutesBetween(date1: Date, date2: Date) {
+        const diffInMs = Math.abs(date1.getTime() - date2.getTime());
+        // convert milliseconds to seconds
+        return diffInMs / (1000 * 60);
+    }
 }

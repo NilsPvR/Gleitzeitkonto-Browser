@@ -22,4 +22,5 @@ export const givenStrings = {
      * closing the previously openend array and objects, followed by a newline (CRLF).
      */
     jsonEndString: ']}}\r\n',
+    flexDayAttendanceType: 9003,
 };
