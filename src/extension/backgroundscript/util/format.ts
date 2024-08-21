@@ -63,4 +63,23 @@ export default class Formater {
         // convert milliseconds to seconds
         return diffInMs / (1000 * 60);
     }
+
+    /**
+     * Formats the given minutes into a human readable string of hours and minutes.
+     * For example 80 -> 1h 20min
+     * @param minutes can be positive or negative
+     * @returns the formatted time string
+     */
+    public static minutesToTimeString(minutes: number): string {
+        const wholeHours = Math.floor(Math.abs(minutes) / 60);
+        const remainingMinutes = Math.abs(minutes) % 60;
+
+        let result = '';
+        // prettier-ignore
+        if (wholeHours > 0)                         result += `${wholeHours}h`;
+        if (wholeHours > 0 && remainingMinutes > 0) result += ' ';
+        // prettier-ignore
+        if (remainingMinutes > 0)                   result += `${remainingMinutes}min`;
+        return (minutes < 0 ? '-' : '') + result;
+    }
 }
