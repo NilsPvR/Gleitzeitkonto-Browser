@@ -95,7 +95,12 @@ export default class WorkingTimes {
 
     // ===== Overtime calculation =====
     /**
-     * @param timeElements    expected to be sorted by date
+     * Calculates the overtime in minutes. The calculation does expect normal working days to be from Monday
+     * to Friday. Additionally working on holidays will result in incorrect overtimes
+     * @param timeElements               all elements to calculate the overtime from, expected to be sorted by date
+     * @param minutesPerWeek             the expected amount of minutes to work in a week (default: `40 * 60`)
+     * @param previousOvertimeMinutes    will be added to the calculated overtime (default: `0`)
+     * @returns the overtime in minutes
      */
     public calculateOvertime(
         timeElements: TimeElement[][],
@@ -106,7 +111,7 @@ export default class WorkingTimes {
         const expectedMinutesPerDay = minutesPerWeek / 5;
 
         timeElements.forEach((dayTimeElements: TimeElement[]) => {
-            overtimeMinutes += this.calculateOvertimeMinutesPerDay(
+            overtimeMinutes += this.calculateOvertimePerDay(
                 dayTimeElements,
                 expectedMinutesPerDay,
             );
@@ -116,14 +121,14 @@ export default class WorkingTimes {
     }
 
     /**
-     * Calculates the total working hours for the given TimeElements. This can be a negative
+     * Calculates the overtime for the given TimeElements on a day. This can be a negative
      * or positiv number in minutes depending on the `attendanceType`s of the TimeElements.
      * Expects normal working days to be from Monday to Friday.
      * @param timeElements     the TimeElements for the day to calcualte
-     * @param minutesPerDay    the expected minutes to have worked per day
-     * @returns the total working hours in minutes
+     * @param minutesPerDay    the expected minutes to work per day
+     * @returns the overtime for the day in minutes
      */
-    private calculateOvertimeMinutesPerDay(timeElements: TimeElement[], minutesPerDay: number): number {
+    private calculateOvertimePerDay(timeElements: TimeElement[], minutesPerDay: number): number {
         let overtimeMinutes = 0;
 
         timeElements.forEach((timeElement) => {
