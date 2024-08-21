@@ -111,10 +111,7 @@ export default class WorkingTimes {
         const expectedMinutesPerDay = minutesPerWeek / 5;
 
         timeElements.forEach((dayTimeElements: TimeElement[]) => {
-            overtimeMinutes += this.calculateOvertimePerDay(
-                dayTimeElements,
-                expectedMinutesPerDay,
-            );
+            overtimeMinutes += this.calculateOvertimePerDay(dayTimeElements, expectedMinutesPerDay);
         });
 
         return overtimeMinutes + previousOvertimeMinutes;
@@ -147,7 +144,7 @@ export default class WorkingTimes {
             // on Sundays or Saturdays don't subtract the minutesPerDay
             return overtimeMinutes;
         }
-        
+
         return overtimeMinutes - minutesPerDay;
     }
 }
