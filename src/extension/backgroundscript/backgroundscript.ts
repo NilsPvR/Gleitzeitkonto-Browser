@@ -59,15 +59,12 @@ function sendBackOvertime(message: unknown) {
         return;
     }
 
-    console.log(controller.timeElements);
+    const overtimeInMinutes = controller.calculateOvertime(controller.timeElements);
 
-    // TODO actually calculate the overtime from the formatted data
-    window.setTimeout(() => {
-        portFromCS.postMessage({
-            command: BackgroundCommand.CalculateOvertime,
-            accountString: '100h',
-        });
-    }, 1000);
+    portFromCS.postMessage({
+        command: BackgroundCommand.CalculateOvertime,
+        accountString: Formater.minutesToTimeString(overtimeInMinutes),
+    });
 }
 
 // listen for connection opening from the content script
