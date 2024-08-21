@@ -13,3 +13,4 @@ url.json
 
 # environment variables
 .env
+.direnv
