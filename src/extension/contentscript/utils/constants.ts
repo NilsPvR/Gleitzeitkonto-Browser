@@ -30,7 +30,7 @@ export const constStrings = {
         pageloadingtimeExceeded: 'Die Seite hat zu lange geladen. Das Gleitzeitkonto kann nicht angezeigt werden.',
         unknown: 'Unbekannter Fehler.',
         noData: 'Keine Daten erhalten.',
-        unableToContactAPI: 'Keine Daten erhalten. Bitte Seite neu laden!',
+        unableToContactAPI: 'Nicht mehr eingeloggt. Bitte Seite neu laden!',
         unexpectedBackgroundResponse: 'Datenverarbeitung fehlgeschlagen.',
         extensionOutdated: 'Bitte die Erweiterung aktualisieren!',
     },
