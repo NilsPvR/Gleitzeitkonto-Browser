@@ -1,15 +1,11 @@
 import { constStrings } from '../util/constants';
 
 export default class Metadata {
-    id: string;
-    uri: string;
-    type: string;
-
-    public constructor(id: string, uri: string, type: string) {
-        this.id = id;
-        this.uri = uri;
-        this.type = type;
-    }
+    public constructor(
+        private id: string,
+        private uri: string,
+        private type: string,
+    ) {}
 
     public static fromObject(obj: object): Metadata {
         if (

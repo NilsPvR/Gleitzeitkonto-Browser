@@ -2,43 +2,19 @@ import { constStrings } from '../util/constants';
 import Metadata from './metadata';
 
 export default class Result {
-    metadata: Metadata;
-    deactivated: boolean;
-    pernr: string;
-    recordNumber: string;
-    fieldName: string;
-    fieldText: string;
-    fieldValue: string;
-    fieldValueText: string;
-    level: number;
-    startDate: string;
-    endDate: string;
-
     public constructor(
-        metadata: Metadata,
-        deactivated: boolean,
-        pernr: string,
-        recordNumber: string,
-        fieldName: string,
-        fieldText: string,
-        fieldValue: string,
-        fieldValueText: string,
-        level: number,
-        startDate: string,
-        endDate: string,
-    ) {
-        this.metadata = metadata;
-        this.deactivated = deactivated;
-        this.pernr = pernr;
-        this.recordNumber = recordNumber;
-        this.fieldName = fieldName;
-        this.fieldText = fieldText;
-        this.fieldValue = fieldValue;
-        this.fieldValueText = fieldValueText;
-        this.level = level;
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
+        public metadata: Metadata,
+        public deactivated: boolean,
+        public pernr: string,
+        public recordNumber: string,
+        public fieldName: string,
+        public fieldText: string,
+        public fieldValue: string,
+        public fieldValueText: string,
+        public level: number,
+        public startDate: string,
+        public endDate: string,
+    ) {}
 
     public static fromObject(obj: object): Result {
         if (
