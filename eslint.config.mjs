@@ -13,11 +13,11 @@ export default [
         languageOptions: { globals: globals.browser },
     },
     {
-        files: ['build/**/*.js', 'build/**/*.ts'],
+        files: ['scripts/**/*.js', 'scripts/**/*.ts'],
         languageOptions: { globals: globals.node },
     },
     {
-        ignores: ['compressed/'],
+        ignores: ['build/'],
     },
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,

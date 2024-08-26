@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*", "build/**/*"],
+  "include": ["src/**/*", "scripts/**/*"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "target": "es2023",

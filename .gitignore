@@ -3,8 +3,8 @@
 package-lock.json
 
 # Project building folder and files
-/compressed
-build/*.js
+/build
+scripts/*.js
 
 
 # Secrets
