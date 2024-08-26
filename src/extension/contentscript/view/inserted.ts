@@ -4,17 +4,20 @@ import Navigation from '../utils/navigation';
 import Common from './common';
 import Floating from './floating';
 import State from '../model/state';
+import Settings from '../../common/utils/settings';
 
 export default class Inserted {
     // ========== Inserted display ==========
 
-    public static addInsertedDisplay(
+    public static async addInsertedDisplay(
         pHeaderBar: HTMLElement,
         pDisplayText: string,
         loading: boolean,
         state: State,
-    ): void {
+    ): Promise<void> {
         Floating.removeFloatingDisplay();
+
+        if (!(await Settings.extensionIsEnabled())) return;
 
         const HTMLElements = Common.createInnerHTMLElements(pDisplayText, loading, true);
 

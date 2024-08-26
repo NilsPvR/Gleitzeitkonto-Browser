@@ -1,11 +1,16 @@
 import { constStrings, givenStrings } from '../utils/constants';
 import Navigation from '../utils/navigation';
 import Common from './common';
+import Settings from '../../common/utils/settings';
 
 export default class Floating {
     // ========== Floating display ==========
 
-    public static addFloatingDisplay(pDisplayText: string, loading = false): void {
+    public static async addFloatingDisplay(pDisplayText: string, loading = false): Promise<void> {
+        if (!(await Settings.extensionIsEnabled())) {
+            return;
+        }
+
         const HTMLElements = Common.createInnerHTMLElements(pDisplayText, loading, false);
 
         // main page element is the (almost) only one loaded when DOM is loaded

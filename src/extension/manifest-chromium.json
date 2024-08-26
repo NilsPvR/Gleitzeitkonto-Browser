@@ -34,7 +34,7 @@
   ],
 
   "permissions": [
-    "nativeMessaging",
+    "storage",
     "https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest"
   ],
 
