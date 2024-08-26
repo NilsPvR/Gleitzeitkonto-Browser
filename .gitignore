@@ -1,6 +1,5 @@
 # Node files and folders
 /node_modules
-package-lock.json
 
 # Project building folder and files
 /build
