@@ -7,12 +7,11 @@
   "scripts": {
     "check-format": "prettier --check . && eslint && tsc -noEmit",
     "format": "prettier --write .",
-    "publish": "npm run transpileBuild && node scripts/publish-extension.js && npm run combineBrowserJS && npm run sass-prod && node scripts/publish-extension-fix-manifests.js && npm run zipChromium && npm run zipFirefox",
+    "publish": "npm run transpileBuild && node scripts/publish-extension.js && npm run combineBrowserJS && npm run sass-prod && node scripts/publish-extension-fix-manifests.js && npm run zipExtension",
     "transpileBuild": "tsc --project tsconfig.build.json",
     "combineBrowserJS": "esbuild src/extension/contentscript/contentscript.ts --bundle --outfile=build/extension/contentscript/gleitzeitkonto-browser.js && esbuild src/extension/backgroundscript/backgroundscript.ts --bundle --outfile=build/extension/backgroundscript/backgroundscript.js",
     "combinePopupJS": "esbuild src/extension/popup/popupscript.ts --bundle --outfile=build/extension/popup/popupscript.js",
-    "zipChromium": "zip-build ./build/extension-chromium ./build/gleitzeitkonto-browser-zip --interactive --template NICHT-Herunterladen-win-x64-chromium.zip --subDir 'Chrome-Edge(Chromium)' --override true",
-    "zipFirefox": "zip-build ./build/extension ./build/gleitzeitkonto-browser-zip --interactive --template NICHT-Herunterladen-win-x64-firefox.zip --override true",
+    "zipExtension": "node scripts/zip-extensions.js",
     "sass-prod": "sass --no-source-map --style=compressed src/extension/popup/gleitzeitkonto-browser.scss:build/extension/popup/gleitzeitkonto-browser.css"
   },
   "repository": {
@@ -27,8 +26,10 @@
   "homepage": "https://github.com/NilsPvR/Gleitzeitkonto-Browser#readme",
   "devDependencies": {
     "@eslint/js": "^9.9.1",
+    "@types/adm-zip": "^0.5.5",
     "@types/fs-extra": "^11.0.4",
     "@types/webextension-polyfill": "^0.12.0",
+    "adm-zip": "^0.5.15",
     "esbuild": "^0.23.1",
     "eslint": "^9.9.1",
     "eslint-config-prettier": "^9.1.0",
@@ -38,7 +39,6 @@
     "sass": "^1.77.8",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.2.0",
-    "webextension-polyfill": "^0.12.0",
-    "zip-build": "^1.8.0"
+    "webextension-polyfill": "^0.12.0"
   }
 }
