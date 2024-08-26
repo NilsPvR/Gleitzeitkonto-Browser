@@ -13,7 +13,6 @@
     "combinePopupJS": "esbuild src/extension/popup/popupscript.ts --bundle --outfile=build/extension/popup/popupscript.js",
     "zipChromium": "zip-build ./build/extension-chromium ./build/gleitzeitkonto-browser-zip --interactive --template NICHT-Herunterladen-win-x64-chromium.zip --subDir 'Chrome-Edge(Chromium)' --override true",
     "zipFirefox": "zip-build ./build/extension ./build/gleitzeitkonto-browser-zip --interactive --template NICHT-Herunterladen-win-x64-firefox.zip --override true",
-    "sass-dev": "sass --watch --update --no-source-map --style=expanded src/extension/popup/gleitzeitkonto-browser.scss:src/extension/popup/gleitzeitkonto-browser.css",
     "sass-prod": "sass --no-source-map --style=compressed src/extension/popup/gleitzeitkonto-browser.scss:build/extension/popup/gleitzeitkonto-browser.css"
   },
   "repository": {
