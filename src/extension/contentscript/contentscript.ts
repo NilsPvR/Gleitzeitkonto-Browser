@@ -7,6 +7,7 @@ import Navigation from './utils/navigation';
 import Data from './utils/format';
 import State from './model/state';
 import { AccountData, ErrorData } from './types/accountData';
+import SettingsSync from './utils/settingsSync';
 
 (async () => {
     'use strict';
@@ -56,6 +57,9 @@ import { AccountData, ErrorData } from './types/accountData';
         );
 
         updateInsertedDisplayOnChange(headerBar, calculatedData, outdated, state);
+
+        const settingsSync = new SettingsSync();
+        settingsSync.updateDisplayOnExtensionStateChange();
     } catch (e) {
         Floating.removeFloatingDisplay(); // TODO show error in popup
         console.error(e);
