@@ -7,6 +7,21 @@ export default class Navigation {
     // ============================================================
 
     /**
+     * Resolves once the DOMContentLoaded event fires or immediately if it is already loaded.
+     */
+    public static async waitForDOMContentLoaded(): Promise<void> {
+        return new Promise((resolve) => {
+            if (document.readyState === 'loading') {
+                window.addEventListener('DOMContentLoaded', () => {
+                    resolve();
+                });
+            } else {
+                resolve();
+            }
+        });
+    }
+
+    /**
      * Waits and checks multiple times until the page has fully loaded. This is determined by specific
      * DOM Elements being present.
      * @param timeout   time in ms between each check, will be limited to min. 1 000 when tab is not focused

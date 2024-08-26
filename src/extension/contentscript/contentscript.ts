@@ -6,7 +6,6 @@ import Communication from './utils/communication';
 import Navigation from './utils/navigation';
 import Data from './utils/format';
 import State from './model/state';
-import { PageVariant } from './enums/pageVariant';
 import { AccountData, ErrorData } from './types/accountData';
 
 (async () => {
@@ -26,21 +25,11 @@ import { AccountData, ErrorData } from './types/accountData';
 
     // ===== Wait for correct page to be opened =====
     await Navigation.continuousMenucheck();
+    await Navigation.waitForDOMContentLoaded();
 
     // ===== Add floating display =====
-    if (document.readyState === 'interactive' || document.readyState === 'complete') {
-        Floating.addFloatingDisplay(
-            constStrings.prefixOvertime + constStrings.overtimeLoading,
-            true,
-        );
-    } else if (Navigation.getPageVariant() == PageVariant.External) {
-        window.addEventListener('DOMContentLoaded', () => {
-            Floating.addFloatingDisplay(
-                constStrings.prefixOvertime + constStrings.overtimeLoading,
-                true,
-            );
-        });
-    }
+    Floating.addFloatingDisplay(constStrings.prefixOvertime + constStrings.overtimeLoading, true);
+
     // register button click for reload
     const realodBtn = document.getElementById(constStrings.buttonID);
     if (realodBtn) {
