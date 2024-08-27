@@ -18,7 +18,10 @@ function connectedToContentScript(port: browser.Runtime.Port) {
     }
 
     portFromCS.onMessage.addListener((message) => {
-        switch (message?.command) {
+        if (typeof message !== 'object' || !message || !('command' in message)) {
+            return;
+        }
+        switch (message.command) {
             case BackgroundCommand.CalculateOvertime:
                 sendBackOvertime(message);
                 break;

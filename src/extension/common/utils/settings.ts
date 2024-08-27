@@ -8,7 +8,7 @@ export default class Settings {
                 return true; // default to true
             }
 
-            return result.extensionIsEnabled;
+            return Boolean(result.extensionIsEnabled);
         } catch {
             return true; // default to true even on error
         }

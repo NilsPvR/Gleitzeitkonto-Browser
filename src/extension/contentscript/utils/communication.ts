@@ -37,7 +37,12 @@ export default class Communication {
             // connection has been established
             this.portToBackground.onMessage.addListener((response) => {
                 // check if the response is a response for this request
-                if (response?.command === command) {
+                if (
+                    response &&
+                    typeof response === 'object' &&
+                    'command' in response &&
+                    response.command === command
+                ) {
                     resolve(response);
                 }
             });
