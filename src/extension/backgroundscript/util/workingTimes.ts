@@ -3,14 +3,21 @@ import TimeData from '../model/timeData';
 import Result from '../model/result';
 import Formater from './format';
 import { givenStrings } from './constants';
+import { SimplePublicHoliday } from '../types/publicHoliday';
 
 export default class WorkingTimes {
     /** The inner arrays represent days. The TimeElements in the inner arrays have the
      * same starting day.*/
     timeElements: TimeElement[][];
+    /** The days which are considered holidays */
+    publicHolidays: SimplePublicHoliday[];
 
-    public constructor() {
+    /**
+     * @param publicHolidays the days which are considered holidays
+     */
+    public constructor(publicHolidays: SimplePublicHoliday[]) {
         this.timeElements = [];
+        this.publicHolidays = publicHolidays;
     }
 
     public parseTimeDataToTimeElements(timeData: TimeData): TimeElement[][] {
@@ -96,7 +103,7 @@ export default class WorkingTimes {
     // ===== Overtime calculation =====
     /**
      * Calculates the overtime in minutes. The calculation does expect normal working days to be from Monday
-     * to Friday. Additionally working on holidays will result in incorrect overtimes
+     * to Friday. Working on holidays will only be calculated correctly if the holidays are set in the constructor.
      * @param timeElements               all elements to calculate the overtime from, expected to be sorted by date
      * @param minutesPerWeek             the expected amount of minutes to work in a week (default: `40 * 60`)
      * @param previousOvertimeMinutes    will be added to the calculated overtime (default: `0`)
@@ -139,12 +146,39 @@ export default class WorkingTimes {
         });
 
         // subtract the expected minutes per day
-        const day = timeElements[0].startDate.getDay();
-        if (day === 0 || day === 6) {
-            // on Sundays or Saturdays don't subtract the minutesPerDay
+        const weekDay = timeElements[0].startDate.getDay();
+        if (weekDay === 0 || weekDay === 6) {
+            // on Sundays or Saturdays don't subtract the minutes per day
             return overtimeMinutes;
         }
+        overtimeMinutes -= minutesPerDay;
 
-        return overtimeMinutes - minutesPerDay;
+        return this.adjustOvertimeForPublicHoliday(
+            timeElements[0].startDate,
+            overtimeMinutes,
+            minutesPerDay,
+        );
+    }
+
+    /**
+     * Adjusts the overtime for the day to respect holidays. Which days are holidays
+     * is set in the constructor.
+     * @param day                the day to check for a holiday
+     * @param overtimeMinutes    the overtime for the day in minutes
+     * @param minutesPerDay      the expected minutes to work per day
+     * @returns the adjusted overtime for the day in minutes
+     */
+    private adjustOvertimeForPublicHoliday(
+        day: Date,
+        overtimeMinutes: number,
+        minutesPerDay: number,
+    ): number {
+        this.publicHolidays.forEach((publicHoliday: SimplePublicHoliday) => {
+            if (day.getDate() === publicHoliday.day && day.getMonth() === publicHoliday.month) {
+                // the given day is a holiday
+                overtimeMinutes += publicHoliday.freeTimeFactor * minutesPerDay;
+            }
+        });
+        return overtimeMinutes;
     }
 }

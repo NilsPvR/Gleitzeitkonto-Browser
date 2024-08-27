@@ -4,6 +4,7 @@ import Formater from './util/format';
 import { constStrings } from './util/constants';
 import TimeData from './model/timeData';
 import WorkingTimes from './util/workingTimes';
+import { config } from '../contentscript/utils/constants';
 
 let portFromCS: browser.Runtime.Port; // port from content script
 
@@ -38,7 +39,8 @@ function connectedToContentScript(port: browser.Runtime.Port) {
 }
 
 function sendBackOvertime(message: unknown) {
-    const controller = new WorkingTimes();
+    // TODO load publicHolidays from settings
+    const controller = new WorkingTimes(config.publicHolidays);
 
     try {
         if (
