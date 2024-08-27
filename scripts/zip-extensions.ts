@@ -25,6 +25,7 @@ async function createChromiumZip() {
         console.error(e);
     }
 }
+console.log('Creating zip archives...');
 
 await createFirefoxZip();
 await createChromiumZip();

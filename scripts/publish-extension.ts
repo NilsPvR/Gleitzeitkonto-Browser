@@ -4,6 +4,8 @@ import { extname } from 'path';
 
 (async function () {
     try {
+        console.log('Copying extension folder...');
+
         const filterFunc = (src: string) => {
             return extname(src) != '.ts' && extname(src) != '.scss' && extname(src) != '.env'; // exclude ts and scss files since these will be transpiled/compiled by other scripts
         };
@@ -33,7 +35,7 @@ import { extname } from 'path';
             fs.mkdirSync('./build/gleitzeitkonto-browser-zip'); // create folder
         }
 
-        console.log('\x1b[32m%s\x1b[0m', 'Copied Extension folder succesfully!');
+        console.log('\x1b[32m%s\x1b[0m', 'Copied extension folder succesfully!');
     } catch (e) {
         console.error(e);
     }

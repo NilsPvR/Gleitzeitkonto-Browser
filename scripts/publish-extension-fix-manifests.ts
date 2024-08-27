@@ -2,6 +2,8 @@ import fs from 'fs';
 import { copy } from 'fs-extra';
 
 (async function () {
+    console.log('Adjusting manifest files...');
+
     try {
         await copy('./build/extension', './build/extension-chromium'); // copies directory with subdirectories
         // Swap the firefox manifest for the chromium manifest
