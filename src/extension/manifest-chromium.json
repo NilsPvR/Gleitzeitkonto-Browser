@@ -29,10 +29,7 @@
     }
   ],
 
-  "web_accessible_resources": [
-    "assets/refresh-light.svg",
-    "assets/refresh-dark.svg"
-  ],
+  "web_accessible_resources": ["assets/refresh-light.svg", "assets/refresh-dark.svg"],
 
   "permissions": [
     "storage",

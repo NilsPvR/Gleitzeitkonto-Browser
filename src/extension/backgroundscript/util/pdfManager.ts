@@ -7,7 +7,6 @@ import * as pdfjsLib from 'pdfjs-dist';
 import '../../../../node_modules/pdfjs-dist/build/pdf.worker.min.mjs';
 
 export default class PDFManager {
-
     public static async demoPDFCompile(message: unknown) {
         if (
             typeof message !== 'object' ||
@@ -17,11 +16,11 @@ export default class PDFManager {
         ) {
             throw new Error('No message or no content received from the content script');
         }
-        
+
         const pdfDocument = await pdfjsLib.getDocument({ data: atob(message.content) }).promise;
-        
+
         const numPages = pdfDocument.numPages;
-    
+
         for (let pageNum = 1; pageNum <= numPages; pageNum++) {
             const page = await pdfDocument.getPage(pageNum);
             console.log(await page.getTextContent());
