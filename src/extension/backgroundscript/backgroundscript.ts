@@ -5,6 +5,7 @@ import { constStrings } from './util/constants';
 import TimeData from './model/timeData';
 import WorkingTimes from './util/workingTimes';
 import { config } from '../contentscript/utils/constants';
+import PDFManager from './util/pdfManager';
 
 let portFromCS: browser.Runtime.Port; // port from content script
 
@@ -25,6 +26,9 @@ function connectedToContentScript(port: browser.Runtime.Port) {
         switch (message.command) {
             case BackgroundCommand.CalculateOvertime:
                 sendBackOvertime(message);
+                break;
+            case BackgroundCommand.CompilePDF:
+                PDFManager.demoPDFCompile(message);
                 break;
             default:
                 portFromCS.postMessage({
