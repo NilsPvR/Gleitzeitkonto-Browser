@@ -1,3 +1,10 @@
+export const config = {
+    publicHolidays: [
+        { day: 24, month: 11, freeTimeFactor: 0.5 }, // Christmas Eve
+        { day: 31, month: 11, freeTimeFactor: 0.5 }, // New Year's Eve
+    ],
+};
+
 export const constStrings = {
     // prettier-ignore
     errorMsgs: {

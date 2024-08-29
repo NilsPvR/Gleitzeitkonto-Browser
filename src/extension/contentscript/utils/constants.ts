@@ -14,10 +14,6 @@ export const config = {
     loadingOpacity: '0.5',
     startDate: new Date(2000, 0, 1), // month is 0-indexed
     endDate: new Date(2099, 11, 31),
-    publicHolidays: [
-        { day: 24, month: 11, freeTimeFactor: 0.5 }, // Christmas Eve
-        { day: 31, month: 11, freeTimeFactor: 0.5 }, // New Year's Eve
-    ],
 };
 
 export const constStrings = {
