@@ -12,6 +12,14 @@ import { extname } from 'path';
         await copy('./src/extension/assets', './build/extension/assets'); // copies assets folder with all files
         await copy('./src/extension/popup', './build/extension/popup', { filter: filterFunc });
 
+        // remove sourcemap files from development
+        if (fs.existsSync('./build/extension/backgroundscript/backgroundscript.js.map')) {
+            fs.rmSync('./build/extension/backgroundscript/backgroundscript.js.map');
+        }
+        if (fs.existsSync('./build/extension/contentscript/gleitzeitkonto-browser.js.map')) {
+            fs.rmSync('./build/extension/contentscript/gleitzeitkonto-browser.js.map');
+        }
+
         // create folders
         if (!fs.existsSync('./build/extension/backgroundscript')) {
             fs.mkdirSync('./build/extension/backgroundscript');

@@ -7,12 +7,13 @@
   "scripts": {
     "check-format": "prettier --check . && eslint && tsc -noEmit",
     "format": "prettier --write .",
-    "publish": "npm run transpileBuild && node scripts/publish-extension.js && npm run combineBrowserJS && npm run sass-prod && node scripts/publish-extension-fix-manifests.js && npm run zipExtension",
+    "publish": "npm run transpileBuild && node scripts/publish-extension.js && npm run combineBrowserJS && npm run sass && node scripts/publish-extension-fix-manifests.js && npm run zipExtension",
     "transpileBuild": "tsc --project tsconfig.build.json",
-    "combineBrowserJS": "esbuild src/extension/contentscript/contentscript.ts --bundle --outfile=build/extension/contentscript/gleitzeitkonto-browser.js && esbuild src/extension/backgroundscript/backgroundscript.ts --bundle --outfile=build/extension/backgroundscript/backgroundscript.js",
+    "combineBrowserJS": "esbuild src/extension/contentscript/contentscript.ts --bundle --outfile=build/extension/contentscript/gleitzeitkonto-browser.js && esbuild src/extension/backgroundscript/backgroundscript.ts --bundle --minify --outfile=build/extension/backgroundscript/backgroundscript.js",
+    "combineBrowserJS-dev": "esbuild src/extension/contentscript/contentscript.ts --bundle --sourcemap --outfile=build/extension/contentscript/gleitzeitkonto-browser.js && esbuild src/extension/backgroundscript/backgroundscript.ts --bundle --sourcemap --outfile=build/extension/backgroundscript/backgroundscript.js",
     "combinePopupJS": "esbuild src/extension/popup/popupscript.ts --bundle --outfile=build/extension/popup/popupscript.js",
     "zipExtension": "node scripts/zip-extensions.js",
-    "sass-prod": "sass --no-source-map --style=compressed src/extension/popup/gleitzeitkonto-browser.scss:build/extension/popup/gleitzeitkonto-browser.css"
+    "sass": "sass --no-source-map --style=compressed src/extension/popup/gleitzeitkonto-browser.scss:build/extension/popup/gleitzeitkonto-browser.css"
   },
   "repository": {
     "type": "git",
