@@ -8,6 +8,8 @@ import Data from './utils/format';
 import State from './model/state';
 import { AccountData, ErrorData } from './types/accountData';
 import SettingsSync from './utils/settingsSync';
+import { BackgroundCommand } from '../common/enums/command';
+import Formater from './utils/format';
 
 (async () => {
     'use strict';
@@ -120,6 +122,17 @@ async function updateInsertedDisplayOnChange(
 // downloads and calculates afterwards, returns a displayable text in any case
 async function fetchAccountData(state: State): Promise<AccountData | ErrorData> {
     try {
+        // TODO
+        const rawPDFData = await Communication.fetchTimeStatement(
+            'FETCH-EMPLOYEE-NUMBER-FIRST',
+            new Date('2024-07-01'),
+            new Date('2024-07-31'),
+        );
+        Communication.sendMsgToBackground(
+            BackgroundCommand.CompilePDF,
+            Formater.convertArrayBufferToBase64(rawPDFData),
+        );
+
         const data = await Communication.fetchWorkingTimes(config.startDate, config.endDate);
         state.downloadFinished = true;
 

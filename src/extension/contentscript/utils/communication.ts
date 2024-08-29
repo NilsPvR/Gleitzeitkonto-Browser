@@ -74,22 +74,53 @@ export default class Communication {
     }
 
     /**
-     * Determines the URL which should be used to fetch the API based on the currently open page.
-     * @returns the URL to fetch the API
+     * Gets the domain for the API to fetch the data from, based on the currently open page.
+     * The external URL for fetching data is different from the currently open page
+     * on some page variants.
      */
-    private static getFetchURL(): string {
+    private static getFetchDomain(): string {
         if (
             Navigation.getPageVariant() == PageVariant.Internal ||
             window.location.origin.includes(givenStrings.externalURLInsert)
         ) {
-            return window.location.origin + givenStrings.timesheetURLPath;
+            return window.location.origin;
         }
         // user is on external page which is missing the URLInsert part
         const fixedURLOrigin = window.location.origin.replace(
             givenStrings.externalURLInsertAfter,
             givenStrings.externalURLInsertAfter + givenStrings.externalURLInsert,
         );
-        return fixedURLOrigin + givenStrings.timesheetURLPath;
+        return fixedURLOrigin;
+    }
+
+    /**
+     * Determines the URL which should be used to fetch the API for the latest timesheet.
+     * @returns the URL to fetch the API
+     */
+    private static getTimesheetFetchURL(): string {
+        return this.getFetchDomain() + givenStrings.timesheetURLPath;
+    }
+
+    /**
+     * Determines the URL which should be used to fetch the API for the time statement
+     * with the given time frame.
+     * @param employeeNumber    the number of the employee to fetch the time statement from
+     * @param startDate         the first day of the time statement (time is ignored)
+     * @param endDate           the last day of the time statement (time is ignored)
+     * @returns the URL to fetch the API
+     */
+    private static getTimeStatementFetchURL(
+        employeeNumber: string,
+        startDate: Date,
+        endDate: Date,
+    ): string {
+        return (
+            this.getFetchDomain() +
+            givenStrings.timeStatementURLPathFormat
+                .replace('{employeeNumber}', employeeNumber)
+                .replace('{startDate}', Formater.formatDateToYYYYMMDD(startDate))
+                .replace('{endDate}', Formater.formatDateToYYYYMMDD(endDate))
+        );
     }
 
     /**
@@ -100,7 +131,7 @@ export default class Communication {
      */
     private static async fetchCSRFToken(): Promise<string> {
         const csrfResponse = await fetch(
-            new Request(this.getFetchURL(), {
+            new Request(this.getTimesheetFetchURL(), {
                 method: 'HEAD',
                 credentials: 'include',
                 headers: {
@@ -147,7 +178,7 @@ export default class Communication {
             '--batch--';
 
         const result = await fetch(
-            new Request(this.getFetchURL(), {
+            new Request(this.getTimesheetFetchURL(), {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -164,9 +195,44 @@ export default class Communication {
         );
 
         if (!result.ok) {
-            throw new Error('Unexpected API response! Received status code: ' + result.status);
+            throw new Error(
+                'Unexpected API response while fetching working times! Received status code: ' +
+                    result.status,
+            );
         }
         return result.text();
+    }
+
+    /**
+     * Contact the API to get the time statement for the given start- and enddate. The response
+     * will be the data returned by the api. This has to be compiled to a pdf to be able to use it.
+     * @param employeeNumber    the number of the employee to fetch the time statement from
+     * @param startDate         the first day of the time statement (time is ignored)
+     * @param endDate           the last day of the time statement (time is ignored)
+     * @returns the unformatted data of the time statement pdf
+     * @throws if the endDate is not after the startDate
+     * @throws if a communication error with api occurs
+     */
+    public static async fetchTimeStatement(
+        employeeNumber: string,
+        startDate: Date,
+        endDate: Date,
+    ): Promise<ArrayBuffer> {
+        if (startDate > endDate || startDate.getDate() > endDate.getDate()) {
+            throw new Error('End date is not after start date');
+        }
+
+        const result = await fetch(
+            this.getTimeStatementFetchURL(employeeNumber, startDate, endDate),
+        );
+
+        if (!result.ok) {
+            throw new Error(
+                'Unexpected API response while fetching time statement! Received status code: ' +
+                    result.status,
+            );
+        }
+        return result.arrayBuffer();
     }
 
     /**

@@ -72,4 +72,10 @@ export default class Formater {
 
         return `${date.getFullYear()}${month}${day}`;
     }
+
+    public static convertArrayBufferToBase64(buffer: ArrayBuffer): string {
+        const byteArray = new Uint8Array(buffer);
+        const binaryString = String.fromCharCode(...byteArray);
+        return btoa(binaryString);
+    }
 }

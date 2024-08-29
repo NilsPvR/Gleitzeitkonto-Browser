@@ -5,4 +5,5 @@
 export enum BackgroundCommand {
     /** From the given data calculate the overtime and return it */
     CalculateOvertime,
+    CompilePDF,
 }
