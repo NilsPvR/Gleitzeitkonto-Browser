@@ -1,7 +1,9 @@
 import * as pdfjsLib from 'pdfjs-dist';
-// import the worker directly, this is not the intended way! doing it the intended way is copying
-// the file into the build output so that the file is available at runtime 
-// and then setting the `workerSrc`. but somehow this still generates a fake worker
+// import the worker directly; TODO/FIXME: This is not the intended way! Doing it the intended way
+// is copying the file into the build output so that the file is available at runtime and then
+// setting the `workerSrc`. Somehow this still generates a fake worker.
+// The alternative is to instantiate a worker manually and then setting `workerPort` however this
+// results in a never resolving worker (does not send anything back).
 import '../../../../node_modules/pdfjs-dist/build/pdf.worker.min.mjs';
 
 export default class PDFManager {
@@ -15,7 +17,6 @@ export default class PDFManager {
         ) {
             throw new Error('No message or no content received from the content script');
         }
-    
         
         const pdfDocument = await pdfjsLib.getDocument({ data: atob(message.content) }).promise;
         
