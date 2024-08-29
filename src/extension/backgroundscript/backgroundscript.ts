@@ -1,10 +1,10 @@
 import browser from 'webextension-polyfill';
 import { BackgroundCommand } from '../common/enums/command';
-import Formater from './util/format';
-import { config, constStrings } from './util/constants';
+import Formater from './utils/format';
+import { config, constStrings } from './utils/constants';
 import TimeData from './model/timeData';
-import WorkingTimes from './util/workingTimes';
-import PDFManager from './util/pdfManager';
+import WorkingTimes from './utils/workingTimes';
+import PDFManager from './utils/pdfManager';
 
 let portFromCS: browser.Runtime.Port; // port from content script
 

@@ -4,7 +4,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 // setting the `workerSrc`. Somehow this still generates a fake worker.
 // The alternative is to instantiate a worker manually and then setting `workerPort` however this
 // results in a never resolving worker (does not send anything back).
-import '../../../../node_modules/pdfjs-dist/build/pdf.worker.min.mjs';
+import 'pdfjs-dist/build/pdf.worker.min.mjs';
 
 export default class PDFManager {
     public static async demoPDFCompile(message: unknown) {

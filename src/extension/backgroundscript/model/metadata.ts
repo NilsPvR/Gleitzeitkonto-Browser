@@ -1,4 +1,4 @@
-import { constStrings } from '../util/constants';
+import { constStrings } from '../utils/constants';
 
 export default class Metadata {
     public constructor(

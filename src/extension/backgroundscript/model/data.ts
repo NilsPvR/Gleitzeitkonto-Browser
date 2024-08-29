@@ -1,4 +1,4 @@
-import { constStrings } from '../util/constants';
+import { constStrings } from '../utils/constants';
 import Result from './result';
 
 export default class Data {

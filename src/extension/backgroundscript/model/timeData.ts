@@ -1,4 +1,4 @@
-import { constStrings } from '../util/constants';
+import { constStrings } from '../utils/constants';
 import Data from './data';
 
 export default class TimeData {
