@@ -29,7 +29,8 @@
     {
       "matches": ["https://*.ondemand.com/*", "https://bgp.btcsap.btc-ag.com/*"],
       "js": ["contentscript/gleitzeitkonto-browser.js"],
-      "css": ["contentscript/gleitzeitkonto-browser.css"]
+      "css": ["contentscript/gleitzeitkonto-browser.css"],
+      "run_at": "document_start"
     }
   ],
 
