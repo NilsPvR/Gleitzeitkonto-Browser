@@ -17,8 +17,6 @@ import Formater from './utils/format';
     /* ==========================================================================================
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Main Events <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
-    View.addCustomCSS('./contentscript/gleitzeitkonto-browser.css');
-
     // ===== Start sending all requests =====
     const state = new State();
 

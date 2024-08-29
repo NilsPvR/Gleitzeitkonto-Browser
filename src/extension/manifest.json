@@ -28,14 +28,14 @@
   "content_scripts": [
     {
       "matches": ["https://*.ondemand.com/*", "https://bgp.btcsap.btc-ag.com/*"],
-      "js": ["contentscript/gleitzeitkonto-browser.js"]
+      "js": ["contentscript/gleitzeitkonto-browser.js"],
+      "css": ["contentscript/gleitzeitkonto-browser.css"]
     }
   ],
 
   "web_accessible_resources": [
     "assets/refresh-light.svg",
-    "assets/refresh-dark.svg",
-    "contentscript/gleitzeitkonto-browser.css"
+    "assets/refresh-dark.svg"
   ],
 
   "permissions": [

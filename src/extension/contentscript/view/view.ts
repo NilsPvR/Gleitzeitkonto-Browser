@@ -1,22 +1,7 @@
-import browser from 'webextension-polyfill';
 import { config, constStrings } from '../utils/constants';
 import { DisplayFormat } from '../types/display';
 
 export default class View {
-    public static addCustomCSS(cssURL: string): void {
-        if (!document.getElementById(constStrings.cssID)) {
-            // if not already added
-            const link = document.createElement('link');
-            link.id = constStrings.cssID;
-            link.rel = 'stylesheet';
-            link.type = 'text/css';
-            link.media = 'all';
-            link.href = browser.runtime.getURL(cssURL);
-
-            document.head.appendChild(link);
-        }
-    }
-
     // ========= Changes on Gleitzeitkonto-Display ========
     // ====================================================
 
