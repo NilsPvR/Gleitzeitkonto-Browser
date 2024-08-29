@@ -71,15 +71,18 @@ export default class Formater {
      * @returns the formatted time string
      */
     public static minutesToTimeString(minutes: number): string {
-        const wholeHours = Math.floor(Math.abs(minutes) / 60);
         const remainingMinutes = Math.abs(minutes) % 60;
+        const wholeHours = (Math.abs(minutes) - remainingMinutes) / 60;
 
-        let result = '';
-        // prettier-ignore
-        if (wholeHours > 0)                         result += `${wholeHours}h`;
-        if (wholeHours > 0 && remainingMinutes > 0) result += ' ';
-        // prettier-ignore
-        if (remainingMinutes > 0)                   result += `${remainingMinutes}min`;
-        return (minutes < 0 ? '-' : '') + result;
+        let result = minutes < 0 ? '-' : '';
+        if (wholeHours > 0) {
+            result += wholeHours + 'h';
+            if (remainingMinutes > 0) {
+                result += ' ';
+            } else {
+                return result;
+            }
+        }
+        return result + remainingMinutes + 'min';
     }
 }
