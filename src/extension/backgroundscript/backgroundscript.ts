@@ -27,7 +27,7 @@ function connectedToContentScript(port: browser.Runtime.Port) {
                 sendBackOvertime(message);
                 break;
             case BackgroundCommand.CompilePDF:
-                PDFManager.demoPDFCompile(message);
+                saveOvertimeFromPDF(message);
                 break;
             default:
                 portFromCS.postMessage({
@@ -62,7 +62,7 @@ function sendBackOvertime(message: unknown) {
         console.error(e);
         portFromCS.postMessage({
             command: BackgroundCommand.CalculateOvertime,
-            error: { message: constStrings.errorMsgs.unableToParseJSON },
+            error: { message: constStrings.errorMsgs.unableToParseData },
         });
         return;
     }
@@ -74,6 +74,24 @@ function sendBackOvertime(message: unknown) {
         accountString: Formater.minutesToTimeString(overtimeInMinutes),
     });
 }
+
+async function saveOvertimeFromPDF(message: unknown) {
+    try {
+        const pdfDocument = await PDFManager.compilePDF(message);
+        const overtimeString = await PDFManager.getOvertimeFromPDF(pdfDocument);
+        console.log(overtimeString);
+        // TODO convert overtime to nummber and save in storage
+        
+    } catch (e) {
+        console.error(e);
+        portFromCS.postMessage({
+            command: BackgroundCommand.CompilePDF,
+            error: { message: constStrings.errorMsgs.unableToParseData },
+        });
+        return;
+    }
+    
+} 
 
 // listen for connection opening from the content script
 browser.runtime.onConnect.addListener(connectedToContentScript);
