@@ -96,7 +96,8 @@ export default class Formater {
         if (input.trim().length == 0) {
             return 0;
         }
-        const number = Number(input.trim().replace(',', '.'));
+        // remove any spaces in the string (allow space between "-" and number)
+        const number = Number(input.replace(/\s+/g, '').replace(',', '.'));
         if (Number.isNaN(number)) {
             throw new Error(
                 'Invalid input string which does not represent a number. Received: ' + input,
