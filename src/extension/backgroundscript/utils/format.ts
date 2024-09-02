@@ -87,7 +87,7 @@ export default class Formater {
     }
 
     /**
-     * Takes a string which will be converted into a number. The string maybe an empty or whitespace only 
+     * Takes a string which will be converted into a number. The string maybe an empty or whitespace only
      * string then 0 will be returned. The string may use `,` or `.` as a decimal point.
      * @returns the number or 0
      * @throws if the input is not a number

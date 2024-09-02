@@ -91,8 +91,7 @@ async function saveOvertimeFromPDF(message: unknown) {
         });
         return;
     }
-    
-} 
+}
 
 // listen for connection opening from the content script
 browser.runtime.onConnect.addListener(connectedToContentScript);

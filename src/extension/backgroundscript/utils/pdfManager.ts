@@ -21,26 +21,34 @@ export default class PDFManager {
         return pdfjsLib.getDocument({ data: atob(message.content) }).promise;
     }
 
-    public static async getOvertimeFromPDF(pdfDocument: pdfjsLib.PDFDocumentProxy): Promise<string> {
+    public static async getOvertimeFromPDF(
+        pdfDocument: pdfjsLib.PDFDocumentProxy,
+    ): Promise<string> {
         const amountPages = pdfDocument.numPages;
 
         // loop over all pages in the pdf
         for (let currentPageNum = 1; currentPageNum <= amountPages; currentPageNum++) {
             const page = await pdfDocument.getPage(currentPageNum);
             const textContent = await page.getTextContent();
+            console.log(textContent);
 
             // loop over all entries in the page
             for (let i = 0; i < textContent.items.length; i++) {
                 const item = textContent.items[i];
                 if (!('str' in item)) continue;
-                if (item.str !== givenStrings.pdfOvertimeString.de && item.str !== givenStrings.pdfOvertimeString.en) {
+                if (
+                    item.str !== givenStrings.pdfOvertimeString.de &&
+                    item.str !== givenStrings.pdfOvertimeString.en
+                ) {
                     continue;
                 }
 
                 // the overtime string is not the next element since that is always a space
                 const overtimeItem = textContent.items[i + 2];
                 if (!('str' in overtimeItem) || overtimeItem.str.trim().length == 0) {
-                    throw new Error('Overtime is not present at expected item. Found instead: ' + overtimeItem);
+                    throw new Error(
+                        'Overtime is not present at expected item. Found instead: ' + overtimeItem,
+                    );
                 }
 
                 return overtimeItem.str;
