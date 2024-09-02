@@ -85,4 +85,23 @@ export default class Formater {
         }
         return result + remainingMinutes + 'min';
     }
+
+    /**
+     * Takes a string which will be converted into a number. The string maybe an empty or whitespace only 
+     * string then 0 will be returned. The string may use `,` or `.` as a decimal point.
+     * @returns the number or 0
+     * @throws if the input is not a number
+     */
+    public static getNumberFromString(input: string): number {
+        if (input.trim().length == 0) {
+            return 0;
+        }
+        const number = Number(input.trim().replace(',', '.'));
+        if (Number.isNaN(number)) {
+            throw new Error(
+                'Invalid input string which does not represent a number. Received: ' + input,
+            );
+        }
+        return number;
+    }
 }

@@ -79,9 +79,10 @@ async function saveOvertimeFromPDF(message: unknown) {
     try {
         const pdfDocument = await PDFManager.compilePDF(message);
         const overtimeString = await PDFManager.getOvertimeFromPDF(pdfDocument);
-        console.log(overtimeString);
-        // TODO convert overtime to nummber and save in storage
-        
+        const overtime = Formater.getNumberFromString(overtimeString);
+        console.log(overtime);
+
+        // TODO save in storage
     } catch (e) {
         console.error(e);
         portFromCS.postMessage({
