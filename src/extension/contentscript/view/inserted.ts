@@ -5,11 +5,14 @@ import Common from './common';
 import Floating from './floating';
 import State from '../model/state';
 import Settings from '../../common/utils/settings';
+import Communication from '../utils/communication';
 
 export default class Inserted {
     // ========== Inserted display ==========
 
-    public static async addInsertedDisplay(
+    constructor(public communication: Communication) {}
+
+    public async addInsertedDisplay(
         pHeaderBar: HTMLElement,
         pDisplayText: string,
         loading: boolean,
@@ -38,7 +41,7 @@ export default class Inserted {
         const refreshIcon = document.getElementById(constStrings.refreshIconID);
         if (!refreshIcon) return; // unable to add event listener
         refreshIcon.addEventListener('click', () => {
-            realodAccountData(state);
+            realodAccountData(this.communication, state);
         });
     }
 

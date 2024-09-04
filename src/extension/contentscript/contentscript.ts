@@ -19,10 +19,11 @@ import Formater from './utils/format';
 
     // ===== Start sending all requests =====
     const state = new State();
+    const communication = new Communication();
 
-    const calculatedData = fetchAccountData(state);
+    const calculatedData = fetchAccountData(communication, state);
 
-    const outdated = Communication.checkVersionOutdated(); // preload version
+    const outdated = communication.checkVersionOutdated(); // preload version
 
     // ===== Wait for correct page to be opened =====
     await Navigation.continuousMenucheck();
@@ -35,7 +36,7 @@ import Formater from './utils/format';
     const realodBtn = document.getElementById(constStrings.buttonID);
     if (realodBtn) {
         realodBtn.addEventListener('click', () => {
-            realodAccountData(state);
+            realodAccountData(communication, state);
         });
     }
 
@@ -56,7 +57,7 @@ import Formater from './utils/format';
             config.maxPageloadingLoops,
         );
 
-        updateInsertedDisplayOnChange(headerBar, calculatedData, outdated, state);
+        updateInsertedDisplayOnChange(headerBar, calculatedData, outdated, communication, state);
 
         const settingsSync = new SettingsSync();
         settingsSync.updateDisplayOnExtensionStateChange();
@@ -75,6 +76,7 @@ async function updateInsertedDisplayOnChange(
     headerBar: HTMLElement,
     calculatedData: Promise<AccountData | ErrorData>,
     outdated: Promise<boolean>,
+    communication: Communication,
     state: State,
 ) {
     const placeOrRemoveInsertedDisplay = async () => {
@@ -85,7 +87,7 @@ async function updateInsertedDisplayOnChange(
                 outdated,
                 state,
             );
-            Inserted.addInsertedDisplay(
+            new Inserted(communication).addInsertedDisplay(
                 headerBar,
                 latestDisplayFormat.text,
                 latestDisplayFormat.loading,
@@ -118,7 +120,10 @@ async function updateInsertedDisplayOnChange(
 }
 
 // downloads and calculates afterwards, returns a displayable text in any case
-async function fetchAccountData(state: State): Promise<AccountData | ErrorData> {
+async function fetchAccountData(
+    communication: Communication,
+    state: State,
+): Promise<AccountData | ErrorData> {
     try {
         // TODO
         const rawPDFData = await Communication.fetchTimeStatement(
@@ -126,15 +131,15 @@ async function fetchAccountData(state: State): Promise<AccountData | ErrorData> 
             new Date('2024-07-01'),
             new Date('2024-07-31'),
         );
-        Communication.sendMsgToBackground(
+        communication.sendMsgToBackground(
             BackgroundCommand.CompilePDF,
             Formater.convertArrayBufferToBase64(rawPDFData),
         );
 
-        const data = await Communication.fetchWorkingTimes(config.startDate, config.endDate);
+        const data = await communication.fetchWorkingTimes(config.startDate, config.endDate);
         state.downloadFinished = true;
 
-        return await Communication.calculateOvertime(data);
+        return await communication.calculateOvertime(data);
     } catch (e) {
         console.error(e);
         return {
@@ -146,14 +151,14 @@ async function fetchAccountData(state: State): Promise<AccountData | ErrorData> 
 }
 
 // called from the reload btn, recalculates the overtime
-export function realodAccountData(state: State) {
+export function realodAccountData(communication: Communication, state: State) {
     View.startLoading(); // start loading immediately
 
     // == Start new requests ==
     state.downloadFinished = false;
     state.calculateFinished = false;
 
-    const calculatedData = fetchAccountData(state);
+    const calculatedData = fetchAccountData(communication, state);
 
     // == Register actions for promise resolving ==
     calculatedData.then(async () => {

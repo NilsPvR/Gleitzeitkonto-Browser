@@ -11,7 +11,8 @@ export default class Communication {
     // =========== Communication with backend ===========
     // ==================================================
 
-    private static portToBackground: Runtime.Port | undefined;
+    private portToBackground: Runtime.Port | undefined;
+    private csrfToken: string | undefined;
 
     /**
      * Sends a message to the background script. The response from the background script will be returned.
@@ -20,10 +21,7 @@ export default class Communication {
      * @param content    the content to send to the background script
      * @returns a response for the command
      */
-    public static async sendMsgToBackground(
-        command: BackgroundCommand,
-        content: string,
-    ): Promise<object> {
+    public async sendMsgToBackground(command: BackgroundCommand, content: string): Promise<object> {
         return new Promise((resolve) => {
             if (this.portToBackground == undefined) {
                 this.portToBackground = browser.runtime.connect(); // buid connection if not already established
@@ -55,7 +53,7 @@ export default class Communication {
      * @param data    the data to calculate overtime from, is expected to be in the format received by the API
      * @returns the calculated account data or an error message object
      */
-    public static async calculateOvertime(data: string): Promise<AccountData | ErrorData> {
+    public async calculateOvertime(data: string): Promise<AccountData | ErrorData> {
         const response = await this.sendMsgToBackground(BackgroundCommand.CalculateOvertime, data);
 
         if (
@@ -129,9 +127,9 @@ export default class Communication {
      * @returns the CSRF token
      * @throws if the token is not sent by the API
      */
-    private static async fetchCSRFToken(): Promise<string> {
+    private async fetchCSRFToken() {
         const csrfResponse = await fetch(
-            new Request(this.getTimesheetFetchURL(), {
+            new Request(Communication.getTimesheetFetchURL(), {
                 method: 'HEAD',
                 credentials: 'include',
                 headers: {
@@ -140,7 +138,7 @@ export default class Communication {
             }),
         );
         const csrfToken = csrfResponse.headers.get('x-csrf-token');
-        if (csrfToken) return csrfToken;
+        if (csrfToken) return this.csrfToken = csrfToken;
 
         throw new Error('Unable to fetch CSRF-Token');
     }
@@ -155,11 +153,13 @@ export default class Communication {
      * @throws if the endDate is not after the startDate
      * @throws if a communication error with api occurs
      */
-    public static async fetchWorkingTimes(startDate: Date, endDate: Date): Promise<string> {
+    public async fetchWorkingTimes(startDate: Date, endDate: Date): Promise<string> {
         if (startDate > endDate || startDate.getDate() > endDate.getDate()) {
             throw new Error('End date is not after start date');
         }
-        const csrfToken = this.fetchCSRFToken();
+        if (!this.csrfToken) {
+            await this.fetchCSRFToken();
+        }
 
         const start = Formater.formatDateToYYYYMMDD(startDate);
         const end = Formater.formatDateToYYYYMMDD(endDate);
@@ -170,7 +170,7 @@ export default class Communication {
             '\n' +
             `GET TimeDataList?sap-client=300&$filter=StartDate%20eq%20%27${start}%27%20and%20EndDate%20eq%20%27${end}%27 HTTP/1.1\n` +
             'Accept: application/json\n' +
-            `X-CSRF-Token: ${await csrfToken}\n` +
+            `X-CSRF-Token: ${this.csrfToken}\n` +
             'DataServiceVersion: 2.0\n' +
             'MaxDataServiceVersion: 2.0\n' +
             'X-Requested-With: XMLHttpRequest\n' +
@@ -178,13 +178,13 @@ export default class Communication {
             '--batch--';
 
         const result = await fetch(
-            new Request(this.getTimesheetFetchURL(), {
+            new Request(Communication.getTimesheetFetchURL(), {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
                     Accept: '*/*',
                     'Accept-Encoding': 'gzip, deflate, br, zstd',
-                    'x-csrf-token': await csrfToken,
+                    'x-csrf-token': this.csrfToken!, // token has been set above or error was thrown
                     Priority: 'u=4',
                     Pragma: 'no-cache',
                     'Cache-Control': 'no-cache',
@@ -213,7 +213,7 @@ export default class Communication {
      * @throws if the endDate is not after the startDate
      * @throws if a communication error with api occurs
      */
-    public static async fetchTimeStatement(
+    public async fetchTimeStatement(
         employeeNumber: string,
         startDate: Date,
         endDate: Date,
@@ -223,7 +223,7 @@ export default class Communication {
         }
 
         const result = await fetch(
-            this.getTimeStatementFetchURL(employeeNumber, startDate, endDate),
+            Communication.getTimeStatementFetchURL(employeeNumber, startDate, endDate),
         );
 
         if (!result.ok) {
@@ -240,7 +240,7 @@ export default class Communication {
      * the browser extension version.
      * @returns true if the extension is outdated
      */
-    public static async checkVersionOutdated(): Promise<boolean> {
+    public async checkVersionOutdated(): Promise<boolean> {
         const localBrowserVersion = browser.runtime.getManifest().version;
 
         let onlineVersion;
