@@ -99,6 +99,10 @@ export default class Communication {
         return this.getFetchDomain() + givenStrings.timesheetURLPath;
     }
 
+    private static getEmployeeNumberFetchURL(): string {
+        return this.getFetchDomain() + givenStrings.employeeNumberURLPath;
+    }
+
     /**
      * Determines the URL which should be used to fetch the API for the time statement
      * with the given time frame.
@@ -197,6 +201,55 @@ export default class Communication {
         if (!result.ok) {
             throw new Error(
                 'Unexpected API response while fetching working times! Received status code: ' +
+                    result.status,
+            );
+        }
+        return result.text();
+    }
+
+    /**
+     * Contacts the API to get a response inclduing the employee id.
+     * The response will be the data returned by the api. This data
+     * contains the employee id but has to be formatted to be able to use it.
+     * @returns an unformatted response with the working times
+     * @throws if a communication error with api occurs
+     */
+    public async fetchEmployeeId() {
+        if (!this.csrfToken) {
+            await this.fetchCSRFToken();
+        }
+
+        const requestBody =
+            '--batch\n' +
+            'Content-Type: application/http\n' +
+            'Content-Transfer-Encoding: binary\n' +
+            '\n' +
+            'GET ConcurrentEmploymentSet?$filter=ApplicationId%20eq%20%27MYHRFORMS%27 HTTP/1.1\n' +
+            'sap-cancel-on-close: true\n' +
+            'sap-contextid-accept: header\n' +
+            'Accept: application/json\n' +
+            'Accept-Language: de\n' +
+            'DataServiceVersion: 2.0\n' +
+            'MaxDataServiceVersion: 2.0\n' +
+            'X-Requested-With: XMLHttpRequest\n' +
+            '\n\n' +
+            '--batch--';
+
+        const result = await fetch(
+            new Request(Communication.getEmployeeNumberFetchURL(), {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'x-csrf-token': this.csrfToken!, // token has been set above or error was thrown
+                    'Content-Type': 'multipart/mixed;boundary=batch',
+                },
+                body: requestBody,
+            }),
+        );
+
+        if (!result.ok) {
+            throw new Error(
+                'Unexpected API response while fetching employee id! Received status code: ' +
                     result.status,
             );
         }
