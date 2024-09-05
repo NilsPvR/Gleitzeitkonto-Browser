@@ -8,13 +8,8 @@ import 'pdfjs-dist/build/pdf.worker.min.mjs';
 import { givenStrings } from './constants';
 
 export default class PDFManager {
-    public static async compilePDF(message: unknown): Promise<pdfjsLib.PDFDocumentProxy> {
-        if (
-            typeof message !== 'object' ||
-            !message ||
-            !('content' in message) ||
-            typeof message.content !== 'string'
-        ) {
+    public static async compilePDF(message: object): Promise<pdfjsLib.PDFDocumentProxy> {
+        if (!('content' in message) || typeof message.content !== 'string') {
             throw new Error('No message or no content received from the content script');
         }
 

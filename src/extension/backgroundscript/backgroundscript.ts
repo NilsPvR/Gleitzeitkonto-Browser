@@ -41,17 +41,12 @@ function connectedToContentScript(port: browser.Runtime.Port) {
     });
 }
 
-function sendBackOvertime(message: unknown) {
+function sendBackOvertime(message: object) {
     // TODO load publicHolidays from settings
     const controller = new WorkingTimes(config.publicHolidays);
 
     try {
-        if (
-            typeof message !== 'object' ||
-            !message ||
-            !('content' in message) ||
-            typeof message.content !== 'string'
-        ) {
+        if (!('content' in message) || typeof message.content !== 'string') {
             throw new Error('No message or no content received from the content script');
         }
         const jsonObject = Formater.getJSONFromAPIData(message.content);
@@ -75,7 +70,7 @@ function sendBackOvertime(message: unknown) {
     });
 }
 
-async function saveOvertimeFromPDF(message: unknown) {
+async function saveOvertimeFromPDF(message: object) {
     try {
         const pdfDocument = await PDFManager.compilePDF(message);
         const overtimeString = await PDFManager.getOvertimeFromPDF(pdfDocument);
