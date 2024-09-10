@@ -3,6 +3,7 @@ import { BackgroundCommand } from '../common/enums/command';
 import Formater from './utils/format';
 import { config, constStrings } from './utils/constants';
 import TimeData from './model/timeData';
+import EmployeeData from './model/employeeData';
 import WorkingTimes from './utils/workingTimes';
 import PDFManager from './utils/pdfManager';
 
@@ -25,6 +26,9 @@ function connectedToContentScript(port: browser.Runtime.Port) {
         switch (message.command) {
             case BackgroundCommand.CalculateOvertime:
                 sendBackOvertime(message);
+                break;
+            case BackgroundCommand.ParseEmployeeId:
+                sendBackEmployeeId(message);
                 break;
             case BackgroundCommand.CompilePDF:
                 saveOvertimeFromPDF(message);
@@ -70,6 +74,34 @@ function sendBackOvertime(message: object) {
     });
 }
 
+async function sendBackEmployeeId(message: object) {
+    let employeeId: string;
+
+    try {
+        if (!('content' in message) || typeof message.content !== 'string') {
+            throw new Error('No message or no content received from the content script');
+        }
+        const jsonObject = Formater.getJSONFromAPIData(message.content);
+        const employeeData = EmployeeData.fromObject(jsonObject);
+        employeeId = employeeData.d.results[0].employeeId;
+        if (!employeeId || employeeId.trim() === '') {
+            throw new Error('No employee ID in API data');
+        }
+    } catch (e) {
+        console.error(e);
+        portFromCS.postMessage({
+            command: BackgroundCommand.ParseEmployeeId,
+            error: { message: constStrings.errorMsgs.unableToParseData },
+        });
+        return;
+    }
+
+    portFromCS.postMessage({
+        command: BackgroundCommand.ParseEmployeeId,
+        employeeId: employeeId,
+    });
+}
+
 async function saveOvertimeFromPDF(message: object) {
     try {
         const pdfDocument = await PDFManager.compilePDF(message);
@@ -86,6 +118,9 @@ async function saveOvertimeFromPDF(message: object) {
         });
         return;
     }
+    portFromCS.postMessage({
+        command: BackgroundCommand.CompilePDF,
+    });
 }
 
 // listen for connection opening from the content script

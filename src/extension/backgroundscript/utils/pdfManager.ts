@@ -25,7 +25,6 @@ export default class PDFManager {
         for (let currentPageNum = 1; currentPageNum <= amountPages; currentPageNum++) {
             const page = await pdfDocument.getPage(currentPageNum);
             const textContent = await page.getTextContent();
-            console.log(textContent);
 
             // loop over all entries in the page
             for (let i = 0; i < textContent.items.length; i++) {

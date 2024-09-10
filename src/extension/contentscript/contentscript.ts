@@ -10,6 +10,7 @@ import { AccountData, ErrorData } from './types/accountData';
 import SettingsSync from './utils/settingsSync';
 import { BackgroundCommand } from '../common/enums/command';
 import Formater from './utils/format';
+import DateManger from './utils/dateManager';
 
 (async () => {
     'use strict';
@@ -125,16 +126,30 @@ async function fetchAccountData(
     state: State,
 ): Promise<AccountData | ErrorData> {
     try {
-        // TODO
-        const rawPDFData = await Communication.fetchTimeStatement(
-            'FETCH-EMPLOYEE-NUMBER-FIRST',
-            new Date('2024-07-01'),
-            new Date('2024-07-31'),
+        const employeeData = await communication.fetchEmployeeId();
+
+        const employeeIdResponse = await communication.sendMsgToBackground(
+            BackgroundCommand.ParseEmployeeId,
+            employeeData,
         );
-        communication.sendMsgToBackground(
+        // TODO check for error messages (like in calculateOvertime())
+        if (
+            !('employeeId' in employeeIdResponse) ||
+            typeof employeeIdResponse.employeeId !== 'string'
+        ) {
+            throw new Error('Received response from background without employee ID');
+        }
+
+        const rawPDFData = await communication.fetchTimeStatement(
+            employeeIdResponse.employeeId,
+            DateManger.calculatePDFStartDate(),
+            DateManger.calcualtePDFEndDate(),
+        );
+        await communication.sendMsgToBackground(
             BackgroundCommand.CompilePDF,
             Formater.convertArrayBufferToBase64(rawPDFData),
         );
+        // TODO check for error messages (like in calculateOvertime())
 
         const data = await communication.fetchWorkingTimes(config.startDate, config.endDate);
         state.downloadFinished = true;
