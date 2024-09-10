@@ -142,7 +142,7 @@ export default class Communication {
             }),
         );
         const csrfToken = csrfResponse.headers.get('x-csrf-token');
-        if (csrfToken) return this.csrfToken = csrfToken;
+        if (csrfToken) return (this.csrfToken = csrfToken);
 
         throw new Error('Unable to fetch CSRF-Token');
     }
@@ -301,7 +301,7 @@ export default class Communication {
             onlineVersion = await fetch(givenStrings.githubAPIURL); // get latest release data from github
             onlineVersion = await onlineVersion.json();
         } catch (e) {
-            console.log(e);
+            console.error(e);
             return false; // don't compare versions since online version not available
         }
         if (onlineVersion?.tag_name) {
