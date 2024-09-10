@@ -1,6 +1,6 @@
 import TimeElement from '../model/timeElement';
 import TimeData from '../model/timeData';
-import Result from '../model/result';
+import TimeData_Result from '../model/timeData_Result';
 import Formater from './format';
 import { givenStrings } from './constants';
 import { SimplePublicHoliday } from '../types/publicHoliday';
@@ -21,7 +21,7 @@ export default class WorkingTimes {
     }
 
     public parseTimeDataToTimeElements(timeData: TimeData): TimeElement[][] {
-        const results: Result[] = timeData.d.results;
+        const results: TimeData_Result[] = timeData.d.results;
 
         let date: string;
         let startTime: string;

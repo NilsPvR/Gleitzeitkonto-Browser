@@ -1,14 +1,14 @@
 import { constStrings } from '../utils/constants';
-import Data from './timeData_Data';
+import Data from './employeeData_Data';
 
-export default class TimeData {
+export default class EmployeeData {
     public constructor(public d: Data) {}
 
-    public static fromObject(obj: object): TimeData {
+    public static fromObject(obj: object): EmployeeData {
         if (!('d' in obj) || !obj.d) {
             throw new Error(constStrings.internalErrorMsgs.unableToParseObj);
         }
-        return new TimeData(Data.fromObject(obj.d));
+        return new EmployeeData(Data.fromObject(obj.d));
     }
 
     public toObject() {

@@ -1,7 +1,7 @@
 import { constStrings } from '../utils/constants';
 import Metadata from './metadata';
 
-export default class Result {
+export default class TimeData_Result {
     public constructor(
         public metadata: Metadata,
         public deactivated: boolean,
@@ -16,7 +16,7 @@ export default class Result {
         public endDate: string,
     ) {}
 
-    public static fromObject(obj: object): Result {
+    public static fromObject(obj: object): TimeData_Result {
         if (
             !('__metadata' in obj) ||
             !obj.__metadata ||
@@ -43,7 +43,7 @@ export default class Result {
         ) {
             throw new Error(constStrings.internalErrorMsgs.unableToParseObj);
         }
-        return new Result(
+        return new TimeData_Result(
             Metadata.fromObject(obj.__metadata),
             obj.Deactivated,
             obj.Pernr,
