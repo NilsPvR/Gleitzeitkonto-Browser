@@ -119,9 +119,10 @@ async function updateInsertedDisplayOnChange(
     });
 }
 
-
 // fetches data and sends requests to background script, returns a displayable text in any case
-async function calculateNewAccountData(communication: Communication): Promise<AccountData | ErrorData> {
+async function calculateNewAccountData(
+    communication: Communication,
+): Promise<AccountData | ErrorData> {
     try {
         const timeStatement = sendTimeStatementData(communication);
         const timeSheet = sendTimeSheetData(communication);
@@ -136,31 +137,29 @@ async function calculateNewAccountData(communication: Communication): Promise<Ac
             return {
                 error: {
                     message: constStrings.errorMsgs.unknown,
-                }
-            }
+                },
+            };
         }
         return {
             error: {
                 message: e.message,
-            }
-        }
-        
-    };
-    return(getAccountData(communication));
+            },
+        };
+    }
+    return getAccountData(communication);
 }
-
 
 // throws a displayable error message in case anything goes wrong
 async function sendTimeStatementData(communication: Communication) {
     // === Employee ID ===
-    let employeeData
+    let employeeData;
     try {
         employeeData = await communication.fetchEmployeeId();
     } catch (e) {
         console.error(e);
         throw new Error(constStrings.errorMsgs.unableToContactAPI);
     }
-    
+
     const employeeIdResponse = await communication.sendMsgToBackground(
         BackgroundCommand.ParseEmployeeId,
         employeeData,
@@ -171,10 +170,9 @@ async function sendTimeStatementData(communication: Communication) {
         !('employeeId' in employeeIdResponse) ||
         typeof employeeIdResponse.employeeId !== 'string'
     ) {
-        console.error('Received response from background without employee ID')
+        console.error('Received response from background without employee ID');
         throw new Error(constStrings.errorMsgs.unexpectedBackgroundResponse);
     }
-
 
     // === Time statement a.k.a. PDF file ===
     let rawTimeStatementData;
@@ -188,7 +186,7 @@ async function sendTimeStatementData(communication: Communication) {
         console.error(e);
         throw new Error(constStrings.errorMsgs.unableToContactAPI);
     }
-    
+
     const timeStatementResponse = await communication.sendMsgToBackground(
         BackgroundCommand.CompileTimeSatement,
         Formater.convertArrayBufferToBase64(rawTimeStatementData),
@@ -196,7 +194,7 @@ async function sendTimeStatementData(communication: Communication) {
 
     Formater.checkForErrorMsg(timeStatementResponse);
     // background only sends content if there is an error
-} 
+}
 
 // throws a displayable error message in case anything goes wrong
 async function sendTimeSheetData(communication: Communication) {
@@ -207,22 +205,18 @@ async function sendTimeSheetData(communication: Communication) {
         console.error(e);
         throw new Error(constStrings.errorMsgs.unableToContactAPI);
     }
-    
+
     const timeSheetResponse = await communication.sendMsgToBackground(
         BackgroundCommand.ParseTimeSheet,
-        timeSheetData
+        timeSheetData,
     );
 
     Formater.checkForErrorMsg(timeSheetResponse);
     // background only sends content if there is an error
 }
 
-async function getAccountData(
-    communication: Communication,
-): Promise<AccountData | ErrorData> {
-    const overtimeResponse = await communication.sendMsgToBackground(
-        BackgroundCommand.GetOvertime,
-    );
+async function getAccountData(communication: Communication): Promise<AccountData | ErrorData> {
+    const overtimeResponse = await communication.sendMsgToBackground(BackgroundCommand.GetOvertime);
 
     if (
         'error' in overtimeResponse &&
@@ -232,8 +226,7 @@ async function getAccountData(
         typeof overtimeResponse.error.message == 'string'
     ) {
         return <ErrorData>overtimeResponse;
-    }
-    else if ('accountString' in overtimeResponse) {
+    } else if ('accountString' in overtimeResponse) {
         return <AccountData>overtimeResponse;
     }
 

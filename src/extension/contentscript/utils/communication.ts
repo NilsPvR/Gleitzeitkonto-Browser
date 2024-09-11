@@ -20,7 +20,10 @@ export default class Communication {
      * @param content    the content to send to the background script
      * @returns a response for the command
      */
-    public async sendMsgToBackground(command: BackgroundCommand, content?: string): Promise<object> {
+    public async sendMsgToBackground(
+        command: BackgroundCommand,
+        content?: string,
+    ): Promise<object> {
         return new Promise((resolve) => {
             if (this.portToBackground == undefined) {
                 this.portToBackground = browser.runtime.connect(); // buid connection if not already established

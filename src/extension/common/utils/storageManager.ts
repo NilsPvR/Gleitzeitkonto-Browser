@@ -11,7 +11,7 @@ export default class StorageManager {
     }
 
     public static async saveTimeSheetOvertime(overtime: number) {
-        await browser.storage.local.set({ timeSheetOvertime: overtime});
+        await browser.storage.local.set({ timeSheetOvertime: overtime });
     }
 
     public static async getTimeStatementOvertime(): Promise<string | unknown> {
@@ -24,7 +24,6 @@ export default class StorageManager {
     }
 
     public static async saveTimeStatementOvertime(overtime: number) {
-        await browser.storage.local.set({ timeStatementOvertime: overtime});
+        await browser.storage.local.set({ timeStatementOvertime: overtime });
     }
-    
 }

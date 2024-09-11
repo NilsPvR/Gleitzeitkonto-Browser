@@ -134,9 +134,8 @@ async function saveOvertimeFromPDF(message: object) {
         const overtimeString = await PDFManager.getOvertimeFromPDF(pdfDocument);
         const overtime = Formater.getNumberFromString(overtimeString);
         // TODO properly convert hours to minutes -> round to nearest 5 minutes
-        const overtimeMinutes = Math.round(overtime * 60);        
+        const overtimeMinutes = Math.round(overtime * 60);
         StorageManager.saveTimeStatementOvertime(overtimeMinutes);
-
     } catch (e) {
         console.error(e);
         portFromCS.postMessage({
