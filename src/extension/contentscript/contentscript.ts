@@ -122,25 +122,33 @@ async function updateInsertedDisplayOnChange(
 
 // fetches data and sends requests to background script, returns a displayable text in any case
 async function calculateNewAccountData(communication: Communication): Promise<AccountData | ErrorData> {
-    return new Promise((resolve) => {
-        sendTimeStatementData(communication).catch((e) => {
-            resolve({
+    try {
+        const timeStatement = sendTimeStatementData(communication);
+        const timeSheet = sendTimeSheetData(communication);
+
+        // wait until both requests finished before calculating total overtime
+        await timeStatement;
+        await timeSheet;
+    } catch (e) {
+        if (typeof e !== 'object' || !e || !('message' in e) || typeof e.message !== 'string') {
+            // should never happen but in case we didn't catch an Error object but something else
+            console.error(e);
+            return {
                 error: {
-                    message: e.message
+                    message: constStrings.errorMsgs.unknown,
                 }
-            })
-        }); // pdf
-        sendTimeSheetData(communication).then(() => {
-            resolve(getAccountData(communication));    
-        }).catch((e) => {
-            resolve({
-                error: {
-                    message: e.message
-                }
-            })
-        });
-    })
+            }
+        }
+        return {
+            error: {
+                message: e.message,
+            }
+        }
+        
+    };
+    return(getAccountData(communication));
 }
+
 
 // throws a displayable error message in case anything goes wrong
 async function sendTimeStatementData(communication: Communication) {
