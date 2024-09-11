@@ -6,6 +6,7 @@ import TimeData from './model/timeData';
 import EmployeeData from './model/employeeData';
 import WorkingTimes from './utils/workingTimes';
 import PDFManager from './utils/pdfManager';
+import StorageManager from '../common/utils/storageManager';
 
 let portFromCS: browser.Runtime.Port; // port from content script
 
@@ -24,19 +25,22 @@ function connectedToContentScript(port: browser.Runtime.Port) {
             return;
         }
         switch (message.command) {
-            case BackgroundCommand.CalculateOvertime:
-                sendBackOvertime(message);
+            case BackgroundCommand.ParseTimeSheet:
+                saveOvertimeFromTimeSheet(message);
                 break;
             case BackgroundCommand.ParseEmployeeId:
                 sendBackEmployeeId(message);
                 break;
-            case BackgroundCommand.CompilePDF:
+            case BackgroundCommand.CompileTimeSatement:
                 saveOvertimeFromPDF(message);
+                break;
+            case BackgroundCommand.GetOvertime:
+                sendBackOvertime();
                 break;
             default:
                 portFromCS.postMessage({
                     error: {
-                        command: BackgroundCommand.CalculateOvertime,
+                        command: BackgroundCommand.ParseTimeSheet,
                         message: constStrings.errorMsgs.invalidCommand,
                     },
                 });
@@ -45,7 +49,29 @@ function connectedToContentScript(port: browser.Runtime.Port) {
     });
 }
 
-function sendBackOvertime(message: object) {
+async function sendBackOvertime() {
+    let totalOvertime;
+    try {
+        const timeSheetOvertime = Number(await StorageManager.getTimeSheetOvertime());
+        const timeStatementOvertime = Number(await StorageManager.getTimeStatementOvertime());
+        if (Number.isNaN(timeSheetOvertime) || Number.isNaN(timeStatementOvertime)) {
+            throw new Error('Overtime in storage is not a number');
+        }
+
+        totalOvertime = timeSheetOvertime + timeStatementOvertime;
+    } catch (e) {
+        console.error(e);
+        // TODO send back useful error message
+        return;
+    }
+
+    portFromCS.postMessage({
+        command: BackgroundCommand.GetOvertime,
+        accountString: Formater.minutesToTimeString(totalOvertime),
+    });
+}
+
+function saveOvertimeFromTimeSheet(message: object) {
     // TODO load publicHolidays from settings
     const controller = new WorkingTimes(config.publicHolidays);
 
@@ -60,17 +86,17 @@ function sendBackOvertime(message: object) {
     } catch (e) {
         console.error(e);
         portFromCS.postMessage({
-            command: BackgroundCommand.CalculateOvertime,
+            command: BackgroundCommand.ParseTimeSheet,
             error: { message: constStrings.errorMsgs.unableToParseData },
         });
         return;
     }
 
     const overtimeInMinutes = controller.calculateOvertime(controller.timeElements);
+    StorageManager.saveTimeSheetOvertime(overtimeInMinutes);
 
     portFromCS.postMessage({
-        command: BackgroundCommand.CalculateOvertime,
-        accountString: Formater.minutesToTimeString(overtimeInMinutes),
+        command: BackgroundCommand.ParseTimeSheet,
     });
 }
 
@@ -107,19 +133,20 @@ async function saveOvertimeFromPDF(message: object) {
         const pdfDocument = await PDFManager.compilePDF(message);
         const overtimeString = await PDFManager.getOvertimeFromPDF(pdfDocument);
         const overtime = Formater.getNumberFromString(overtimeString);
-        console.log(overtime);
+        // TODO properly convert hours to minutes -> round to nearest 5 minutes
+        const overtimeMinutes = Math.round(overtime * 60);        
+        StorageManager.saveTimeStatementOvertime(overtimeMinutes);
 
-        // TODO save in storage
     } catch (e) {
         console.error(e);
         portFromCS.postMessage({
-            command: BackgroundCommand.CompilePDF,
+            command: BackgroundCommand.CompileTimeSatement,
             error: { message: constStrings.errorMsgs.unableToParseData },
         });
         return;
     }
     portFromCS.postMessage({
-        command: BackgroundCommand.CompilePDF,
+        command: BackgroundCommand.CompileTimeSatement,
     });
 }
 
