@@ -75,7 +75,11 @@ export default class Formater {
 
     public static convertArrayBufferToBase64(buffer: ArrayBuffer): string {
         const byteArray = new Uint8Array(buffer);
-        const binaryString = String.fromCharCode(...byteArray);
+        let binaryString = ''
+        for (let i = 0; i < byteArray.byteLength; i++) {
+            binaryString += String.fromCharCode(byteArray[i]);
+        }
+
         return btoa(binaryString);
     }
 }
