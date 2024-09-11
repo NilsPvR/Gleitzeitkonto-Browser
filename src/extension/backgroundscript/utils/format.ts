@@ -105,4 +105,14 @@ export default class Formater {
         }
         return number;
     }
+
+    /**
+     * Takes the hours and calculates the minutes rounded to the nearest 5 min.
+     * @param hours the hours to convert, may be floating point, e.g.: 1.57
+     * @returns integer minutes, e.g.: 95
+     */
+    public static roundHoursToNearest5Minutes(hours: number): number {
+        const minutes = hours * 60;
+        return Math.round(minutes / 5) * 5;
+    }
 }
