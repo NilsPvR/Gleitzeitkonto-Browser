@@ -82,4 +82,19 @@ export default class Formater {
 
         return btoa(binaryString);
     }
+
+    /**
+     * @throws if the given object implements the `ErrorData` interface with the contained message
+     */
+    public static checkForErrorMsg(obj: object) {
+        if (
+            'error' in obj &&
+            typeof obj.error == 'object' &&
+            obj.error &&
+            'message' in obj.error &&
+            typeof obj.error.message == 'string'
+        ) {
+            throw new Error(obj.error.message);
+        }
+    }
 }

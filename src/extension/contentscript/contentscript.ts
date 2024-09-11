@@ -22,8 +22,7 @@ import DateManger from './utils/dateManager';
     const state = new State();
     const communication = new Communication();
 
-    const calculatedData = fetchAccountData(communication, state);
-
+    const calculatedData = calculateNewAccountData(communication);
     const outdated = communication.checkVersionOutdated(); // preload version
 
     // ===== Wait for correct page to be opened =====
@@ -120,49 +119,116 @@ async function updateInsertedDisplayOnChange(
     });
 }
 
-// downloads and calculates afterwards, returns a displayable text in any case
-async function fetchAccountData(
-    communication: Communication,
-    state: State,
-): Promise<AccountData | ErrorData> {
+
+// fetches data and sends requests to background script, returns a displayable text in any case
+async function calculateNewAccountData(communication: Communication): Promise<AccountData | ErrorData> {
+    return new Promise((resolve) => {
+        sendTimeStatementData(communication).catch((e) => {
+            resolve({
+                error: {
+                    message: e.message
+                }
+            })
+        }); // pdf
+        sendTimeSheetData(communication).catch((e) => {
+            resolve({
+                error: {
+                    message: e.message
+                }
+            })
+        });
+        resolve(getAccountData(communication))
+    })
+}
+
+// throws a displayable error message in case anything goes wrong
+async function sendTimeStatementData(communication: Communication) {
+    // === Employee ID ===
+    let employeeData
     try {
-        const employeeData = await communication.fetchEmployeeId();
-
-        const employeeIdResponse = await communication.sendMsgToBackground(
-            BackgroundCommand.ParseEmployeeId,
-            employeeData,
-        );
-        // TODO check for error messages (like in calculateOvertime())
-        if (
-            !('employeeId' in employeeIdResponse) ||
-            typeof employeeIdResponse.employeeId !== 'string'
-        ) {
-            throw new Error('Received response from background without employee ID');
-        }
-
-        const rawPDFData = await communication.fetchTimeStatement(
-            employeeIdResponse.employeeId,
-            DateManger.calculatePDFStartDate(),
-            DateManger.calcualtePDFEndDate(),
-        );
-        await communication.sendMsgToBackground(
-            BackgroundCommand.CompilePDF,
-            Formater.convertArrayBufferToBase64(rawPDFData),
-        );
-        // TODO check for error messages (like in calculateOvertime())
-
-        const data = await communication.fetchWorkingTimes(config.startDate, config.endDate);
-        state.downloadFinished = true;
-
-        return await communication.calculateOvertime(data);
+        employeeData = await communication.fetchEmployeeId();
     } catch (e) {
         console.error(e);
-        return {
-            error: {
-                message: constStrings.errorMsgs.unableToContactAPI,
-            },
-        };
+        throw new Error(constStrings.errorMsgs.unableToContactAPI);
     }
+    
+    const employeeIdResponse = await communication.sendMsgToBackground(
+        BackgroundCommand.ParseEmployeeId,
+        employeeData,
+    );
+
+    Formater.checkForErrorMsg(employeeIdResponse);
+    if (
+        !('employeeId' in employeeIdResponse) ||
+        typeof employeeIdResponse.employeeId !== 'string'
+    ) {
+        console.error('Received response from background without employee ID')
+        throw new Error(constStrings.errorMsgs.unexpectedBackgroundResponse);
+    }
+
+
+    // === Time statement a.k.a. PDF file ===
+    let rawTimeStatementData;
+    try {
+        rawTimeStatementData = await communication.fetchTimeStatement(
+            employeeIdResponse.employeeId,
+            DateManger.calculateTimeStatementStartDate(),
+            DateManger.calcualteTimeStatementEndDate(),
+        );
+    } catch (e) {
+        console.error(e);
+        throw new Error(constStrings.errorMsgs.unableToContactAPI);
+    }
+    
+    const timeStatementResponse = await communication.sendMsgToBackground(
+        BackgroundCommand.CompileTimeSatement,
+        Formater.convertArrayBufferToBase64(rawTimeStatementData),
+    );
+
+    Formater.checkForErrorMsg(timeStatementResponse);
+    // background only sends content if there is an error
+} 
+
+// throws a displayable error message in case anything goes wrong
+async function sendTimeSheetData(communication: Communication) {
+    let timeSheetData;
+    try {
+        timeSheetData = await communication.fetchWorkingTimes(config.startDate, config.endDate);
+    } catch (e) {
+        console.error(e);
+        throw new Error(constStrings.errorMsgs.unableToContactAPI);
+    }
+    
+    const timeSheetResponse = await communication.sendMsgToBackground(
+        BackgroundCommand.ParseTimeSheet,
+        timeSheetData
+    );
+
+    Formater.checkForErrorMsg(timeSheetResponse);
+    // background only sends content if there is an error
+}
+
+async function getAccountData(
+    communication: Communication,
+): Promise<AccountData | ErrorData> {
+    const overtimeResponse = await communication.sendMsgToBackground(
+        BackgroundCommand.GetOvertime,
+    );
+
+    if (
+        'error' in overtimeResponse &&
+        typeof overtimeResponse.error == 'object' &&
+        overtimeResponse.error &&
+        'message' in overtimeResponse.error &&
+        typeof overtimeResponse.error.message == 'string'
+    ) {
+        return <ErrorData>overtimeResponse;
+    }
+    else if ('accountString' in overtimeResponse) {
+        return <AccountData>overtimeResponse;
+    }
+
+    return { error: { message: constStrings.errorMsgs.unexpectedBackgroundResponse } };
 }
 
 // called from the reload btn, recalculates the overtime
@@ -170,10 +236,9 @@ export function realodAccountData(communication: Communication, state: State) {
     View.startLoading(); // start loading immediately
 
     // == Start new requests ==
-    state.downloadFinished = false;
     state.calculateFinished = false;
 
-    const calculatedData = fetchAccountData(communication, state);
+    const calculatedData = calculateNewAccountData(communication);
 
     // == Register actions for promise resolving ==
     calculatedData.then(async () => {

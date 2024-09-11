@@ -1,9 +1,8 @@
 import * as browser from 'webextension-polyfill';
 import { Runtime } from 'webextension-polyfill';
 import { BackgroundCommand } from '../../common/enums/command';
-import { constStrings, givenStrings } from './constants';
+import { givenStrings } from './constants';
 import Formater from './format';
-import { AccountData, ErrorData } from '../types/accountData';
 import Navigation from './navigation';
 import { PageVariant } from '../enums/pageVariant';
 
@@ -21,7 +20,7 @@ export default class Communication {
      * @param content    the content to send to the background script
      * @returns a response for the command
      */
-    public async sendMsgToBackground(command: BackgroundCommand, content: string): Promise<object> {
+    public async sendMsgToBackground(command: BackgroundCommand, content?: string): Promise<object> {
         return new Promise((resolve) => {
             if (this.portToBackground == undefined) {
                 this.portToBackground = browser.runtime.connect(); // buid connection if not already established
@@ -49,29 +48,6 @@ export default class Communication {
     }
 
     /**
-     * Sends the given data to the background script to calculate the overtime.
-     * @param data    the data to calculate overtime from, is expected to be in the format received by the API
-     * @returns the calculated account data or an error message object
-     */
-    public async calculateOvertime(data: string): Promise<AccountData | ErrorData> {
-        const response = await this.sendMsgToBackground(BackgroundCommand.CalculateOvertime, data);
-
-        if (
-            'error' in response &&
-            typeof response.error == 'object' &&
-            response.error &&
-            'message' in response.error
-        ) {
-            return <ErrorData>response;
-        }
-        if ('accountString' in response) {
-            return <AccountData>response;
-        }
-
-        return { error: { message: constStrings.errorMsgs.unexpectedBackgroundResponse } };
-    }
-
-    /**
      * Gets the domain for the API to fetch the data from, based on the currently open page.
      * The external URL for fetching data is different from the currently open page
      * on some page variants.
@@ -92,11 +68,11 @@ export default class Communication {
     }
 
     /**
-     * Determines the URL which should be used to fetch the API for the latest timesheet.
+     * Determines the URL which should be used to fetch the API for the latest time sheet.
      * @returns the URL to fetch the API
      */
-    private static getTimesheetFetchURL(): string {
-        return this.getFetchDomain() + givenStrings.timesheetURLPath;
+    private static getTimeSheetFetchURL(): string {
+        return this.getFetchDomain() + givenStrings.timeSheetURLPath;
     }
 
     private static getEmployeeNumberFetchURL(): string {
@@ -133,7 +109,7 @@ export default class Communication {
      */
     private async fetchCSRFToken() {
         const csrfResponse = await fetch(
-            new Request(Communication.getTimesheetFetchURL(), {
+            new Request(Communication.getTimeSheetFetchURL(), {
                 method: 'HEAD',
                 credentials: 'include',
                 headers: {
@@ -182,7 +158,7 @@ export default class Communication {
             '--batch--';
 
         const result = await fetch(
-            new Request(Communication.getTimesheetFetchURL(), {
+            new Request(Communication.getTimeSheetFetchURL(), {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

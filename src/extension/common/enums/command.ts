@@ -3,8 +3,9 @@
  * are not accepted.
  */
 export enum BackgroundCommand {
-    /** From the given data calculate the overtime and return it */
-    CalculateOvertime,
-    CompilePDF,
+    ParseTimeSheet,
+    CompileTimeSatement,
     ParseEmployeeId,
+    /** From the previously given data calculate the overtime and return it */
+    GetOvertime,
 }
