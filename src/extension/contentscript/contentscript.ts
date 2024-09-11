@@ -130,14 +130,15 @@ async function calculateNewAccountData(communication: Communication): Promise<Ac
                 }
             })
         }); // pdf
-        sendTimeSheetData(communication).catch((e) => {
+        sendTimeSheetData(communication).then(() => {
+            resolve(getAccountData(communication));    
+        }).catch((e) => {
             resolve({
                 error: {
                     message: e.message
                 }
             })
         });
-        resolve(getAccountData(communication))
     })
 }
 
