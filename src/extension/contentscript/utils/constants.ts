@@ -12,8 +12,8 @@ export const config = {
     maxPageloadingLoops: 120, // 1s * 120 = 2 minutes
     pageloadingTimeout: 1000, // 1 s
     loadingOpacity: '0.5',
-    startDate: new Date(2000, 0, 1), // month is 0-indexed
-    endDate: new Date(2099, 11, 31),
+    monthsToCalculateManually: 3,
+    timesheetEndDate: new Date(2999, 11, 31), // month is 0-indexed
 };
 
 export const constStrings = {

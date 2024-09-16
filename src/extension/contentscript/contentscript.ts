@@ -179,8 +179,8 @@ async function sendTimeStatementData(communication: Communication) {
     try {
         rawTimeStatementData = await communication.fetchTimeStatement(
             employeeIdResponse.employeeId,
-            DateManger.calculateTimeStatementStartDate(),
-            DateManger.calcualteTimeStatementEndDate(),
+            DateManger.calculateTimeStatementStartDate(config.monthsToCalculateManually),
+            DateManger.calcualteTimeStatementEndDate(config.monthsToCalculateManually),
         );
     } catch (e) {
         console.error(e);
@@ -200,7 +200,10 @@ async function sendTimeStatementData(communication: Communication) {
 async function sendTimeSheetData(communication: Communication) {
     let timeSheetData;
     try {
-        timeSheetData = await communication.fetchWorkingTimes(config.startDate, config.endDate);
+        timeSheetData = await communication.fetchWorkingTimes(
+            DateManger.calculateTimeSheetStartDate(config.monthsToCalculateManually),
+            DateManger.calculateTimeSheetEndDate(),
+        );
     } catch (e) {
         console.error(e);
         throw new Error(constStrings.errorMsgs.unableToContactAPI);
