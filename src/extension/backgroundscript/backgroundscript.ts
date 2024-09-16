@@ -61,7 +61,12 @@ async function sendBackOvertime() {
         totalOvertime = timeSheetOvertime + timeStatementOvertime;
     } catch (e) {
         console.error(e);
-        // TODO send back useful error message
+        portFromCS.postMessage({
+            error: {
+                command: BackgroundCommand.GetOvertime,
+                message: constStrings.errorMsgs.unableToParseData,
+            },
+        });
         return;
     }
 
