@@ -1,15 +1,16 @@
 import * as pdfjsLib from 'pdfjs-dist';
 import { givenStrings } from './constants';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'backgroundscript/pdf.worker.min.mjs';
+// path is relative to the worker which calls the pdf manager -> timeStatementWorker
+pdfjsLib.GlobalWorkerOptions.workerSrc = '../pdf.worker.min.mjs';
 
 export default class PDFManager {
-    public static async compilePDF(message: object): Promise<pdfjsLib.PDFDocumentProxy> {
-        if (!('content' in message) || typeof message.content !== 'string') {
+    public static async compilePDF(message: MessageEvent): Promise<pdfjsLib.PDFDocumentProxy> {
+        if (!('content' in message.data) || typeof message.data.content !== 'string') {
             throw new Error('No message or no content received from the content script');
         }
 
-        return pdfjsLib.getDocument({ data: atob(message.content) }).promise;
+        return pdfjsLib.getDocument({ data: atob(message.data.content) }).promise;
     }
 
     public static async getOvertimeFromPDF(

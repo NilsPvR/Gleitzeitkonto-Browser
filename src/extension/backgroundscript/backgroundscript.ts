@@ -1,14 +1,15 @@
 import browser from 'webextension-polyfill';
 import { BackgroundCommand } from '../common/enums/command';
 import Formater from './utils/format';
-import { config, constStrings } from './utils/constants';
-import TimeData from './model/timeData';
-import EmployeeData from './model/employeeData';
-import WorkingTimes from './utils/workingTimes';
-import PDFManager from './utils/pdfManager';
+import { constStrings } from './utils/constants';
 import StorageManager from '../common/utils/storageManager';
 
 let portFromCS: browser.Runtime.Port; // port from content script
+
+// paths are not relative but start at the extension folder (build output)
+const TIME_STATEMENT_WORKER_FILE = 'backgroundscript/webWorker/timeStatementWorker.js';
+const TIME_SHEET_WORKER_FILE = 'backgroundscript/webWorker/timeSheetWorker.js';
+const EMPLOYEE_ID_WORKER_FILE = 'backgroundscript/webWorker/employeeIdWorker.js';
 
 function connectedToContentScript(port: browser.Runtime.Port) {
     portFromCS = port;
@@ -77,80 +78,89 @@ async function sendBackOvertime() {
 }
 
 function saveOvertimeFromTimeSheet(message: object) {
-    // TODO load publicHolidays from settings
-    const controller = new WorkingTimes(config.publicHolidays);
+    const timeSheetWorker = new Worker(TIME_SHEET_WORKER_FILE);
 
-    try {
-        if (!('content' in message) || typeof message.content !== 'string') {
-            throw new Error('No message or no content received from the content script');
+    timeSheetWorker.onmessage = (workerMessage: MessageEvent) => {
+        if ('error' in workerMessage.data) {
+            // the worker caught an error, forward the message
+            portFromCS.postMessage(workerMessage.data);
+            return;
         }
-        const jsonObject = Formater.getJSONFromAPIData(message.content);
-        const timeData = TimeData.fromObject(jsonObject);
+        if (!('overtime' in workerMessage.data)) {
+            // should not happen
+            console.error('Received an unexpected response from time sheet worker:');
+            console.error(workerMessage);
+            postWorkerError(BackgroundCommand.ParseTimeSheet);
+            return;
+        }
 
-        controller.timeElements = controller.parseTimeDataToTimeElements(timeData);
-    } catch (e) {
-        console.error(e);
-        portFromCS.postMessage({
-            command: BackgroundCommand.ParseTimeSheet,
-            error: { message: constStrings.errorMsgs.unableToParseData },
-        });
-        return;
-    }
-
-    const overtimeInMinutes = controller.calculateOvertime(controller.timeElements);
-    StorageManager.saveTimeSheetOvertime(overtimeInMinutes);
-
-    portFromCS.postMessage({
-        command: BackgroundCommand.ParseTimeSheet,
-    });
+        StorageManager.saveTimeSheetOvertime(workerMessage.data.overtime);
+        portFromCS.postMessage({ command: BackgroundCommand.ParseTimeSheet });
+    };
+    timeSheetWorker.onerror = (error: ErrorEvent) => {
+        console.error('Worker error:', error.message, error.filename, error.lineno, error.colno);
+        postWorkerError(BackgroundCommand.ParseTimeSheet);
+    };
+    timeSheetWorker.postMessage(message);
 }
 
-async function sendBackEmployeeId(message: object) {
-    let employeeId: string;
+function sendBackEmployeeId(message: object) {
+    const employeeIdWorker = new Worker(EMPLOYEE_ID_WORKER_FILE);
 
-    try {
-        if (!('content' in message) || typeof message.content !== 'string') {
-            throw new Error('No message or no content received from the content script');
-        }
-        const jsonObject = Formater.getJSONFromAPIData(message.content);
-        const employeeData = EmployeeData.fromObject(jsonObject);
-        employeeId = employeeData.d.results[0].employeeId;
-        if (!employeeId || employeeId.trim() === '') {
-            throw new Error('No employee ID in API data');
-        }
-    } catch (e) {
-        console.error(e);
+    employeeIdWorker.onmessage = (workerMessage: MessageEvent) => {
+        portFromCS.postMessage(workerMessage.data);
+    };
+    employeeIdWorker.onerror = (error: ErrorEvent) => {
+        console.error('Worker error:', error.message, error.filename, error.lineno, error.colno);
         portFromCS.postMessage({
             command: BackgroundCommand.ParseEmployeeId,
-            error: { message: constStrings.errorMsgs.unableToParseData },
+            error: { message: constStrings.errorMsgs.unexpectedWorkerError },
         });
-        return;
-    }
-
-    portFromCS.postMessage({
-        command: BackgroundCommand.ParseEmployeeId,
-        employeeId: employeeId,
-    });
+    };
+    employeeIdWorker.postMessage(message);
 }
 
-async function saveOvertimeFromPDF(message: object) {
-    try {
-        const pdfDocument = await PDFManager.compilePDF(message);
-        const overtimeString = await PDFManager.getOvertimeFromPDF(pdfDocument);
-        const overtime = Formater.getNumberFromString(overtimeString);
-        const overtimeMinutesRounded = Formater.roundHoursToNearest5Minutes(overtime);
+function saveOvertimeFromPDF(message: object) {
+    const timeStatementWorker = new Worker(TIME_STATEMENT_WORKER_FILE);
 
-        StorageManager.saveTimeStatementOvertime(overtimeMinutesRounded);
-    } catch (e) {
-        console.error(e);
-        portFromCS.postMessage({
-            command: BackgroundCommand.CompileTimeSatement,
-            error: { message: constStrings.errorMsgs.unableToParseData },
-        });
-        return;
-    }
+    timeStatementWorker.onmessage = (workerMessage: MessageEvent) => {
+        if ('error' in workerMessage.data) {
+            // the worker caught an error, forward the message
+            portFromCS.postMessage(workerMessage.data);
+            return;
+        }
+        if ('action' in workerMessage.data) {
+            // the pdf worker sends a ready message which is caught by this check
+            if (workerMessage.data.action !== 'ready') {
+                console.error('A message with action was sent which is not the ready action:');
+                console.error(workerMessage);
+                postWorkerError(BackgroundCommand.ParseTimeSheet);
+            }
+            return; // pdf worker only notified that it is ready, nothing to do
+        }
+        if (!('overtime' in workerMessage.data)) {
+            // should not happen
+            console.error('Received an unexpected response from time time statement worker:');
+            console.error(workerMessage);
+            postWorkerError(BackgroundCommand.CompileTimeSatement);
+            return;
+        }
+
+        StorageManager.saveTimeStatementOvertime(workerMessage.data.overtime);
+        portFromCS.postMessage({ command: BackgroundCommand.CompileTimeSatement });
+    };
+    timeStatementWorker.onerror = (error: ErrorEvent) => {
+        console.error('Worker error:', error.message, error.filename, error.lineno, error.colno);
+        postWorkerError(BackgroundCommand.CompileTimeSatement);
+    };
+    timeStatementWorker.postMessage(message);
+}
+
+// posts a messaage to the content script with an error message about an unexpected error in the worker
+function postWorkerError(command: BackgroundCommand) {
     portFromCS.postMessage({
-        command: BackgroundCommand.CompileTimeSatement,
+        command: command,
+        error: { message: constStrings.errorMsgs.unexpectedWorkerError },
     });
 }
 

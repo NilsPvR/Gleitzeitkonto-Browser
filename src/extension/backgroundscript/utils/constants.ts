@@ -12,6 +12,7 @@ export const constStrings = {
         invalidCommand: 'Interner Fehler: ungültiger Befehl!',
         unableToParseData: 'Ungültige Daten erhalten.',
         invalidResult: 'Ungültige Daten berechnet.',
+        unexpectedWorkerError: 'Unerwarteter Fehler bei Datenverarbeitung.'
     },
     internalErrorMsgs: {
         unableToParseObj: 'Object is not in form of expected class',
