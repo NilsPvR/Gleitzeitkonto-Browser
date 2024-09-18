@@ -17,10 +17,10 @@ function saveOvertimeFromTimeSheet(message: MessageEvent) {
 
         controller.timeElements = controller.parseTimeDataToTimeElements(timeData);
     } catch (e) {
-        console.error(e);
         postMessage({
             command: BackgroundCommand.ParseTimeSheet,
             error: { message: constStrings.errorMsgs.unableToParseData },
+            originalError: e,
         });
         return;
     }

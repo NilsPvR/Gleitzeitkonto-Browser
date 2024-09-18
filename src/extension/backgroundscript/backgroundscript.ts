@@ -82,6 +82,7 @@ function saveOvertimeFromTimeSheet(message: object) {
 
     timeSheetWorker.onmessage = (workerMessage: MessageEvent) => {
         if ('error' in workerMessage.data) {
+            printPossibleError(workerMessage.data);
             // the worker caught an error, forward the message
             portFromCS.postMessage(workerMessage.data);
             return;
@@ -108,6 +109,7 @@ function sendBackEmployeeId(message: object) {
     const employeeIdWorker = new Worker(EMPLOYEE_ID_WORKER_FILE);
 
     employeeIdWorker.onmessage = (workerMessage: MessageEvent) => {
+        printPossibleError(workerMessage.data);
         portFromCS.postMessage(workerMessage.data);
     };
     employeeIdWorker.onerror = (error: ErrorEvent) => {
@@ -125,6 +127,7 @@ function saveOvertimeFromPDF(message: object) {
 
     timeStatementWorker.onmessage = (workerMessage: MessageEvent) => {
         if ('error' in workerMessage.data) {
+            printPossibleError(workerMessage.data);
             // the worker caught an error, forward the message
             portFromCS.postMessage(workerMessage.data);
             return;
@@ -162,6 +165,13 @@ function postWorkerError(command: BackgroundCommand) {
         command: command,
         error: { message: constStrings.errorMsgs.unexpectedWorkerError },
     });
+}
+
+// checks if the given data has an original error message and prints it
+function printPossibleError(data: object) {
+    if ('originalError' in data) {
+        console.error(data.originalError);
+    }
 }
 
 // listen for connection opening from the content script

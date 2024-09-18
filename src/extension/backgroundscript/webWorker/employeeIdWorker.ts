@@ -17,13 +17,14 @@ async function sendBackEmployeeId(message: MessageEvent) {
             throw new Error('No employee ID in API data');
         }
     } catch (e) {
-        console.error(e);
         postMessage({
             command: BackgroundCommand.ParseEmployeeId,
             error: { message: constStrings.errorMsgs.unableToParseData },
+            originalError: e,
         });
         return;
     }
+    
 
     postMessage({
         command: BackgroundCommand.ParseEmployeeId,

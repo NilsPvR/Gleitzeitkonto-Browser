@@ -10,10 +10,10 @@ async function saveOvertimeFromPDF(message: MessageEvent) {
         const overtimeString = await PDFManager.getOvertimeFromPDF(pdfDocument);
         overtime = Formater.getNumberFromString(overtimeString);
     } catch (e) {
-        console.error(e);
         postMessage({
             command: BackgroundCommand.CompileTimeSatement,
             error: { message: constStrings.errorMsgs.unableToParseData },
+            originalError: e,
         });
         return;
     }
