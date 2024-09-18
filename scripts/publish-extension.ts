@@ -38,6 +38,11 @@ import { extname } from 'path';
             './src/extension/manifest-chromium.json',
             './build/extension/manifest-chromium.json',
         );
+        // copy pdf.js worker file, necessary for pdf analysis
+        fs.copyFileSync(
+            './node_modules/pdfjs-dist/build/pdf.worker.min.mjs',
+            './build/extension/backgroundscript/pdf.worker.min.mjs',
+        );
 
         if (!fs.existsSync('./build/gleitzeitkonto-browser-zip')) {
             fs.mkdirSync('./build/gleitzeitkonto-browser-zip'); // create folder
