@@ -24,7 +24,6 @@ async function sendBackEmployeeId(message: MessageEvent) {
         });
         return;
     }
-    
 
     postMessage({
         command: BackgroundCommand.ParseEmployeeId,
