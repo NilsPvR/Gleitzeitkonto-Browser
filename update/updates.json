@@ -5,6 +5,10 @@
         {
           "version": "3.0.0",
           "update_link": "https://gleitzeitkontobrowser.blob.core.windows.net/$web/v3.0.0/Gleitzeitkonto-Browser.xpi"
+        },
+        {
+          "version": "3.1.0",
+          "update_link": "https://gleitzeitkontobrowser.blob.core.windows.net/$web/v3.1.0/Gleitzeitkonto-Browser.xpi"
         }
       ]
     }
