@@ -17,7 +17,8 @@
 
   "browser_specific_settings": {
     "gecko": {
-      "id": "{43dd30a9-9e9f-4499-90f6-590bd1ac2034}"
+      "id": "{43dd30a9-9e9f-4499-90f6-590bd1ac2034}",
+      "update_url": "https://gleitzeitkontobrowser.blob.core.windows.net/$web/updates.json"
     }
   },
 

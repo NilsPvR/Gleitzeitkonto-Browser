@@ -1,0 +1,12 @@
+{
+  "addons": {
+    "{43dd30a9-9e9f-4499-90f6-590bd1ac2034}": {
+      "updates": [
+        {
+          "version": "3.0.0",
+          "update_link": "https://gleitzeitkontobrowser.blob.core.windows.net/$web/v3.0.0/Gleitzeitkonto-Browser.xpi"
+        }
+      ]
+    }
+  }
+}
