@@ -5,12 +5,12 @@ import Inserted from './view/inserted';
 import Communication from './utils/communication';
 import Navigation from './utils/navigation';
 import Data from './utils/format';
-import State from './model/state';
 import { AccountData, ErrorData } from './types/accountData';
 import SettingsSync from './utils/settingsSync';
 import { BackgroundCommand } from '../common/enums/command';
 import Formater from './utils/format';
 import DateManger from './utils/dateManager';
+import StatusedPromise from './model/statusedPromise';
 
 (async () => {
     'use strict';
@@ -19,11 +19,9 @@ import DateManger from './utils/dateManager';
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Main Events <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
     // ===== Start sending all requests =====
-    const state = new State();
     const communication = new Communication();
 
-    const calculatedData = calculateNewAccountData(communication);
-    const outdated = communication.checkVersionOutdated(); // preload version
+    const calculatedData = new StatusedPromise(calculateNewAccountData(communication));
 
     // ===== Wait for correct page to be opened =====
     await Navigation.continuousMenucheck();
@@ -36,19 +34,14 @@ import DateManger from './utils/dateManager';
     const realodBtn = document.getElementById(constStrings.buttonID);
     if (realodBtn) {
         realodBtn.addEventListener('click', () => {
-            realodAccountData(communication, state);
+            realodAccountData(communication);
         });
     }
 
     // ===== Register actions for promises resolving =====
     // update the display as soon as new data is available
-    calculatedData.then(async () => {
-        state.calculateFinished = true;
-        View.updateDisplay(await Data.getLatestDisplayFormat(calculatedData, outdated, state));
-    });
-    outdated.then(async () => {
-        state.versionCheckFinished = true;
-        View.updateDisplay(await Data.getLatestDisplayFormat(calculatedData, outdated, state));
+    calculatedData.promise.then(async () => {
+        View.updateDisplay(await Data.getLatestDisplayFormat(calculatedData));
     });
 
     try {
@@ -57,10 +50,10 @@ import DateManger from './utils/dateManager';
             config.maxPageloadingLoops,
         );
 
-        updateInsertedDisplayOnChange(headerBar, calculatedData, outdated, communication, state);
+        updateInsertedDisplayOnChange(headerBar, calculatedData, communication);
 
         const settingsSync = new SettingsSync();
-        settingsSync.updateDisplayOnExtensionStateChange();
+        settingsSync.updateDisplayOnExtensionStateChange(); // TODO rename to DisplayState
     } catch (e) {
         Floating.removeFloatingDisplay(); // TODO show error in popup
         console.error(e);
@@ -74,24 +67,17 @@ import DateManger from './utils/dateManager';
 // it is assumed that the page has already loaded completely
 async function updateInsertedDisplayOnChange(
     headerBar: HTMLElement,
-    calculatedData: Promise<AccountData | ErrorData>,
-    outdated: Promise<boolean>,
+    calculatedData: StatusedPromise<Promise<AccountData | ErrorData>>,
     communication: Communication,
-    state: State,
 ) {
     const placeOrRemoveInsertedDisplay = async () => {
         // when correct page is open and the display doesn't already exist
         if (Navigation.checkCorrectMenuIsOpen() && !Inserted.getInsertedDisplay()) {
-            const latestDisplayFormat = await Data.getLatestDisplayFormat(
-                calculatedData,
-                outdated,
-                state,
-            );
+            const latestDisplayFormat = await Data.getLatestDisplayFormat(calculatedData);
             new Inserted(communication).addInsertedDisplay(
                 headerBar,
                 latestDisplayFormat.text,
                 latestDisplayFormat.loading,
-                state,
             );
         } else if (!Navigation.checkCorrectMenuIsOpen()) {
             // this will also be removed by Fiori but keep remove just in case this behaviour gets changed
@@ -237,19 +223,14 @@ async function getAccountData(communication: Communication): Promise<AccountData
 }
 
 // called from the reload btn, recalculates the overtime
-export function realodAccountData(communication: Communication, state: State) {
+export function realodAccountData(communication: Communication) {
     View.startLoading(); // start loading immediately
 
-    // == Start new requests ==
-    state.calculateFinished = false;
+    // == Start new request ==
+    const calculatedData = new StatusedPromise(calculateNewAccountData(communication));
 
-    const calculatedData = calculateNewAccountData(communication);
-
-    // == Register actions for promise resolving ==
-    calculatedData.then(async () => {
-        state.calculateFinished = true;
-        View.updateDisplay(
-            await Data.getLatestDisplayFormat(calculatedData, Promise.resolve(false), state),
-        );
+    // == Register action for promise resolving ==
+    calculatedData.promise.then(async () => {
+        View.updateDisplay(await Data.getLatestDisplayFormat(calculatedData));
     });
 }

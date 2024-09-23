@@ -39,7 +39,6 @@
 
   "permissions": [
     "storage",
-    "https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest",
     "https://bgp.btcsap.btc-ag.com/sap/opu/odata/sap/HCM_TIMESHEET_MAN_SRV/$batch",
     "https://*.ondemand.com/sap/opu/odata/sap/HCM_TIMESHEET_MAN_SRV/$batch"
   ],

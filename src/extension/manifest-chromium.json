@@ -31,10 +31,7 @@
 
   "web_accessible_resources": ["assets/refresh-light.svg", "assets/refresh-dark.svg"],
 
-  "permissions": [
-    "storage",
-    "https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest"
-  ],
+  "permissions": ["storage"],
 
   "browser_action": {
     "default_icon": {

@@ -1,4 +1,4 @@
-import State from '../model/state';
+import StatusedPromise from '../model/statusedPromise';
 import { AccountData, ErrorData } from '../types/accountData';
 import { DisplayFormat } from '../types/display';
 import { constStrings } from './constants';
@@ -26,27 +26,16 @@ export default class Formater {
     }
 
     /**
-     * Using the provided state the method determines the latest data which can be shown in the display.
+     * Determines the latest data which can be shown in the display.
      * This can be a loading placeholder if no data is available.
      * @param calcAccountData     the data from a calculate
-     * @param outdated            true if extension is outdated
-     * @param state               the current state of information
      */
     public static async getLatestDisplayFormat(
-        calcAccountData: Promise<AccountData | ErrorData>,
-        outdated: Promise<boolean>,
-        state: State,
+        calcAccountData: StatusedPromise<Promise<AccountData | ErrorData>>,
     ): Promise<DisplayFormat> {
-        if (state.versionCheckFinished && (await outdated)) {
-            // version outdated has highest priority
+        if (calcAccountData.isResolved) {
             return {
-                text: constStrings.prefixError + constStrings.errorMsgs.extensionOutdated,
-                loading: false,
-            };
-        }
-        if (state.calculateFinished) {
-            return {
-                text: this.formatDisplayText(await calcAccountData),
+                text: this.formatDisplayText(await calcAccountData.promise),
                 loading: false,
             };
         }

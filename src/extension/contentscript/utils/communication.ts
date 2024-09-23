@@ -266,43 +266,4 @@ export default class Communication {
         }
         return result.arrayBuffer();
     }
-
-    /**
-     * Contacts the Github API to check if there are newer versions online. The version is compared to
-     * the browser extension version.
-     * @returns true if the extension is outdated
-     */
-    public async checkVersionOutdated(): Promise<boolean> {
-        const localBrowserVersion = browser.runtime.getManifest().version;
-
-        let onlineVersion;
-        try {
-            onlineVersion = await fetch(givenStrings.githubAPIURL); // get latest release data from github
-            onlineVersion = await onlineVersion.json();
-        } catch (e) {
-            console.error(e);
-            return false; // don't compare versions since online version not available
-        }
-        if (onlineVersion?.tag_name) {
-            onlineVersion = onlineVersion.tag_name.toLowerCase().replace('v', ''); // get only the number string
-        }
-
-        // one of the versions is not available
-        if (typeof onlineVersion != 'string' || !localBrowserVersion) {
-            return false;
-        }
-
-        // compare strings to compare version numbers
-        const resultBrowser = localBrowserVersion.localeCompare(onlineVersion, undefined, {
-            numeric: true,
-            sensitivity: 'base',
-        });
-
-        if (resultBrowser == -1) {
-            // browser extension version is outdated
-            return true;
-        }
-
-        return false;
-    }
 }

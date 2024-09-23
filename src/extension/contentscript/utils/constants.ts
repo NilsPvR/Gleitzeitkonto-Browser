@@ -32,7 +32,6 @@ export const constStrings = {
         noData: 'Keine Daten erhalten.',
         unableToContactAPI: 'Nicht mehr eingeloggt. Bitte Seite neu laden!',
         unexpectedBackgroundResponse: 'Datenverarbeitung fehlgeschlagen.',
-        extensionOutdated: 'Bitte die Erweiterung aktualisieren!',
     },
     cssClasses: {
         lightMode: 'gleitzeitkonto-light',
@@ -51,7 +50,6 @@ export const givenStrings = {
     mainPageElement2: 'canvas',
     headerID: 'shell-header',
     headerEndID: 'shell-header-hdr-end',
-    githubAPIURL: 'https://api.github.com/repos/NilsPvR/Gleitzeitkonto-Browser/releases/latest',
     timeSheetURLPath: '/sap/opu/odata/sap/HCM_TIMESHEET_MAN_SRV/$batch?sap-client=300',
     employeeNumberURLPath: '/sap/opu/odata/sap/HCMFAB_COMMON_SRV/$batch',
     timeStatementURLPathFormat:
