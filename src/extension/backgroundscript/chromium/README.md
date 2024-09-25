@@ -1,0 +1,3 @@
+This folder is responsible to create a compatability layer for issues created by the Chromium manifest V3. Specifically this extension uses [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers) to imporove the performance of the background script and the extension as a whole. See the `src/extension/backgroundscript/webWorker` folder.
+
+Further explanation on why this workaround is necessary can be found in a related Chromium bug: https://issues.chromium.org/issues/40772041, and on the [offscreen documentation]( https://developer.chrome.com/docs/extensions/reference/api/offscreen).

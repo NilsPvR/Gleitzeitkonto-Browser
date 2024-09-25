@@ -4,6 +4,7 @@ import Formater from './utils/format';
 import { constStrings } from './utils/constants';
 import StorageManager from '../common/utils/storageManager';
 import Communication from './utils/communication';
+import CompatabilityLayer from './chromium/compatabilityLayer';
 
 let portFromCS: browser.Runtime.Port; // port from content script
 
@@ -78,8 +79,8 @@ async function sendBackOvertime() {
     });
 }
 
-function saveOvertimeFromTimeSheet(message: object) {
-    const timeSheetWorker = new Worker(TIME_SHEET_WORKER_FILE);
+async function saveOvertimeFromTimeSheet(message: object) {
+    const timeSheetWorker = await CompatabilityLayer.CreateWorker(TIME_SHEET_WORKER_FILE);
 
     timeSheetWorker.onmessage = (workerMessage: MessageEvent) => {
         checkForOvertime(
@@ -96,8 +97,8 @@ function saveOvertimeFromTimeSheet(message: object) {
     timeSheetWorker.postMessage(message);
 }
 
-function sendBackEmployeeId(message: object) {
-    const employeeIdWorker = new Worker(EMPLOYEE_ID_WORKER_FILE);
+async function sendBackEmployeeId(message: object) {
+    const employeeIdWorker = await CompatabilityLayer.CreateWorker(EMPLOYEE_ID_WORKER_FILE);
 
     employeeIdWorker.onmessage = (workerMessage: MessageEvent) => {
         printPossibleError(workerMessage.data);
@@ -113,8 +114,8 @@ function sendBackEmployeeId(message: object) {
     employeeIdWorker.postMessage(message);
 }
 
-function saveOvertimeFromPDF(message: object) {
-    const timeStatementWorker = new Worker(TIME_STATEMENT_WORKER_FILE);
+async function saveOvertimeFromPDF(message: object) {
+    const timeStatementWorker = await CompatabilityLayer.CreateWorker(TIME_STATEMENT_WORKER_FILE);
 
     timeStatementWorker.onmessage = (workerMessage: MessageEvent) => {
         checkForOvertime(

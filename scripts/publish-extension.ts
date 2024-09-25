@@ -27,6 +27,11 @@ import { extname } from 'path';
         if (!fs.existsSync('./build/extension/contentscript')) {
             fs.mkdirSync('./build/extension/contentscript');
         }
+        if (!fs.existsSync('./build/extension-chromium/backgroundscript/chromium')) {
+            fs.mkdirSync('./build/extension-chromium/backgroundscript/chromium', {
+                recursive: true,
+            });
+        }
 
         // copy necessary files
         fs.copyFileSync(
@@ -42,6 +47,12 @@ import { extname } from 'path';
         fs.copyFileSync(
             './node_modules/pdfjs-dist/build/pdf.worker.min.mjs',
             './build/extension/backgroundscript/pdf.worker.min.mjs',
+        );
+
+        // copy Chromium specific files only to Chromium output
+        fs.copyFileSync(
+            'src/extension/backgroundscript/chromium/offscreen.html',
+            './build/extension-chromium/backgroundscript/chromium/offscreen.html',
         );
 
         if (!fs.existsSync('./build/gleitzeitkonto-browser-zip')) {

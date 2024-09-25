@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Gleitzeitkonto-Browser",
   "version": "3.1.0",
 
@@ -35,15 +35,21 @@
     }
   ],
 
-  "web_accessible_resources": ["assets/refresh-light.svg", "assets/refresh-dark.svg"],
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/refresh-light.svg", "assets/refresh-dark.svg"],
+      "matches": ["https://*.ondemand.com/*", "https://bgp.btcsap.btc-ag.com/*"]
+    }
+  ],
 
-  "permissions": [
-    "storage",
+  "permissions": ["storage"],
+
+  "host_permissions": [
     "https://bgp.btcsap.btc-ag.com/sap/opu/odata/sap/HCM_TIMESHEET_MAN_SRV/$batch",
     "https://*.ondemand.com/sap/opu/odata/sap/HCM_TIMESHEET_MAN_SRV/$batch"
   ],
 
-  "browser_action": {
+  "action": {
     "default_icon": {
       "48": "assets/gleitzeitkonto-icon48.png",
       "64": "assets/gleitzeitkonto-icon64.png",
@@ -53,7 +59,6 @@
       "512": "assets/gleitzeitkonto-icon512.png"
     },
     "default_title": "Gleitzeitkonto-Browser",
-    "default_popup": "popup/gleitzeitkonto-browser.html",
-    "browser_style": true
+    "default_popup": "popup/gleitzeitkonto-browser.html"
   }
 }
