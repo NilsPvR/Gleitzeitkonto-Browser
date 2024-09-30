@@ -1,20 +1,21 @@
 {
   "name": "Gleitzeitkonto-Browser",
-  "version": "2.0.1",
+  "version": "3.1.0",
   "description": "Browser Erweiterung für Chromium und Firefox, welche erlaubt die Überstunden bzw. ein Gleitzeitkonto direkt in der Fiori-Zeiterfassung oder in der Erweiterung einzusehen.",
-  "main": "gleitzeitkonto-browser.js",
+  "browser": "src/extension/contentscript/contentscript",
+  "type": "module",
   "scripts": {
-    "publishProject": "npm run publishExtension && npm run publishCompanionApp",
-    "publishExtension": "node build/publish-extension.js && npm run combineBrowserJS && npm run sass-prod && node build/publish-extension-fix-manifests.js && npm run zipChromium && npm run zipFirefox",
-    "publishCompanionApp": "node build/publish-companionapp.js && npm run combineCompanionAppJS && npm run zipCompanionApp",
-    "combineCompanionAppJS": "esbuild src/companionapp/main.js --bundle --minify --platform=node --external:puppeteer --outfile=compressed/companionapp/main.js",
-    "combineBrowserJS": "esbuild src/extension/gleitzeitkonto-browser.js --bundle --minify --outfile=compressed/extension/gleitzeitkonto-browser.js && esbuild src/extension/background-messaging.js --bundle --minify --outfile=compressed/extension/background-messaging.js",
-    "compressBrowserJS": "esbuild src/extension/popup/popup-script.js --minify --outfile=compressed/extension/popup/popup-script.js",
-    "zipChromium": "zip-build ./compressed/extension-chromium ./compressed/gleitzeitkonto-browser-zip --interactive --template NICHT-Herunterladen-win-x64-chromium.zip --subDir Chrome-Edge(Chromium) --override true",
-    "zipFirefox": "zip-build ./compressed/extension ./compressed/gleitzeitkonto-browser-zip --interactive --template NICHT-Herunterladen-win-x64-firefox.zip --override true",
-    "sass-dev": "sass --watch --update --no-source-map --style=expanded src/extension/popup/gleitzeitkonto-browser.scss:src/extension/popup/gleitzeitkonto-browser.css",
-    "sass-prod": "sass --no-source-map --style=compressed src/extension/popup/gleitzeitkonto-browser.scss:compressed/extension/popup/gleitzeitkonto-browser.css",
-    "zipCompanionApp": "zip-build ./compressed/companionapp ./compressed/gleitzeitkonto-browser-zip --interactive --template NICHT-Herunterladen-win-x64-companionApp.zip --subDir CompanionApp --override true"
+    "check-format": "prettier --check . && eslint && tsc -noEmit",
+    "format": "prettier --write .",
+    "publish": "npm run transpileBuild && node scripts/publish-extension.js && npm run combineBrowserJS && npm run sass && node scripts/publish-extension-fix-manifests.js && npm run zipExtension",
+    "transpileBuild": "tsc --project tsconfig.build.json",
+    "combineBrowserJS": "npm run combineWebWorkersJS && npm run combinePopupJS && npm run combineOffscreenJS && esbuild src/extension/contentscript/contentscript.ts --bundle --outfile=build/extension/contentscript/gleitzeitkonto-browser.js && esbuild src/extension/backgroundscript/backgroundscript.ts --bundle --outfile=build/extension/backgroundscript/backgroundscript.js",
+    "combineBrowserJS-dev": "esbuild src/extension/contentscript/contentscript.ts --bundle --sourcemap --outfile=build/extension/contentscript/gleitzeitkonto-browser.js && esbuild src/extension/backgroundscript/backgroundscript.ts --bundle --sourcemap --outfile=build/extension/backgroundscript/backgroundscript.js",
+    "combineWebWorkersJS": "esbuild src/extension/backgroundscript/webWorker/timeStatementWorker.ts --bundle --minify --outfile=build/extension/backgroundscript/webWorker/timeStatementWorker.js && esbuild src/extension/backgroundscript/webWorker/timeSheetWorker.ts --bundle --outfile=build/extension/backgroundscript/webWorker/timeSheetWorker.js && esbuild src/extension/backgroundscript/webWorker/employeeIdWorker.ts --bundle --outfile=build/extension/backgroundscript/webWorker/employeeIdWorker.js",
+    "combinePopupJS": "esbuild src/extension/popup/popupscript.ts --bundle --outfile=build/extension/popup/popupscript.js",
+    "combineOffscreenJS": "esbuild src/extension/backgroundscript/chromium/offscreen.ts --bundle --outfile=build/extension-chromium/backgroundscript/chromium/offscreen.js",
+    "zipExtension": "node scripts/zip-extensions.js",
+    "sass": "sass --no-source-map --style=compressed src/extension/popup/gleitzeitkonto-browser.scss:build/extension/popup/gleitzeitkonto-browser.css"
   },
   "repository": {
     "type": "git",
@@ -27,13 +28,23 @@
   },
   "homepage": "https://github.com/NilsPvR/Gleitzeitkonto-Browser#readme",
   "devDependencies": {
-    "esbuild": "^0.20.1",
+    "@eslint/js": "^9.9.1",
+    "@types/adm-zip": "^0.5.5",
+    "@types/fs-extra": "^11.0.4",
+    "@types/webextension-polyfill": "^0.12.0",
+    "adm-zip": "^0.5.15",
+    "esbuild": "^0.23.1",
+    "eslint": "^9.9.1",
+    "eslint-config-prettier": "^9.1.0",
     "fs-extra": "^11.2.0",
-    "sass": "^1.65.1",
-    "webextension-polyfill": "^0.10.0",
-    "zip-build": "^1.8.0"
+    "globals": "^15.9.0",
+    "prettier": "3.3.3",
+    "sass": "^1.77.8",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.2.0"
   },
   "dependencies": {
-    "puppeteer": "^21.0.3"
+    "webextension-polyfill": "^0.12.0",
+    "pdfjs-dist": "^4.6.82"
   }
 }

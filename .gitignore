@@ -1,14 +1,13 @@
 # Node files and folders
 /node_modules
-package-lock.json
 
-# Project building folder
-/compressed
+# Project building folder and files
+/build
+scripts/*.js
 
 
 # Secrets
-src/companionapp/url.json
-src/extension/url.json
+src/extension/contentscript/url.json
 url.json
 
 # environment variables
