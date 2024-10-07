@@ -13,8 +13,8 @@ Alternativ: [Gleitzeitkonto-Desktop](https://github.com/julius-boettger/gleitzei
 # Installation
 Die Erweiterung muss im entsprechenden Browser installiert werden:
 - [Installation Firefox](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Firefox-Installation)
-- [Installation Chrome](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Chrome-Installation)
-- [Installation Edge](https://github.com/NilsPvR/Gleitzeitkonto-Browser/wiki/Edge-Installation)
+- [Installation Chrome](https://chromewebstore.google.com/detail/gleitzeitkonto-browser/pfafglenejhimeinpohlpdobpnmocddj)
+- [Installation Edge](https://microsoftedge.microsoft.com/addons/detail/ionekooopielnnakholllacpgnlkjikm)
 
 *Probleme? Erstelle ein [Issue](https://github.com/NilsPvR/Gleitzeitkonto-Browser/issues)*
 
