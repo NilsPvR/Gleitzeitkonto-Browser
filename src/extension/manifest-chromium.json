@@ -37,10 +37,7 @@
 
   "permissions": ["storage", "offscreen"],
 
-  "host_permissions": [
-    "https://bgp.btcsap.btc-ag.com/sap/opu/odata/sap/HCM_TIMESHEET_MAN_SRV/$batch",
-    "https://*.ondemand.com/sap/opu/odata/sap/HCM_TIMESHEET_MAN_SRV/$batch"
-  ],
+  "host_permissions": ["https://bgp.btcsap.btc-ag.com/*", "https://*.ondemand.com/*"],
 
   "minimum_chrome_version": "116",
 
