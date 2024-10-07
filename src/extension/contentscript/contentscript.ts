@@ -52,8 +52,8 @@ import StatusedPromise from './model/statusedPromise';
 
         updateInsertedDisplayOnChange(headerBar, calculatedData, communication);
 
-        const settingsSync = new SettingsSync();
-        settingsSync.updateDisplayOnExtensionStateChange(); // TODO rename to DisplayState
+        const settingsSync = new SettingsSync(communication);
+        settingsSync.updateDisplayOnDisplayStateChange(headerBar);
     } catch (e) {
         Floating.removeFloatingDisplay(); // TODO show error in popup
         console.error(e);
@@ -204,7 +204,9 @@ async function sendTimeSheetData(communication: Communication) {
     // background only sends content if there is an error
 }
 
-async function getAccountData(communication: Communication): Promise<AccountData | ErrorData> {
+export async function getAccountData(
+    communication: Communication,
+): Promise<AccountData | ErrorData> {
     const overtimeResponse = await communication.sendMsgToBackground(BackgroundCommand.GetOvertime);
 
     if (

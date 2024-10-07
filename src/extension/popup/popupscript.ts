@@ -10,13 +10,13 @@ async function initializeEnabledCheck() {
     if (checkbox && 'checked' in checkbox) {
         checkbox.addEventListener('change', async () => {
             if (checkbox.checked) {
-                await Settings.setExtensionState(true);
+                await Settings.setDisplayState(true);
             } else {
-                await Settings.setExtensionState(false);
+                await Settings.setDisplayState(false);
             }
         });
 
-        if (!(await Settings.extensionIsEnabled())) {
+        if (!(await Settings.displayIsEnabled())) {
             checkbox.checked = false;
         }
     }

@@ -7,7 +7,7 @@ export default class Floating {
     // ========== Floating display ==========
 
     public static async addFloatingDisplay(pDisplayText: string, loading = false): Promise<void> {
-        if (!(await Settings.extensionIsEnabled())) {
+        if (!(await Settings.displayIsEnabled())) {
             return;
         }
 
