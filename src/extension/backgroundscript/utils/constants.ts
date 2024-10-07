@@ -36,4 +36,12 @@ export const givenStrings = {
         en: 'Total Flextime Balance',
         de: 'GLZ-Saldo aktuell',
     },
+    /**
+     * When the fetched pdf document does not have a value for overtime (e.g. no working times available for fetched period)
+     * this is the string of the next entry.
+     */
+    pdfNextItemString: {
+        en: 'Overtime Remuneration',
+        de: 'Über-/Unterdeckung',
+    },
 };
