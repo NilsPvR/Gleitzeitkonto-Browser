@@ -65,8 +65,8 @@ async function sendBackOvertime() {
     } catch (e) {
         console.error(e);
         portFromCS.postMessage({
+            command: BackgroundCommand.GetOvertime,
             error: {
-                command: BackgroundCommand.GetOvertime,
                 message: constStrings.errorMsgs.unableToParseData,
             },
         });

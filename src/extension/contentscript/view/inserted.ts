@@ -18,7 +18,7 @@ export default class Inserted {
     ): Promise<void> {
         Floating.removeFloatingDisplay();
 
-        if (!(await Settings.extensionIsEnabled())) return;
+        if (!(await Settings.displayIsEnabled())) return;
 
         const HTMLElements = Common.createInnerHTMLElements(pDisplayText, loading, true);
 

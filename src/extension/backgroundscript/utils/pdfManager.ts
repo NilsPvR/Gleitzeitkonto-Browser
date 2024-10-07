@@ -41,6 +41,13 @@ export default class PDFManager {
                         'Overtime is not present at expected item. Found instead: ' + overtimeItem,
                     );
                 }
+                if (
+                    overtimeItem.str === givenStrings.pdfNextItemString.de ||
+                    overtimeItem.str === givenStrings.pdfNextItemString.en
+                ) {
+                    // no overtime available for time period (e.g. new employee) -> assume 0 as overtime
+                    return '0';
+                }
 
                 return overtimeItem.str;
             }
