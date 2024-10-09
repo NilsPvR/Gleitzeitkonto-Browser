@@ -2,11 +2,17 @@ import globals from 'globals';
 import pluginJs from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import eslintConfigPrettier from 'eslint-config-prettier';
+import nounsanitized from 'eslint-plugin-no-unsanitized';
 
 export default [
     {
         files: ['**/*.js', '**/*.ts'],
         languageOptions: { sourceType: 'module' },
+        plugins: { 'no-unsanitized': nounsanitized },
+        rules: {
+            'no-unsanitized/method': 'error',
+            'no-unsanitized/property': 'error',
+        },
     },
     {
         files: ['src/**/*.js', 'src/**/*.ts'],
