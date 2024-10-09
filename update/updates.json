@@ -13,6 +13,10 @@
         {
           "version": "3.1.1",
           "update_link": "https://gleitzeitkontobrowser.blob.core.windows.net/$web/v3.1.1/Gleitzeitkonto-Browser-firefox.xpi"
+        },
+        {
+          "version": "3.1.2",
+          "update_link": "https://gleitzeitkontobrowser.blob.core.windows.net/$web/v3.1.2/Gleitzeitkonto-Browser-firefox.xpi"
         }
       ]
     }
