@@ -1,41 +1,42 @@
 import StatusedPromise from '../model/statusedPromise';
-import { AccountData, ErrorData } from '../types/accountData';
 import { DisplayFormat } from '../types/display';
 import { constStrings } from './constants';
+import { ErrorData, isErrorData } from '../types/errorData';
+import { isOvertimeObject, OvertimeData } from '../types/overtimeData';
 
 export default class Formater {
     // =============== Data formatting ==================
     // ==================================================
 
     /**
-     * Format the given AccountData object to a string which can be displayed. If an ErrorData object is provided
-     * the error message will be formatted. If the AccountData is invalid a special error message will be returned.
-     * @param accountData   the object which contains the accountString or error messages
-     * @returns the formatted string derived from the given AccountData object
+     * Format the given OvertimeData to a string which can be displayed. If an ErrorData object is provided
+     * the error message will be formatted. If the given obj is invalid a special error message will be returned.
+     * @param data   the object which contains the overtime or error messages
+     * @returns the formatted string derived from the given data object
      */
-    public static formatDisplayText(accountData: AccountData | ErrorData): string {
-        if ('error' in accountData) {
-            return constStrings.prefixError + accountData.error.message; // error occured
+    public static formatDisplayText(data: OvertimeData | ErrorData): string {
+        if (isOvertimeObject(data)) {
+            return constStrings.prefixOvertime + data.overtimeText;
         }
-        if (!accountData || !('accountString' in accountData)) {
-            // no Data
-            return constStrings.prefixError + constStrings.errorMsgs.noData;
+        if (isErrorData(data)) {
+            return constStrings.prefixError + data.error.message;
         } else {
-            return constStrings.prefixOvertime + accountData.accountString;
+            // no Data
+            return constStrings.prefixOvertime + constStrings.errorMsgs.noData;
         }
     }
 
     /**
      * Determines the latest data which can be shown in the display.
      * This can be a loading placeholder if no data is available.
-     * @param calcAccountData     the data from a calculate
+     * @param calcOvertimeData     the data from a calculate
      */
     public static async getLatestDisplayFormat(
-        calcAccountData: StatusedPromise<Promise<AccountData | ErrorData>>,
+        calcOvertimeData: StatusedPromise<Promise<OvertimeData | ErrorData>>,
     ): Promise<DisplayFormat> {
-        if (calcAccountData.isResolved) {
+        if (calcOvertimeData.isResolved) {
             return {
-                text: this.formatDisplayText(await calcAccountData.promise),
+                text: this.formatDisplayText(await calcOvertimeData.promise),
                 loading: false,
             };
         }
@@ -75,14 +76,8 @@ export default class Formater {
     /**
      * @throws if the given object implements the `ErrorData` interface with the contained message
      */
-    public static checkForErrorMsg(obj: object) {
-        if (
-            'error' in obj &&
-            typeof obj.error == 'object' &&
-            obj.error &&
-            'message' in obj.error &&
-            typeof obj.error.message == 'string'
-        ) {
+    public static throwIfErrorMessage(obj: object) {
+        if (isErrorData(obj)) {
             throw new Error(obj.error.message);
         }
     }

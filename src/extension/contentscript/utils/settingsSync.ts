@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill';
 import Inserted from '../view/inserted';
-import { getAccountData } from '../contentscript';
+import { getOvertimeData } from '../contentscript';
 import Communication from './communication';
 import Data from './format';
 import StatusedPromise from '../model/statusedPromise';
@@ -11,13 +11,7 @@ export default class SettingsSync {
 
     public updateDisplayOnDisplayStateChange(headerBar: HTMLElement) {
         browser.storage.local.onChanged.addListener((changes: browser.Storage.StorageChange) => {
-            if (
-                'displayIsEnabled' in changes &&
-                changes.displayIsEnabled &&
-                typeof changes.displayIsEnabled == 'object' &&
-                'newValue' in changes.displayIsEnabled &&
-                typeof changes.displayIsEnabled.newValue === 'boolean'
-            ) {
+            if (isDisplayStateChange(changes)) {
                 this.addOrRemoveDisplay(headerBar, changes.displayIsEnabled.newValue);
             }
         });
@@ -25,8 +19,8 @@ export default class SettingsSync {
 
     private async addOrRemoveDisplay(headerBar: HTMLElement, displayIsEnabled: boolean) {
         if (displayIsEnabled) {
-            const accountData = new StatusedPromise(getAccountData(this.communication));
-            const latestDisplayFormat = await Data.getLatestDisplayFormat(accountData);
+            const overtimeData = new StatusedPromise(getOvertimeData(this.communication));
+            const latestDisplayFormat = await Data.getLatestDisplayFormat(overtimeData);
 
             new Inserted(this.communication).addInsertedDisplay(
                 headerBar,
@@ -35,12 +29,31 @@ export default class SettingsSync {
             );
 
             // update the display as soon as new data is available
-            accountData.promise.then(async () => {
-                'updated';
-                View.updateDisplay(await Data.getLatestDisplayFormat(accountData));
+            overtimeData.promise.then(async () => {
+                View.updateDisplay(await Data.getLatestDisplayFormat(overtimeData));
             });
             return;
         }
         Inserted.removeInsertedDisplay();
     }
+}
+
+interface DisplayStateChange {
+    displayIsEnabled: {
+        newValue: boolean;
+    };
+}
+
+function isDisplayStateChange(
+    displayStateChange: unknown,
+): displayStateChange is DisplayStateChange {
+    return (
+        typeof displayStateChange === 'object' &&
+        displayStateChange !== null &&
+        'displayIsEnabled' in displayStateChange &&
+        displayStateChange.displayIsEnabled !== null &&
+        typeof displayStateChange.displayIsEnabled == 'object' &&
+        'newValue' in displayStateChange.displayIsEnabled &&
+        typeof displayStateChange.displayIsEnabled.newValue === 'boolean'
+    );
 }

@@ -1,5 +1,5 @@
 import { constStrings } from '../utils/constants';
-import { realodAccountData } from '../contentscript';
+import { reloadOvertimeData } from '../contentscript';
 import Navigation from '../utils/navigation';
 import Common from './common';
 import Floating from './floating';
@@ -39,7 +39,7 @@ export default class Inserted {
         const refreshIcon = document.getElementById(constStrings.refreshIconID);
         if (!refreshIcon) return; // unable to add event listener
         refreshIcon.addEventListener('click', () => {
-            realodAccountData(this.communication);
+            reloadOvertimeData(this.communication);
         });
     }
 

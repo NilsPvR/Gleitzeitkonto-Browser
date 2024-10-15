@@ -187,10 +187,10 @@ export default class Communication {
     }
 
     /**
-     * Contacts the API to get a response inclduing the employee id.
+     * Contacts the API to get a response including the employee id.
      * The response will be the data returned by the api. This data
      * contains the employee id but has to be formatted to be able to use it.
-     * @returns an unformatted response with the working times
+     * @returns an unformatted response with the employee id
      * @throws if a communication error with api occurs
      */
     public async fetchEmployeeId() {

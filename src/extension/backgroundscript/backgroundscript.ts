@@ -73,9 +73,10 @@ async function sendBackOvertime() {
         return;
     }
 
+    // TODO use custom send message wrapper to enforce type cheking
     portFromCS.postMessage({
         command: BackgroundCommand.GetOvertime,
-        accountString: Formater.minutesToTimeString(totalOvertime),
+        overtimeText: Formater.minutesToTimeString(totalOvertime),
     });
 }
 
