@@ -7,7 +7,7 @@
   "scripts": {
     "check-format": "prettier --check . && eslint && tsc -noEmit",
     "format": "prettier --write .",
-    "publish": "npm run transpileBuild && node scripts/publish-extension.js && npm run combineBrowserJS && npm run sass && node scripts/publish-extension-fix-manifests.js && npm run zipExtension",
+    "build": "npm run transpileBuild && node scripts/publish-extension.js && npm run combineBrowserJS && npm run sass && node scripts/publish-extension-fix-manifests.js && npm run zipExtension",
     "transpileBuild": "tsc --project tsconfig.build.json",
     "combineBrowserJS": "npm run combineWebWorkersJS && npm run combinePopupJS && npm run combineOffscreenJS && esbuild src/extension/contentscript/contentscript.ts --bundle --outfile=build/extension/contentscript/gleitzeitkonto-browser.js && esbuild src/extension/backgroundscript/backgroundscript.ts --bundle --outfile=build/extension/backgroundscript/backgroundscript.js",
     "combineBrowserJS-dev": "esbuild src/extension/contentscript/contentscript.ts --bundle --sourcemap --outfile=build/extension/contentscript/gleitzeitkonto-browser.js && esbuild src/extension/backgroundscript/backgroundscript.ts --bundle --sourcemap --outfile=build/extension/backgroundscript/backgroundscript.js",
