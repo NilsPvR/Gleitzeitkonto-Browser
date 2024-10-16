@@ -5,8 +5,8 @@ import { constStrings } from './utils/constants';
 import StorageManager from '../common/utils/storageManager';
 import Communication from './utils/communication';
 import CompatabilityLayer from './chromium/compatabilityLayer';
-
-let portFromCS: browser.Runtime.Port; // port from content script
+import { isMessageObject } from '../common/types/messageObject';
+import { isErrorData } from '../common/types/errorData';
 
 // paths are not relative but start at the extension folder (build output)
 const TIME_STATEMENT_WORKER_FILE = 'backgroundscript/webWorker/timeStatementWorker.js';
@@ -14,45 +14,44 @@ const TIME_SHEET_WORKER_FILE = 'backgroundscript/webWorker/timeSheetWorker.js';
 const EMPLOYEE_ID_WORKER_FILE = 'backgroundscript/webWorker/employeeIdWorker.js';
 
 function connectedToContentScript(port: browser.Runtime.Port) {
-    portFromCS = port;
-
-    if (portFromCS.sender?.id !== browser.runtime.id) {
+    if (port.sender?.id !== browser.runtime.id) {
         // sender id is not the one of this extension
         // invalid id, incoming request might be malicious
         console.error(constStrings.errorMsgs.invalidRequest);
         port.disconnect();
+        return;
     }
-
-    portFromCS.onMessage.addListener((message) => {
-        if (typeof message !== 'object' || !message || !('command' in message)) {
+    const communication = new Communication(port);
+    communication.portToCs.onMessage.addListener((message) => {
+        if (!isMessageObject(message)) {
+            sendBackUnknownCmdError(communication);
             return;
         }
         switch (message.command) {
             case BackgroundCommand.ParseTimeSheet:
-                saveOvertimeFromTimeSheet(message);
+                saveOvertimeFromTimeSheet(communication, message);
                 break;
             case BackgroundCommand.ParseEmployeeId:
-                sendBackEmployeeId(message);
+                sendBackEmployeeId(communication, message);
                 break;
             case BackgroundCommand.CompileTimeSatement:
-                saveOvertimeFromPDF(message);
+                saveOvertimeFromPDF(communication, message);
                 break;
             case BackgroundCommand.GetOvertime:
-                sendBackOvertime();
+                sendBackOvertime(communication);
                 break;
             default:
-                portFromCS.postMessage({
-                    error: {
-                        command: BackgroundCommand.ParseTimeSheet,
-                        message: constStrings.errorMsgs.invalidCommand,
-                    },
-                });
+                sendBackUnknownCmdError(communication);
                 break;
         }
     });
 }
 
-async function sendBackOvertime() {
+/**
+ * Calculate the total overtime and send it back to the content script. Sends an error message
+ * if overtime can't be calculated.
+ */
+async function sendBackOvertime(communication: Communication) {
     let totalOvertime;
     try {
         const timeSheetOvertime = Number(await StorageManager.getTimeSheetOvertime());
@@ -64,8 +63,7 @@ async function sendBackOvertime() {
         totalOvertime = timeSheetOvertime + timeStatementOvertime;
     } catch (e) {
         console.error(e);
-        portFromCS.postMessage({
-            command: BackgroundCommand.GetOvertime,
+        communication.postCsMessage(BackgroundCommand.GetOvertime, {
             error: {
                 message: constStrings.errorMsgs.unableToParseData,
             },
@@ -73,64 +71,68 @@ async function sendBackOvertime() {
         return;
     }
 
-    // TODO use custom send message wrapper to enforce type cheking
-    portFromCS.postMessage({
-        command: BackgroundCommand.GetOvertime,
+    communication.postCsMessage(BackgroundCommand.GetOvertime, {
         overtimeText: Formater.minutesToTimeString(totalOvertime),
     });
 }
 
-async function saveOvertimeFromTimeSheet(message: object) {
+async function saveOvertimeFromTimeSheet(communication: Communication, message: object) {
     const timeSheetWorker = await CompatabilityLayer.CreateWorker(TIME_SHEET_WORKER_FILE);
 
     timeSheetWorker.onmessage = (workerMessage: MessageEvent) => {
         checkForOvertime(
+            communication,
             workerMessage,
             BackgroundCommand.ParseTimeSheet,
             (overtime: number) => StorageManager.saveTimeSheetOvertime(overtime),
-            portFromCS,
         );
     };
     timeSheetWorker.onerror = (error: ErrorEvent) => {
         console.error('Worker error:', error.message, error.filename, error.lineno, error.colno);
-        Communication.postWorkerError(portFromCS, BackgroundCommand.ParseTimeSheet);
+        communication.postWorkerError(BackgroundCommand.ParseTimeSheet);
     };
     timeSheetWorker.postMessage(message);
 }
 
-async function sendBackEmployeeId(message: object) {
+async function sendBackEmployeeId(communication: Communication, message: object) {
     const employeeIdWorker = await CompatabilityLayer.CreateWorker(EMPLOYEE_ID_WORKER_FILE);
 
     employeeIdWorker.onmessage = (workerMessage: MessageEvent) => {
         printPossibleError(workerMessage.data);
-        portFromCS.postMessage(workerMessage.data);
+        communication.postCsMessage(BackgroundCommand.ParseEmployeeId, workerMessage.data);
     };
     employeeIdWorker.onerror = (error: ErrorEvent) => {
         console.error('Worker error:', error.message, error.filename, error.lineno, error.colno);
-        portFromCS.postMessage({
-            command: BackgroundCommand.ParseEmployeeId,
-            error: { message: constStrings.errorMsgs.unexpectedWorkerError },
-        });
+        communication.postWorkerError(BackgroundCommand.ParseEmployeeId);
     };
     employeeIdWorker.postMessage(message);
 }
 
-async function saveOvertimeFromPDF(message: object) {
+async function saveOvertimeFromPDF(communication: Communication, message: object) {
     const timeStatementWorker = await CompatabilityLayer.CreateWorker(TIME_STATEMENT_WORKER_FILE);
 
     timeStatementWorker.onmessage = (workerMessage: MessageEvent) => {
         checkForOvertime(
+            communication,
             workerMessage,
             BackgroundCommand.CompileTimeSatement,
             (overtime: number) => StorageManager.saveTimeStatementOvertime(overtime),
-            portFromCS,
         );
     };
     timeStatementWorker.onerror = (error: ErrorEvent) => {
         console.error('Worker error:', error.message, error.filename, error.lineno, error.colno);
-        Communication.postWorkerError(portFromCS, BackgroundCommand.CompileTimeSatement);
+        communication.postWorkerError(BackgroundCommand.CompileTimeSatement);
     };
     timeStatementWorker.postMessage(message);
+}
+
+function sendBackUnknownCmdError(communication: Communication) {
+    // explicitly break the messaging contract since, there is no command to send back
+    communication.portToCs.postMessage({
+        error: {
+            message: constStrings.errorMsgs.invalidCommand,
+        },
+    });
 }
 
 /**
@@ -139,42 +141,50 @@ async function saveOvertimeFromPDF(message: object) {
  * in which case any `originalError`s will be printed and an error response will be sent on the port.
  * If the MessageEvent data has the `action` attribute the callback function wont be called either.
  * If the overtime is in the data then the callback will be called with the overtime.
- * @param message     the message which to check for errors and the overtime
- * @param command     the command to send as a response on the port
- * @param callback    will be called once the overtime was found in the MessageEvent data
- * @param port        the port on which to send messages
+ * @param communication    the communication instance to send messages with
+ * @param message          the message which to check for errors and the overtime
+ * @param command          the command to send as a response on the port
+ * @param callback         will be called once the overtime was found in the MessageEvent data
+ * @TODO reevaluate if this message/communication can't use the message object type
  */
 function checkForOvertime(
+    communication: Communication,
     message: MessageEvent,
     command: BackgroundCommand,
     callback: (overtime: number) => void,
-    port: browser.Runtime.Port,
 ) {
-    if ('error' in message.data) {
+    const receivedData: unknown = message.data;
+
+    if (isErrorData(receivedData)) {
         // an error was caught, forward the message
-        port.postMessage(message.data);
-        printPossibleError(message.data);
+        communication.postCsMessage(command, receivedData);
+        printPossibleError(receivedData);
         return;
     }
-    if ('action' in message.data) {
+    if (typeof receivedData === 'object' && receivedData !== null && 'action' in receivedData) {
         // the pdf worker sends a ready message which is caught by this check
-        if (message.data.action !== 'ready') {
+        if (receivedData.action !== 'ready') {
             console.error('A message with action was sent which is not the ready action:');
             console.error(message);
-            Communication.postWorkerError(port, command);
+            communication.postWorkerError(command);
         }
         return; // pdf worker only notified that it is ready, nothing to do
     }
-    if (!('overtime' in message.data)) {
+    if (
+        typeof receivedData !== 'object' ||
+        receivedData === null ||
+        !('overtime' in receivedData) ||
+        typeof receivedData.overtime !== 'number'
+    ) {
         // should not happen
         console.error('Received an unexpected response from time time statement worker:');
         console.error(message);
-        Communication.postWorkerError(port, command);
+        communication.postWorkerError(command);
         return;
     }
 
-    callback(message.data.overtime);
-    port.postMessage({ command: command });
+    callback(receivedData.overtime);
+    communication.postCsMessage(command);
 }
 
 /**

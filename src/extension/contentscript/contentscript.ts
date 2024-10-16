@@ -5,13 +5,13 @@ import Inserted from './view/inserted';
 import Communication from './utils/communication';
 import Navigation from './utils/navigation';
 import Data from './utils/format';
-import { ErrorData, isErrorData } from './types/errorData';
+import { ErrorData, isErrorData } from '../common/types/errorData';
 import SettingsSync from './utils/settingsSync';
 import { BackgroundCommand } from '../common/enums/command';
 import StatusedPromise from './model/statusedPromise';
 import TimeStatementManager from './utils/timeStatementManager';
 import TimeSheetManager from './utils/timeSheetManager';
-import { isOvertimeObject, OvertimeData } from './types/overtimeData';
+import { isOvertimeObject, OvertimeData } from '../common/types/overtimeData';
 
 (async () => {
     'use strict';

@@ -1,8 +1,8 @@
 import StatusedPromise from '../model/statusedPromise';
 import { DisplayFormat } from '../types/display';
 import { constStrings } from './constants';
-import { ErrorData, isErrorData } from '../types/errorData';
-import { isOvertimeObject, OvertimeData } from '../types/overtimeData';
+import { ErrorData, isErrorData } from '../../common/types/errorData';
+import { isOvertimeObject, OvertimeData } from '../../common/types/overtimeData';
 
 export default class Formater {
     // =============== Data formatting ==================
@@ -76,9 +76,9 @@ export default class Formater {
     /**
      * @throws if the given object implements the `ErrorData` interface with the contained message
      */
-    public static throwIfErrorMessage(obj: object) {
-        if (isErrorData(obj)) {
-            throw new Error(obj.error.message);
+    public static throwIfErrorMessage(data: unknown) {
+        if (isErrorData(data)) {
+            throw new Error(data.error.message);
         }
     }
 }

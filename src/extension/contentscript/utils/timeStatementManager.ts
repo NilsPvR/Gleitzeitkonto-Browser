@@ -1,4 +1,5 @@
 import { BackgroundCommand } from '../../common/enums/command';
+import { isEmployeeIdData } from '../../common/types/employeeIdData';
 import Communication from './communication';
 import { config, constStrings } from './constants';
 import DateManger from './dateManager';
@@ -42,10 +43,7 @@ export default class TimeStatementManager {
         );
 
         Formater.throwIfErrorMessage(employeeIdResponse);
-        if (
-            !('employeeId' in employeeIdResponse) ||
-            typeof employeeIdResponse.employeeId !== 'string'
-        ) {
+        if (!isEmployeeIdData(employeeIdResponse)) {
             console.error('Received response from background without employee ID');
             throw new Error(constStrings.errorMsgs.unexpectedBackgroundResponse);
         }

@@ -5,6 +5,11 @@ import { givenStrings } from './constants';
 import Formater from './format';
 import Navigation from './navigation';
 import { PageVariant } from '../enums/pageVariant';
+import { ErrorData } from '../../common/types/errorData';
+import { OvertimeData } from '../../common/types/overtimeData';
+import { isBackgroundResponse } from '../../common/types/backgroundResponse';
+import { EmployeeIdData } from '../../common/types/employeeIdData';
+import { MessageObject } from '../../common/types/messageObject';
 
 export default class Communication {
     // =========== Communication with backend ===========
@@ -23,7 +28,7 @@ export default class Communication {
     public async sendMsgToBackground(
         command: BackgroundCommand,
         content?: string,
-    ): Promise<object> {
+    ): Promise<OvertimeData | EmployeeIdData | ErrorData | undefined> {
         return new Promise((resolve) => {
             if (this.portToBackground == undefined) {
                 this.portToBackground = browser.runtime.connect(); // buid connection if not already established
@@ -37,16 +42,12 @@ export default class Communication {
             // connection has been established
             this.portToBackground.onMessage.addListener((response) => {
                 // check if the response is a response for this request
-                if (
-                    response &&
-                    typeof response === 'object' &&
-                    'command' in response &&
-                    response.command === command
-                ) {
-                    resolve(response);
+                if (isBackgroundResponse(response) && response.command === command) {
+                    resolve(response.content);
                 }
             });
-            this.portToBackground.postMessage({ command: command, content: content });
+            const message: MessageObject = { command: command, content: content };
+            this.portToBackground.postMessage(message);
         });
     }
 

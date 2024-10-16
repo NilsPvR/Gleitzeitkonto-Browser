@@ -1,4 +1,3 @@
-import { BackgroundCommand } from '../../common/enums/command';
 import EmployeeData from '../model/employeeData';
 import { constStrings } from '../utils/constants';
 import Formater from '../utils/format';
@@ -18,7 +17,6 @@ async function sendBackEmployeeId(message: MessageEvent) {
         }
     } catch (e) {
         postMessage({
-            command: BackgroundCommand.ParseEmployeeId,
             error: { message: constStrings.errorMsgs.unableToParseData },
             originalError: e,
         });
@@ -26,7 +24,6 @@ async function sendBackEmployeeId(message: MessageEvent) {
     }
 
     postMessage({
-        command: BackgroundCommand.ParseEmployeeId,
         employeeId: employeeId,
     });
 }
