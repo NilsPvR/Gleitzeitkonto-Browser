@@ -106,7 +106,7 @@ export default class Common {
      * Get the URL for the refresh icon based on the current LightingMode (light/dark) of the page.
      * @returns the URL
      */
-    static getRefreshIconURL(): string {
+    private static getRefreshIconURL(): string {
         if (this.getLightingMode() == LightingMode.Light) {
             return browser.runtime.getURL('./assets/refresh-light.svg');
         } else {
