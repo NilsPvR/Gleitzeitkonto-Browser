@@ -1,28 +1,24 @@
 import { constStrings } from '../utils/constants';
-import { reloadOvertimeData } from '../contentscript';
 import Navigation from '../utils/navigation';
 import Common from './common';
-import Floating from './floating';
 import Settings from '../../common/utils/settings';
-import Communication from '../utils/communication';
+import { DisplayFormat } from '../types/display';
+import OvertimeManager from '../utils/overtimeManager';
 
 export default class Inserted {
     // ========== Inserted display ==========
 
-    constructor(public communication: Communication) {}
+    constructor(public overtimeManager: OvertimeManager) {}
 
     public async addInsertedDisplay(
-        pHeaderBar: HTMLElement,
-        pDisplayText: string,
-        loading: boolean,
+        headerBar: HTMLElement,
+        displayState: DisplayFormat
     ) {
-        Floating.removeFloatingDisplay();
-
         if (!(await Settings.displayIsEnabled())) return;
 
-        const HTMLElements = Common.createInnerHTMLElements(pDisplayText, loading, true);
+        const HTMLElements = Common.createInnerHTMLElements(displayState.text, displayState.loading, true);
 
-        pHeaderBar.prepend(
+        headerBar.prepend(
             Common.createRichElement(
                 'div',
                 {
@@ -30,7 +26,7 @@ export default class Inserted {
                         `${constStrings.cssClasses.insertedDisplay} ${Navigation.getPageVariant().toString().toLowerCase()} ` +
                         Common.getLightingClassName(Common.getLightingMode()),
                     id: constStrings.insertedDisplayID,
-                    style: loading ? ' opacity: 0.5;' : '',
+                    style: displayState.loading ? ' opacity: 0.5;' : '',
                 },
                 ...HTMLElements, // spread syntax to expand array
             ),
@@ -39,7 +35,7 @@ export default class Inserted {
         const refreshIcon = document.getElementById(constStrings.refreshIconID);
         if (!refreshIcon) return; // unable to add event listener
         refreshIcon.addEventListener('click', () => {
-            reloadOvertimeData(this.communication);
+            this.overtimeManager.reloadOvertimeData(displayState);
         });
     }
 

@@ -2,16 +2,17 @@ import { constStrings, givenStrings } from '../utils/constants';
 import Navigation from '../utils/navigation';
 import Common from './common';
 import Settings from '../../common/utils/settings';
+import { DisplayFormat } from '../types/display';
 
 export default class Floating {
     // ========== Floating display ==========
 
-    public static async addFloatingDisplay(pDisplayText: string, loading = false) {
+    public static async addFloatingDisplay(displayState: DisplayFormat) {
         if (!(await Settings.displayIsEnabled())) {
             return;
         }
 
-        const HTMLElements = Common.createInnerHTMLElements(pDisplayText, loading, false);
+        const HTMLElements = Common.createInnerHTMLElements(displayState.text, displayState.loading, false);
 
         // main page element is the (almost) only one loaded when DOM is loaded
         const canvas =
@@ -28,7 +29,7 @@ export default class Floating {
                         `${constStrings.cssClasses.floatingDisplay} ${Navigation.getPageVariant().toString().toLowerCase()} ` +
                         Common.getLightingClassName(Common.getLightingMode()),
                     id: constStrings.floatingDisplayID,
-                    style: loading ? ' opacity: 0.5;' : '',
+                    style: displayState.loading ? ' opacity: 0.5;' : '',
                 },
                 ...HTMLElements, // spread syntax to expand array
             ),

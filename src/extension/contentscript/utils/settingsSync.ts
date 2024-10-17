@@ -1,40 +1,24 @@
 import browser from 'webextension-polyfill';
-import Inserted from '../view/inserted';
-import { getOvertimeData } from '../contentscript';
-import Communication from './communication';
-import Data from './format';
-import StatusedPromise from '../model/statusedPromise';
+import { DisplayFormat } from '../types/display';
 import View from '../view/view';
 
 export default class SettingsSync {
-    constructor(public communication: Communication) {}
+    constructor(public view: View) {}
 
-    public updateDisplayOnDisplayEnabledChange(headerBar: HTMLElement) {
+    public updateDisplayOnDisplayEnabledChange(displayState: DisplayFormat) {
         browser.storage.local.onChanged.addListener((changes: browser.Storage.StorageChange) => {
             if (isDisplayEnabledChange(changes)) {
-                this.addOrRemoveDisplay(headerBar, changes.displayIsEnabled.newValue);
+                this.addOrRemoveDisplay(displayState, changes.displayIsEnabled.newValue);
             }
         });
     }
 
-    private async addOrRemoveDisplay(headerBar: HTMLElement, displayIsEnabled: boolean) {
+    private async addOrRemoveDisplay(displayState: DisplayFormat, displayIsEnabled: boolean) {
         if (displayIsEnabled) {
-            const overtimeData = new StatusedPromise(getOvertimeData(this.communication));
-            const latestDisplayFormat = await Data.getLatestDisplayFormat(overtimeData);
-
-            new Inserted(this.communication).addInsertedDisplay(
-                headerBar,
-                latestDisplayFormat.text,
-                latestDisplayFormat.loading,
-            );
-
-            // update the display as soon as new data is available
-            overtimeData.promise.then(async () => {
-                View.updateDisplay(await Data.getLatestDisplayFormat(overtimeData));
-            });
+            this.view.renderDisplay(displayState)
             return;
         }
-        Inserted.removeInsertedDisplay();
+        View.removeDisplay();
     }
 }
 

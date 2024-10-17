@@ -1,9 +1,49 @@
 import { config, constStrings } from '../utils/constants';
 import { DisplayFormat } from '../types/display';
+import Inserted from './inserted';
+import Settings from '../../common/utils/settings';
+import Floating from './floating';
 
 export default class View {
-    // ========= Changes on Gleitzeitkonto-Display ========
-    // ====================================================
+    constructor(public inserted: Inserted, public headerBar?: HTMLElement) {}
+
+    /**
+     * Will add/update/change a display in the page with the given data. The function will
+     * determine the display to use.
+     * @param displayState    the data to render
+     * @param updateText      if true will update the text even if the display is already added (default: `true`)
+     */
+    public async renderDisplay(displayState: DisplayFormat, updateText: boolean = true) {
+        if (!(await Settings.displayIsEnabled())) {
+            View.removeDisplay();
+            return;
+        }
+        if (this.headerBar) { // inserted can be rendered
+            Floating.removeFloatingDisplay();
+            this.renderInsertedDisplay(displayState, updateText);
+        } else {
+            Inserted.removeInsertedDisplay();
+            this.renderFloatingDisplay(displayState, updateText);
+        }
+    }
+
+    private renderInsertedDisplay(displayState: DisplayFormat, updateText: boolean) {
+        if (!this.headerBar) return;
+
+        if (Inserted.getInsertedDisplay() === null) {
+            this.inserted.addInsertedDisplay(this.headerBar, displayState);
+        } else if (updateText) {
+            View.updateDisplay(displayState);
+        }
+    }
+
+    private renderFloatingDisplay(displayState: DisplayFormat, updateText: boolean) {
+        if (Floating.getFloatingDisplay() === null) {
+            Floating.addFloatingDisplay(displayState);
+        } else if (updateText) {
+            View.updateDisplay(displayState);
+        }
+    }
 
     public static startLoading() {
         const currentDisplay =
@@ -58,6 +98,14 @@ export default class View {
         const display = displayList.item(0);
         if (display) {
             display.replaceChildren(text);
+        }
+    }
+
+    public static removeDisplay() {
+        if (Inserted.getInsertedDisplay()) {
+            Inserted.removeInsertedDisplay();
+        } else if (Floating.getFloatingDisplay()) {
+            Floating.removeFloatingDisplay();
         }
     }
 }
