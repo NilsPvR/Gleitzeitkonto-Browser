@@ -152,6 +152,9 @@ class WorkerWrapper implements Worker {
         }
 
         if (this.onmessage) {
+            /* TODO Error, messages are sent to often or caught to often which causes the extension to attempt to
+             use a disconnected port */
+
             // we can be quite certain that the data is now a MessageEvent (or at least has the data we want)
             this.onmessage(<MessageEvent>message.data);
         }
