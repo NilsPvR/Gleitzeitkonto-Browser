@@ -6,7 +6,7 @@ import Settings from '../../common/utils/settings';
 export default class Floating {
     // ========== Floating display ==========
 
-    public static async addFloatingDisplay(pDisplayText: string, loading = false): Promise<void> {
+    public static async addFloatingDisplay(pDisplayText: string, loading = false) {
         if (!(await Settings.displayIsEnabled())) {
             return;
         }
@@ -39,7 +39,7 @@ export default class Floating {
         return document.getElementById(constStrings.floatingDisplayID);
     }
 
-    public static removeFloatingDisplay(): void {
+    public static removeFloatingDisplay() {
         const oldDisplay = this.getFloatingDisplay();
         if (oldDisplay) oldDisplay.remove(); // delete the old display
     }

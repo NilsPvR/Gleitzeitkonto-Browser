@@ -9,8 +9,8 @@ export default class Navigation {
     /**
      * Resolves once the DOMContentLoaded event fires or immediately if it is already loaded.
      */
-    public static async waitForDOMContentLoaded(): Promise<void> {
-        return new Promise((resolve) => {
+    public static async waitForDOMContentLoaded() {
+        return new Promise<void>((resolve) => {
             if (document.readyState === 'loading') {
                 window.addEventListener('DOMContentLoaded', () => {
                     resolve();

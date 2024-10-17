@@ -5,7 +5,7 @@ export default class View {
     // ========= Changes on Gleitzeitkonto-Display ========
     // ====================================================
 
-    public static startLoading(): void {
+    public static startLoading() {
         const currentDisplay =
             document.getElementById(constStrings.insertedDisplayID) ??
             document.getElementById(constStrings.floatingDisplayID); // get the display;
@@ -21,7 +21,7 @@ export default class View {
         }
     }
 
-    public static stopLoading(): void {
+    public static stopLoading() {
         const currentDisplay =
             document.getElementById(constStrings.insertedDisplayID) ??
             document.getElementById(constStrings.floatingDisplayID); // get the display
@@ -41,7 +41,7 @@ export default class View {
      * Updates the text and loading state of the display.
      * @param displayFormat text and loading state to update the display with
      */
-    public static updateDisplay(displayFormat: DisplayFormat): void {
+    public static updateDisplay(displayFormat: DisplayFormat) {
         if (displayFormat.text) {
             this.updateDisplayText(displayFormat.text);
 
@@ -50,7 +50,7 @@ export default class View {
         }
     }
 
-    public static async updateDisplayText(displayText: Promise<string> | string): Promise<void> {
+    public static async updateDisplayText(displayText: Promise<string> | string) {
         const text = await displayText;
         const displayList = document.getElementsByClassName(constStrings.cssClasses.displayLine);
         if (!displayList) return;

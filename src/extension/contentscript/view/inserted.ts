@@ -15,7 +15,7 @@ export default class Inserted {
         pHeaderBar: HTMLElement,
         pDisplayText: string,
         loading: boolean,
-    ): Promise<void> {
+    ) {
         Floating.removeFloatingDisplay();
 
         if (!(await Settings.displayIsEnabled())) return;
@@ -47,7 +47,7 @@ export default class Inserted {
         return document.getElementById(constStrings.insertedDisplayID);
     }
 
-    public static removeInsertedDisplay(): void {
+    public static removeInsertedDisplay() {
         const previousInsertedDisplay = this.getInsertedDisplay();
         if (previousInsertedDisplay) {
             previousInsertedDisplay.remove();
