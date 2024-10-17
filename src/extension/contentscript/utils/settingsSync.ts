@@ -9,9 +9,9 @@ import View from '../view/view';
 export default class SettingsSync {
     constructor(public communication: Communication) {}
 
-    public updateDisplayOnDisplayStateChange(headerBar: HTMLElement) {
+    public updateDisplayOnDisplayEnabledChange(headerBar: HTMLElement) {
         browser.storage.local.onChanged.addListener((changes: browser.Storage.StorageChange) => {
-            if (isDisplayStateChange(changes)) {
+            if (isDisplayEnabledChange(changes)) {
                 this.addOrRemoveDisplay(headerBar, changes.displayIsEnabled.newValue);
             }
         });
@@ -38,22 +38,22 @@ export default class SettingsSync {
     }
 }
 
-interface DisplayStateChange {
+interface DisplayEnabledChange {
     displayIsEnabled: {
         newValue: boolean;
     };
 }
 
-function isDisplayStateChange(
-    displayStateChange: unknown,
-): displayStateChange is DisplayStateChange {
+function isDisplayEnabledChange(
+    displayEnabledChange: unknown,
+): displayEnabledChange is DisplayEnabledChange {
     return (
-        typeof displayStateChange === 'object' &&
-        displayStateChange !== null &&
-        'displayIsEnabled' in displayStateChange &&
-        displayStateChange.displayIsEnabled !== null &&
-        typeof displayStateChange.displayIsEnabled == 'object' &&
-        'newValue' in displayStateChange.displayIsEnabled &&
-        typeof displayStateChange.displayIsEnabled.newValue === 'boolean'
+        typeof displayEnabledChange === 'object' &&
+        displayEnabledChange !== null &&
+        'displayIsEnabled' in displayEnabledChange &&
+        displayEnabledChange.displayIsEnabled !== null &&
+        typeof displayEnabledChange.displayIsEnabled == 'object' &&
+        'newValue' in displayEnabledChange.displayIsEnabled &&
+        typeof displayEnabledChange.displayIsEnabled.newValue === 'boolean'
     );
 }

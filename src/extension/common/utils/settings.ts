@@ -14,7 +14,7 @@ export default class Settings {
         }
     }
 
-    public static async setDisplayState(state: boolean): Promise<void> {
+    public static async setDisplayEnabled(state: boolean): Promise<void> {
         return await browser.storage.local.set({ displayIsEnabled: state });
     }
 }

@@ -10,9 +10,9 @@ async function initializeEnabledCheck() {
     if (checkbox && 'checked' in checkbox) {
         checkbox.addEventListener('change', async () => {
             if (checkbox.checked) {
-                await Settings.setDisplayState(true);
+                await Settings.setDisplayEnabled(true);
             } else {
-                await Settings.setDisplayState(false);
+                await Settings.setDisplayEnabled(false);
             }
         });
 

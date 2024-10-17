@@ -54,7 +54,7 @@ import { isOvertimeObject, OvertimeData } from '../common/types/overtimeData';
         updateInsertedDisplayOnChange(headerBar, calculatedData, communication);
 
         const settingsSync = new SettingsSync(communication);
-        settingsSync.updateDisplayOnDisplayStateChange(headerBar);
+        settingsSync.updateDisplayOnDisplayEnabledChange(headerBar);
     } catch (e) {
         Floating.removeFloatingDisplay(); // TODO show error in popup
         console.error(e);
